@@ -1,0 +1,57 @@
+@charset "UTF-8";
+/**
+ * Override material colors
+ */
+:root {
+	--mdc-shape-medium: 4px;
+	--input-border-color: #BDBDBD;
+	--mdc-theme-primary: #4866cc;
+	--mdc-theme-secondary: #455a64;
+	--mdc-theme-background: #fff;
+	--mdc-theme-surface: #fff;
+	--mdc-theme-error: #b00020;
+	--mdc-theme-on-primary: #fff;
+	--mdc-theme-on-secondary: #fff;
+	--mdc-theme-on-surface: #000;
+	--mdc-theme-on-error: #fff;
+}
+
+.mdc-top-app-bar {
+	position:static;
+}
+.partage-auth {
+	width: 400px;
+	max-width: 400px;
+	display: flex;
+	flex-flow: column;
+	margin: 100px auto 0 auto;
+	align-items: center;
+}
+.partage-auth-form{
+	width: 100%;
+	padding: 2rem 1rem;
+	margin-bottom: 3rem;
+}
+.partage-auth-invite {
+	width: 100%;
+	padding: 1rem;
+}
+
+.partage-auth-double-label {
+	display: flex;
+	justify-content: space-between;
+}
+.partage-auth-button-box {
+	width: auto;
+	margin: 0 auto;
+}
+/* Vertical space between elements */
+.partage-auth-label, 
+.partage-auth-double-label,
+.partage-auth-button-box {
+	margin-top: 2rem;
+}
+.partage-auth-button-submit {
+	border-radius: 3rem;
+	padding: 0 1.5rem;	
+}

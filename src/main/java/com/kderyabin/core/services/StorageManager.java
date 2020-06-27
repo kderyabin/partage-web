@@ -36,7 +36,7 @@ public class StorageManager {
 	 * Finds user in DB by login and password.
 	 * @param login User login.
 	 * @param password user password.
-	 * @return UserModel instance ot null if user is not found.
+	 * @return UserModel instance or null if user is not found.
 	 */
 	public UserModel findUserByLoginPassword(String login, String password) {
     	UserEntity entity = userRepository.findByLoginPwd(login, password);

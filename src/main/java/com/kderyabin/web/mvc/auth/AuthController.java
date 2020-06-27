@@ -26,6 +26,10 @@ public class AuthController {
 //		this.storageManager = storageManager;
 //	}
 
+	/**
+	 * Display authentication form
+	 * @return
+	 */
 	@GetMapping("/")
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView("index");

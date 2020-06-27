@@ -1,0 +1,49 @@
+@charset "UTF-8";
+
+:root {
+	--text-color: #333333;
+	--input-border-color: #BDBDBD;
+	--mdc-shape-medium: 4px;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+	font-size: 16px;
+	line-height: 1.15;
+}
+
+body {
+	margin: 0;
+	background-color: #f4f4f4;
+	color: var(--text-color);
+}
+
+
+input,
+button,
+select,
+optgroup,
+textarea {
+	margin: 0;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+input {
+	padding: 0.5rem 0.2rem;
+	border: 1px solid var(--input-border-color);
+	border-radius: var(--mdc-shape-medium, 4px);	
+}
+label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+a {
+	color: var(--mdc-theme-primary);	
+}
