@@ -37,7 +37,17 @@ textarea {
 input {
 	padding: 0.5rem 0.2rem;
 	border: 1px solid var(--input-border-color);
-	border-radius: var(--mdc-shape-medium, 4px);	
+	border-radius: var(--mdc-shape-medium, 4px);
+}
+
+input:focus {
+	border-color: var(--mdc-theme-primary);
+	border-width: 2px;
+}
+
+input:invalid {
+	outline: none;
+	box-shadow: none;
 }
 label {
   display: inline-block;
@@ -45,5 +55,5 @@ label {
 }
 
 a {
-	color: var(--mdc-theme-primary);	
+	color: var(--mdc-theme-primary);
 }

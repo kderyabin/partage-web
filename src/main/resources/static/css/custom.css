@@ -7,7 +7,8 @@
 	--input-border-color: #BDBDBD;
 	--mdc-theme-primary: #4866cc;
 	--mdc-theme-secondary: #455a64;
-	--mdc-theme-background: #fff;
+	/*--mdc-theme-background: #fff;*/
+	--mdc-theme-background: #f4f4f4;
 	--mdc-theme-surface: #fff;
 	--mdc-theme-error: #b00020;
 	--mdc-theme-on-primary: #fff;
@@ -32,26 +33,109 @@
 	padding: 2rem 1rem;
 	margin-bottom: 3rem;
 }
+.partage-auth-form input {
+	margin-bottom: 0.5rem;
+}
 .partage-auth-invite {
 	width: 100%;
 	padding: 1rem;
 }
 
-.partage-auth-double-label {
+.partage-signin-password-label {
 	display: flex;
 	justify-content: space-between;
 }
 .partage-auth-button-box {
 	width: auto;
-	margin: 0 auto;
+	margin: 1.5rem auto 0 auto;
 }
-/* Vertical space between elements */
-.partage-auth-label, 
-.partage-auth-double-label,
-.partage-auth-button-box {
-	margin-top: 2rem;
+
+.label-inline-block {
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
 }
-.partage-auth-button-submit {
+
+.button-rounded {
 	border-radius: 3rem;
-	padding: 0 1.5rem;	
+	padding: 0 1.5rem;
+}
+
+.required {
+	color: var(--mdc-theme-error);
+}
+
+.input-info,
+.input-error {
+	font-size: 0.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.input-error {
+	color: var(--mdc-theme-error);
+}
+
+.starter-box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.starter-label {
+	font-family: "Nothing You Could Do", "Segoe Script", cursive;
+	font-size: 6rem;
+	font-weight: 300;
+	color: #fe6060;
+}
+
+.starter-button {
+	width: 250px;
+	padding: 2rem 2.5rem;
+	font-size: 1.5rem;
+}
+
+.starter-image {
+	margin-top: 4rem;
+	height:auto;
+	width: 600px;
+	max-width: calc( 100% - 2rem);
+}
+.partage-top-app-bar__section--align-center {
+	justify-content: center;
+}
+.main-container {
+	display: flex;
+	flex-direction: column;
+	padding-top: 4rem;
+}
+
+/*
+ * Common list css
+ */
+.list-item {
+	display: flex;
+	align-items: center;
+	margin: 1rem;
+	background-color: #ffffff;
+	padding: 1rem;
+}
+a.list-item {
+	text-decoration: none;
+	color: inherit;
+}
+.list-item-content {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+.list-item-title {
+	font-weight: 700;
+	margin-bottom: 1rem;
+}
+.list-item-info {
+	font-style: italic;
+	font-size: 0.875rem;
+}
+
+.list-item-action:not(:last-child) {
+	margin-right: 0.5rem;
 }
