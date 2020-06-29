@@ -11,6 +11,7 @@
     <link href="../css/custom.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="../images/appIcon.ico">
     <script src="../js/mdc.menu.js"></script>
+    <script src="../js/mdc.dialog.js"></script>
 </head>
 <body class="mdc-typography">
 <header class="mdc-top-app-bar">
@@ -67,7 +68,8 @@
                 <span class="material-icons">edit</span>
             </button>
             <button type="button" class="mdc-button mdc-button--unelevated list-item-action"
-                    aria-label="Delete board Barcelona">
+                    aria-label="Delete board Barcelona"
+                    data-date-delete-btn="1">
                 <span class="mdc-button__ripple"></span>
                 <span class="material-icons">delete</span>
             </button>
@@ -89,13 +91,52 @@
         </a>
     </div>
 </main>
+<div class="mdc-dialog">
+    <div class="mdc-dialog__container">
+        <div class="mdc-dialog__surface"
+             role="alertdialog"
+             aria-modal="true"
+             aria-labelledby="my-dialog-title"
+             aria-describedby="my-dialog-content">
+            <div class="mdc-dialog__content" id="my-dialog-content">
+                Are you sure you want to continue?
+            </div>
+            <div class="mdc-dialog__actions">
+                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">Cancel</span>
+                </button>
+                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">OK</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-dialog__scrim"></div>
+</div>
 <script>
     window.onload = () => {
+        // init delete confirmation dialog
+        const dialogChoiceListener = (event) => {
+            console.log(event.detail.action)
+        };
+        const dialog = new mdc.dialog.MDCDialog(document.querySelector('.mdc-dialog'));
+        dialog.listen('MDCDialog:closing', dialogChoiceListener );
+
         document.querySelectorAll("[data-link-href]").forEach(element => {
             element.onclick = (event) => {
                 event.preventDefault();
                 event.stopPropagation();
                 window.location.assign(element.dataset.linkHref);
+            };
+        });
+
+        document.querySelectorAll("[data-date-delete-btn]").forEach(element => {
+            element.onclick = (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                dialog.open();
             };
         });
         const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
