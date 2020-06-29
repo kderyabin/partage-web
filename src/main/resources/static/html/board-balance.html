@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Barcelona</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons&family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
+          rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/material-components-web.css" rel="stylesheet">
+    <link href="../css/custom.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../images/appIcon.ico">
+    <script src="../js/highcharts.js"></script>
+</head>
+<body class="mdc-typography">
+<header class="mdc-top-app-bar">
+    <nav class="mdc-top-app-bar__row">
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+            <!--            <a class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"-->
+            <!--                    aria-label="Open navigation menu">menu-->
+            <!--            </a>-->
+            <a href="board-details.html" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
+               aria-label="Go back">arrow_back
+            </a>
+        </section>
+        <section class="mdc-top-app-bar__section partage-top-app-bar__section--align-center">
+            <span class="mdc-top-app-bar__title">Barcelona</span>
+        </section>
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+            <a href="board-edit.html" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+               aria-label="Add board">
+                add
+            </a>
+        </section>
+    </nav>
+</header>
+<main class="main-container">
+    <div class="content-column">
+        <h2 class="align-center">Expenses</h2>
+
+        <figure class="highcharts-figure board-balance-chart">
+            <div id="chart-container"></div>
+        </figure>
+
+        <h3 class="align-center">Balance</h3>
+        <p class="h5"> Curency: EUR</p>
+
+        <table class="balance-table">
+            <thead>
+            <tr>
+                <th>Participant</th>
+                <th>Spent</th>
+                <th>Average</th>
+                <th>Balance</th>
+            </tr>
+            </thead>
+            <tfoot></tfoot>
+            <tbody>
+            <tr>
+                <td>Sam</td>
+                <td>300.00</td>
+                <td>225.00</td>
+                <td>75.00</td>
+            </tr>
+            <tr>
+                <td>John</td>
+                <td>500.00</td>
+                <td>225.00</td>
+                <td>275.00</td>
+            </tr>
+            <tr>
+                <td>Alice</td>
+                <td>100.00</td>
+                <td>225.00</td>
+                <td>-125.00</td>
+            </tr>
+            <tr>
+                <td>Sarah</td>
+                <td>0.00</td>
+                <td>225.00</td>
+                <td>-225.00</td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <h3 class="align-center">Refundement</h3>
+        <p class="h5">Curency: EUR</p>
+
+        <table class="balance-table">
+            <thead>
+            <tr>
+                <th>Debtor</th>
+                <th>Creditor</th>
+                <th>Amount</th>
+            </tr>
+            </thead>
+            <tfoot></tfoot>
+            <tbody>
+            <tr>
+                <td>Sarah</td>
+                <td>John</td>
+                <td>225.00</td>
+            </tr>
+            <tr>
+                <td>Alice</td>
+                <td>John</td>
+                <td>50.00</td>
+            </tr>
+            <tr>
+                <td>Alice</td>
+                <td>Sam</td>
+                <td>75.00</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<script>
+    window.onload = function () {
+
+        Highcharts.chart('chart-container', {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: ''
+            },
+            xAxis: {
+                categories: ['Sam', 'John', 'Alice', 'Sarah']
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Amount'
+                }
+            },
+            legend: {
+                reversed: true
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+            series: [{
+                name: 'Overpaid',
+                data: [75.00, 275.00, 0.00, 0.00]
+            },  {
+                name: 'Debt',
+                data: [0.00, 0.00, 125.00, 225.00]
+            }, {
+                name: 'Paid',
+                data: [225.00, 225.00, 100.00, 0]
+            } ]
+        });
+    }
+</script>
+</body>
+</html>

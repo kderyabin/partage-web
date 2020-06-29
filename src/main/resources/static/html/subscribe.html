@@ -12,53 +12,42 @@
     <title>Subscribe</title>
 </head>
 <body class="mdc-typography">
-<header class="mdc-top-app-bar">
-    <nav class="mdc-top-app-bar__row">
-        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
-                    aria-label="Open navigation menu">menu
-            </button>
-            <span class="mdc-top-app-bar__title">Subscribe</span>
-        </section>
-        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-            <button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Favorite">favorite
-            </button>
-            <button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Search">search
-            </button>
-            <button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Options">more_vert
-            </button>
-        </section>
-    </nav>
-</header>
-<main>
-    <form method="post">
-        <div class="partage-auth">
+<main class="main-container">
 
-            <h1>Create account</h1>
+    <div class="content-column">
 
-            <div class="mdc-card partage-auth-form">
+        <h1 class="align-center">Create account</h1>
 
-                <label for="email" class="label-inline-block">Email</label>
-                <input type="email" id="email" name="email" maxlength="100" required>
+        <form method="post">
+            <div class="partage-auth">
 
-                <label for="pass" class="label-inline-block">Password <span class="required">*</span></label>
-                <span class="input-error">Passwords do not match.</span>
-                <input type="password" id="pass" name="pass" minlength="8" maxlength="20" required>
+                <div class="mdc-card partage-auth-form">
 
-                <span class="input-info">Enter at least 8 characters.</span>
+                    <div class="input-group-column">
+                        <label for="email">Email  <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" maxlength="100" required>
+                    </div>
 
-                <label for="pass_confirm" class="label-inline-block">Repeat password</label>
-                <input type="password" id="pass_confirm" minlength="8" maxlength="20" name="pass">
-
-                <div class="partage-auth-button-box">
-                    <button type="submit" class="mdc-button mdc-button--unelevated button-rounded">
-                        <span class="mdc-button__ripple"></span> Create account
-                    </button>
+                    <div class="input-group-column">
+                        <label for="pass">Password <span class="required">*</span></label>
+                        <span class="input-error">Passwords do not match.</span>
+                        <input type="password" id="pass" name="pass" minlength="8" maxlength="20" required>
+                        <span class="input-info">Enter at least 8 characters.</span>
+                    </div>
+                    <div class="input-group-column">
+                        <label for="pass_confirm">Repeat password</label>
+                        <input type="password" id="pass_confirm" minlength="8" maxlength="20" name="pass">
+                    </div>
+                    <div class="partage-auth-button-box">
+                        <button type="submit" class="mdc-button mdc-button--unelevated button-rounded">
+                            <span class="mdc-button__ripple"></span> Create account
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-        </div>
-    </form>
+            </div>
+        </form>
+    </div>
 </main>
 </body>
 </html>

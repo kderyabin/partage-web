@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons&family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
+          rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/material-components-web.css" rel="stylesheet">
+    <link href="../css/custom.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../images/appIcon.ico">
+    <title>New expense</title>
+</head>
+<body class="mdc-typography">
+<header class="mdc-top-app-bar">
+    <nav class="mdc-top-app-bar__row">
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+            <a href="board-details.html" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
+                    aria-label="Open navigation menu">arrow_back
+            </a>
+        </section>
+        <section class="mdc-top-app-bar__section partage-top-app-bar__section--align-center">
+            <span class="mdc-top-app-bar__title">New expense</span>
+        </section>
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+            <a href="board-details.html" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+               aria-label="Save">done</a>
+        </section>
+    </nav>
+</header>
+<main class="main-container">
+    <form>
+        <div class="content-column">
+            <div class="input-group-column">
+                <label for="name" class="label-inline-block">Title</label>
+                <input type="text" name="name" id="name">
+            </div>
+            <div class="input-group-column">
+                <label for="amount">Amount</label>
+                <input placeholder="15.00" type="number" name="name" id="amount" min="0">
+            </div>
+            <div class="input-group-column">
+                <label for="date">Date</label>
+                <input placeholder="10/10/2020" type="date" name="date" id="date">
+                <span class="input-info">Put date in format 10/10/2020</span>
+            </div>
+            <div class="input-group-column">
+                <label for="participant" class="label-inline-block">Participant</label>
+                <select name="participant" id="participant">
+                    <option value="">Choose participant</option>
+                    <option value="1">Camille</option>
+                    <option value="2">Christopher</option>
+                </select>
+            </div>
+        </div>
+
+    </form>
+</main>
+</body>
+</html>

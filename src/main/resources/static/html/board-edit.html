@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons&family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
+          rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/material-components-web.css" rel="stylesheet">
+    <link href="../css/custom.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../images/appIcon.ico">
+    <title>New board</title>
+</head>
+<body class="mdc-typography">
+<header class="mdc-top-app-bar">
+    <nav class="mdc-top-app-bar__row">
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
+                    aria-label="Open navigation menu">menu
+            </button>
+        </section>
+        <section class="mdc-top-app-bar__section partage-top-app-bar__section--align-center">
+            <span class="mdc-top-app-bar__title">New board</span>
+        </section>
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+            <a href="board-details.html" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+               aria-label="Save">done</a>
+        </section>
+    </nav>
+</header>
+<main class="main-container">
+    <form>
+        <div class="content-column">
+            <div class="input-group-column">
+                <label for="name" class="label-inline-block">Title</label>
+                <input type="text" name="name" id="name">
+            </div>
+            <div class="input-group-column">
+                <label for="description">Description</label>
+                <textarea name="description" id="description"></textarea>
+            </div>
+            <div class="input-group-column">
+                <label for="currency" class="label-inline-block">Currency</label>
+                <select name="currency" id="currency">
+                    <option value="EUR">Euro (EUR)</option>
+                    <option value="USD">US Dollar (USD)</option>
+                </select>
+            </div>
+            <h3>Participants</h3>
+            <div class="input-group-column">
+                <ul class="mdc-list list-condensed" id="participants" aria-live="assertive">
+                    <li class="mdc-list-item" tabindex="0">
+                        <span class="mdc-list-item__ripple"></span>
+                        <div class="list-condensed-item-content">
+                            John
+                            <button type="button" class="mdc-button mdc-button--unelevated list-condensed-button"
+                                    aria-label="Remove John">
+                                <span class="mdc-button__ripple"></span>
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </div>
+                    </li>
+                    <li class="mdc-list-item" tabindex="0">
+                        <span class="mdc-list-item__ripple"></span>
+                        <div class="list-condensed-item-content">
+                            Anna
+                            <button type="button" class="mdc-button mdc-button--unelevated list-condensed-button"
+                                    aria-label="Remove John">
+                                <span class="mdc-button__ripple"></span>
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="input-group-column">
+                <label for="person" class="label-inline-block">New participant</label>
+                <input type="text" name="person" id="person" maxlength="50">
+            </div>
+
+            <span class="h1 align-center">OR</span>
+            <div class="input-group-column">
+                <label for="participant" class="label-inline-block">Registered participant</label>
+                <select name="participant" id="participant">
+                    <option value="">Choose participant</option>
+                    <option value="1">Camille</option>
+                    <option value="2">Christopher</option>
+                </select>
+            </div>
+            <div class="participant-add-button-box">
+                <button type="button" class="mdc-button mdc-button--unelevated button-rounded">
+                    <span class="mdc-button__ripple"></span> Add participant
+                </button>
+            </div>
+        </div>
+
+    </form>
+</main>
+</body>
+</html>

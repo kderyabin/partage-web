@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Partage</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons&family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
@@ -9,7 +10,7 @@
     <link href="../css/material-components-web.css" rel="stylesheet">
     <link href="../css/custom.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="../images/appIcon.ico">
-    <title>Partage</title>
+    <script src="../js/mdc.menu.js"></script>
 </head>
 <body class="mdc-typography">
 <header class="mdc-top-app-bar">
@@ -23,19 +24,61 @@
             <span class="mdc-top-app-bar__title">Your boards</span>
         </section>
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-            <button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Participants">people_outline</button>
-            <button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Add board">add</button>
+            <a href="participants.html" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+               aria-label="Participants">
+                people_outline
+            </a>
+            <a href="board-edit.html" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+               aria-label="Add board">add
+            </a>
+            <div class="mdc-menu-surface--anchor">
+                <button id="settings-btn" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+                        aria-label="Settings">more_vert
+                </button>
+                <div class="mdc-menu mdc-menu-surface">
+                    <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
+                        <li class="mdc-list-item" role="menuitem">
+                            <span class="mdc-list-item__ripple"></span>
+                            <a href="settings.html" class="mdc-list-item__text">Settings</a>
+                        </li>
+                        <li role="separator" class="mdc-list-divider"></li>
+                        <li class="mdc-list-item" role="menuitem">
+                            <span class="mdc-list-item__ripple"></span>
+                            <span class="mdc-list-item__text">Logout</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
         </section>
     </nav>
 </header>
 <main class="main-container">
-    <div class="list">
-        <a class="list-item" href="starter.html">
+
+    <div class="content-column">
+        <a class="list-item" href="board-details.html">
             <div class="list-item-content">
                 <span class="list-item-title">Barcelona</span>
                 <span class="list-item-info">Updated on 13 october, 2020</span>
             </div>
-            <button type="submit" class="mdc-button mdc-button--unelevated list-item-action">
+            <button class="mdc-button mdc-button--unelevated list-item-action" aria-label="Edit board barcelona"
+                    data-link-href="board-edit.html">
+                <span class="mdc-button__ripple"></span>
+                <span class="material-icons">edit</span>
+            </button>
+            <button type="button" class="mdc-button mdc-button--unelevated list-item-action"
+                    aria-label="Delete board Barcelona">
+                <span class="mdc-button__ripple"></span>
+                <span class="material-icons">delete</span>
+            </button>
+        </a>
+        <a class="list-item" href="board-details.html">
+            <div class="list-item-content">
+                <span class="list-item-title">Barcelona</span>
+                <span class="list-item-info">Updated on 13 october, 2020</span>
+            </div>
+            <button type="submit" class="mdc-button mdc-button--unelevated list-item-action"
+                    data-link-href="board-edit.html">
                 <span class="mdc-button__ripple"></span>
                 <span class="material-icons">edit</span>
             </button>
@@ -46,5 +89,21 @@
         </a>
     </div>
 </main>
+<script>
+    window.onload = () => {
+        document.querySelectorAll("[data-link-href]").forEach(element => {
+            element.onclick = (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                window.location.assign(element.dataset.linkHref);
+            };
+        });
+        const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
+        document.querySelector('#settings-btn').addEventListener('click', () => {
+            menu.open = true;
+        });
+
+    }
+</script>
 </body>
 </html>

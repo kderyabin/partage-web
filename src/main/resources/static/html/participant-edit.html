@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons&family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
+          rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/material-components-web.css" rel="stylesheet">
+    <link href="../css/custom.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../images/appIcon.ico">
+    <title>Edit participant</title>
+</head>
+<body class="mdc-typography">
+<header class="mdc-top-app-bar">
+    <nav class="mdc-top-app-bar__row">
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+            <a href="participants.html" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
+                    aria-label="Go back">arrow_back
+            </a>
+        </section>
+        <section class="mdc-top-app-bar__section partage-top-app-bar__section--align-center">
+            <span class="mdc-top-app-bar__title">Edit participant</span>
+        </section>
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+            <a href="participants.html" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+               aria-label="Save">done</a>
+        </section>
+    </nav>
+</header>
+<main class="main-container">
+    <form>
+        <div class="content-column">
+            <div class="input-group-column">
+                <label for="name" class="label-inline-block">Name <span class="required">*</span> </label>
+                <input type="text" name="name" id="name" required>
+            </div>
+        </div>
+
+    </form>
+</main>
+</body>
+</html>
