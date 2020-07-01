@@ -8,22 +8,23 @@ import java.util.Objects;
 
 @ToString
 @Entity
-@Table(name = "settings")
+@Table(name = "setting")
 public class SettingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "setting_id", nullable = false)
     @Getter @Setter
     private Long id;
 
 
     @Getter @Setter
-    @Column(length = 30, nullable = false, unique = true)
+    @Column(name="setting_name", length = 30, nullable = false, unique = true)
     private String name;
 
 
-    @Column @Getter @Setter
+    @Getter @Setter
+    @Column(name="setting_value")
     private String value;
 
     @Override

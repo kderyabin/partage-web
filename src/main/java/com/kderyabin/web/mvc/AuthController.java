@@ -1,4 +1,4 @@
-package com.kderyabin.web.mvc.auth;
+package com.kderyabin.web.mvc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,7 +20,6 @@ public class AuthController {
 	
 	private StorageManager storageManager;
 	
-	
 //	@Autowired
 //	public void setStorageManager(StorageManager storageManager) {
 //		this.storageManager = storageManager;
@@ -36,7 +35,13 @@ public class AuthController {
 
 		return modelAndView;
 	}
-	
+	/**
+	 * Validate authentication form.
+	 * @param model
+	 * @param viewModel
+	 * @param request
+	 * @return
+	 */
 	@PostMapping("/")
 	public String authenticate(@ModelAttribute UserModel model, Model viewModel, HttpServletRequest request) {
 
@@ -57,5 +62,6 @@ public class AuthController {
 
 		return "redirect:/sharings";
 	}
+	 
 
 }
