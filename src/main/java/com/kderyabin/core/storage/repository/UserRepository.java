@@ -17,12 +17,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 	 * @param pwd	User password.
 	 * @return UserEntity instance or null if user is not found.
 	 */
-	UserEntity findByLogin(String login);
+	public UserEntity findByLogin(String login);
 	/**
 	 * Finds user by login and password.
 	 * @param login User login.
 	 * @param pwd	User password.
 	 * @return UserEntity instance or null if user is not found.
 	 */
-	UserEntity findByLoginPwd(String login, String pwd);
+	public UserEntity findByLoginPwd(String login, String pwd);
 }

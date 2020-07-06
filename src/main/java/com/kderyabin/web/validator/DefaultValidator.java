@@ -2,10 +2,8 @@ package com.kderyabin.web.validator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -13,25 +11,19 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.kderyabin.web.dto.SignupDTO;
-
-public class SignupValidator {
-	
-	final private Logger LOG = LoggerFactory.getLogger(SignupValidator.class);
+public class DefaultValidator<T> {
 	/**
 	 * Validator instance.
 	 */
-	Validator validator;
+	protected Validator validator;
 	
 	/**
 	 * Labeled error messages where label is an object property name.
 	 */
-	Map<String, List<String>> messages = new HashMap<>();
+	protected Map<String, List<String>> messages = new HashMap<>();
 	
-	public SignupValidator() {
+	public DefaultValidator() {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 	}
@@ -40,19 +32,14 @@ public class SignupValidator {
 	 * Validates provided object.
 	 * @param bean
 	 */
-	public void validate(SignupDTO bean) {
-		Set<ConstraintViolation<SignupDTO>> violations = validator.validate(bean);
+	public void validate(T bean) {
+		Set<ConstraintViolation<T>> violations = validator.validate(bean);
 	
 		if(violations.size() > 0 ) {
-			for (ConstraintViolation<SignupDTO> violation : violations) {
+			for (ConstraintViolation<T> violation : violations) {
 				String property =  violation.getPropertyPath().toString();
 				addMessage(property, violation.getMessage());
 			}
-		}
-		// Check if passwords match
-		if ( ! Objects.equals(bean.getPwd(), bean.getConfirmPwd() )) {
-			addMessage("pwd", "error.password_mismatch");
-			addMessage("confirmPwd", "error.password_mismatch");
 		}
 	}
 	/**

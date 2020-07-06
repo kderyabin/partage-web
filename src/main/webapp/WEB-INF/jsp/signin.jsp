@@ -11,16 +11,20 @@
         <form method="post">
             <div class="partage-auth">
                 <div class="mdc-card partage-auth-form">
-
+				<c:if test="${$isFailedAuth}">
+						<div class="input-group-column">
+						<p>error</p>
+						</div>
+				</c:if>
                     <div class="input-group-column">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" maxlength="100" required>
+                        <label for="login">Email</label>
+                        <input type="email" id="login" name="login" maxlength="100" required>
                     </div>
                     <div class="input-group-column">
                         <div class="partage-signin-password-label">
-                            <label for="pass">Password</label> <a href="password-reset.html">Forgot password ?</a>
+                            <label for="pwd">Password</label> <a href="password-reset">Forgot password ?</a>
                         </div>
-                        <input type="password" id="pass" name="pass">
+                        <input type="password" id="pwd" name="pwd">
                     </div>
 
                     <div class="partage-auth-button-box">
@@ -31,7 +35,7 @@
                 </div>
 
                 <div class="mdc-card partage-auth-invite">
-                    <p>New? <a href="subscribe.html">Create an account</a></p>
+                    <p>New? <a href="signup">Create an account</a></p>
                 </div>
             </div>
         </form>

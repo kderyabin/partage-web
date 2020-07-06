@@ -5,6 +5,7 @@ import com.kderyabin.core.storage.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,15 +33,31 @@ public class StorageManager {
 	SettingRepository settingRepository;
 	UserRepository userRepository;
 	
+	@Transactional(readOnly = true)
+	public boolean isUserExists(UserModel model) {
+		Example<UserEntity> e  = Example.of(getEntity(model));
+		return userRepository.exists(e);
+	}
 	/**
 	 * Finds user in DB by login and password.
 	 * @param login User login.
 	 * @param password user password.
 	 * @return UserModel instance or null if user is not found.
 	 */
+	@Transactional(readOnly = true)
 	public UserModel findUserByLoginPassword(String login, String password) {
     	UserEntity entity = userRepository.findByLoginPwd(login, password);
     	return getModel( entity);
+	}
+	
+	@Transactional
+	public UserModel save(UserModel model) {
+		LOG.debug("Start UserModel saving ");
+		UserEntity entity = getEntity(model);
+		entity = userRepository.saveAndFlush(entity);
+		model = getModel(entity);
+		LOG.debug("End UserModel saving");
+		return model;
 	}
 
 	@Transactional
