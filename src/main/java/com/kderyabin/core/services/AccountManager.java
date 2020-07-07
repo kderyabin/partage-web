@@ -7,6 +7,7 @@ import com.kderyabin.core.storage.entity.MailActionEntity;
 import com.kderyabin.core.storage.entity.UserEntity;
 import com.kderyabin.core.storage.repository.MailActionRepository;
 import com.kderyabin.core.storage.repository.UserRepository;
+import com.kderyabin.web.error.MailTokenNotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +98,26 @@ public class AccountManager {
         return model;
     }
 
+	/**
+	 * Fetches received token in DB, activates user's account if the token is valid.
+	 *
+	 * @param token Mail validation token
+	 * @return Up to date instance of UserModel
+	 */
+	@Transactional
+    public UserModel activateAccount(String token) {
+		LOG.debug("Start activateAccount: processing token " + token);
+    	MailActionEntity entity = mailActionRepository.findByToken(token);
+    	if(entity == null) {
+    		throw new MailTokenNotFound("Mail confirmation token not found: " + token);
+		}
+		LOG.debug("Found mail action record" );
+		entity.getUser().setIsConfirmed(true);
+		UserEntity user = userRepository.save(entity.getUser());
+    	mailActionRepository.delete(entity);
+		LOG.debug("End activateAccount" );
+    	return getModel(user);
+	}
     /**
      * Converts UserEntity into UserModel.
      *

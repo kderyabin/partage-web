@@ -27,7 +27,7 @@ public class SignupValidator {
 	Validator validator;
 	
 	/**
-	 * Labeled error messages where label is an object property name.
+	 * Labeled error messages where key is a DOM object name and value is a resource key.
 	 */
 	Map<String, List<String>> messages = new HashMap<>();
 	

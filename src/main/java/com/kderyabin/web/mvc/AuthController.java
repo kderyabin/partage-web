@@ -3,13 +3,15 @@ package com.kderyabin.web.mvc;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import com.kderyabin.core.model.MailActionModel;
+import com.kderyabin.web.error.MailTokenNotFound;
 import com.kderyabin.web.services.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,12 +165,49 @@ public class AuthController {
     }
     
     /**
-     * Displays an email confirmation page.
+     * Displays a page with invitation for the email validation after the account setup.
      * @return View name 
      */
     @GetMapping("{lang}/confirm-email")
-    public String displayConfirmEmail() {
-    	return "confirm-email";
+    public String displayConfirmEmail(Model viewModel) {
+    	//msg.confirm_email
+        List<String> messages = new ArrayList<>();
+        messages.add("msg.confirm_email");
+        viewModel.addAttribute("messages", messages);
+        return "confirm-email";
+    }
+
+
+    @GetMapping("{lang}/sharing-app/{userId}/")
+    public String displayUserSpace(@PathVariable String userId, Model viewModel){
+        viewModel.addAttribute("userId", userId);
+        return "sharing-app";
+    }
+    /**
+     * Landing page for the email validation.
+     *
+     * @param lang      Language code.
+     * @param token     User validation token sent by email.
+     * @param viewModel Spring framework model to be populated in case of error.
+     * @param request   Current request.
+     * @return View name in case of a error or a redirection command.
+     */
+    @GetMapping("{lang}/confirm-email/{token}/")
+    public String validateEmail(@PathVariable String lang, @PathVariable String token, Model viewModel, HttpServletRequest request) {
+        try {
+            // Success
+            UserModel user = accountManager.activateAccount(token);
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+            return String.format("redirect:/%s/sharing-app/%s/", lang, user.getId());
+        } catch ( MailTokenNotFound e) {
+            LOG.warn( e.getMessage());
+        }
+        // error case
+        List<String> messages = new ArrayList<>();
+        messages.add("error.token_validation_not_found");
+        viewModel.addAttribute("messages", messages);
+        return "confirm-email";
     }
 
     /**
