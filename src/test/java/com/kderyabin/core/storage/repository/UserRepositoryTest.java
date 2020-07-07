@@ -29,6 +29,7 @@ class UserRepositoryTest {
 		entity.setId( UUID.randomUUID().toString());
 		entity.setLogin(login);
 		entity.setPwd(pwd);
+		entity.setName("Joe");
 		
 		UserEntity saved = repository.saveAndFlush(entity);
 		assertNotNull(saved);

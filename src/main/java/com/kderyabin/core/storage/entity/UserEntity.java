@@ -31,12 +31,28 @@ public class UserEntity {
 	private String id;
 
 	/**
+	 * User name
+	 */
+	@Getter
+	@Setter
+	@Column(name = "name", nullable = false, length = 100)
+	private String name;
+
+	/**
 	 * User login (currently email).
 	 */
 	@Getter
 	@Setter
 	@Column(name = "login", nullable = false, length = 100, unique = true)
 	private String login;
+
+	/**
+	 * User email confirmation status.
+	 */
+	@Getter
+	@Setter
+	@Column(name = "confirmed")
+	private Boolean isConfirmed;
 
 	/**
 	 * User password hash.

@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="../images/favicon.ico">
-<title>${ pageTitle }</title>
+<title>${ title }</title>
 <link href="https://fonts.googleapis.com/css2?family=Material+Icons&family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
           rel="stylesheet">
     <link href="${contextPath}/css/main.css" rel="stylesheet">

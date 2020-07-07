@@ -11,6 +11,7 @@ import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -47,6 +48,13 @@ public class MailService {
 	 * Application resource bundle with messages.
 	 */
 	private MessageSource messageSource;
+	/**
+	 * Flag saying if generated email must be sent.
+	 * Initialized in application properties.
+	 * Default true. Can be set to false in dev env.
+	 */
+	@Value("${app.mail.send}")
+	private Boolean sendMail;
 
 	@Autowired
 	private SpringTemplateEngine templateEngine;
@@ -64,7 +72,15 @@ public class MailService {
 	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
-	
+
+	public void setSendMail(Boolean sendMail) {
+		this.sendMail = sendMail;
+	}
+
+	public Boolean isSendMail() {
+		return sendMail;
+	}
+
 	/**
 	 * Application From address.
 	 * @param senderAddress Email address.
@@ -74,7 +90,7 @@ public class MailService {
 	}
 
 	/**
-	 * Sends email to confirm an email address.
+	 * Sends email to newly registered user for email address confirmation.
 	 * 
 	 * @param recipientEmail Receiver email.
 	 * @param recipientName  Receiver name.
@@ -95,12 +111,20 @@ public class MailService {
 		templateModel.put("token", token);
 
 		String htmlBody = getMailContent("mail/confirm.html", locale, templateModel);
-		
+
+		LOG.debug("Generated email content for " + recipientEmail);
+		LOG.debug( htmlBody );
+
 		helper.setFrom(senderAddress);
 		helper.setTo(recipientEmail);
 		helper.setText(htmlBody, true);
 		helper.setSubject(messageSource.getMessage("email.confirm.subject", null, locale));
-		
+
+		if(!sendMail) {
+			LOG.warn("Mail sending is disabled by application configuration");
+			return;
+		}
+
 		mailSender.send(message);
 	}
 

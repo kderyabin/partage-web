@@ -1,5 +1,6 @@
 package com.kderyabin.web.services;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
@@ -67,4 +68,10 @@ class MailServiceTest {
 		}
 
 	}
+
+    @Test
+    void isSendMail() {
+		// mail sending is disabled for tests
+		assertFalse(mailService.isSendMail());
+    }
 }

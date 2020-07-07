@@ -21,10 +21,14 @@ import lombok.ToString;
 public class UserModel {
 	
     private String id;
+
+    private String name;
     
     private String login;
     
     private String pwd;
+
+	private Boolean isConfirmed;
     
     private String token;
     
