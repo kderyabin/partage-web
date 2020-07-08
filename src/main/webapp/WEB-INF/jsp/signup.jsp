@@ -13,9 +13,7 @@
 		</h1>
 		<form method="post">
 			<div class="partage-auth">
-
 				<div class="mdc-card partage-auth-form">
-
                     <div class="input-group-column">
 						<label for="name"><fmt:message key="name" /><span class="required">*</span> </label>
 						<c:if test="${!empty errors && !empty errors.name}">
@@ -33,7 +31,7 @@
 							<span class="input-error"><fmt:message key="${ errorMsg }" /></span> 
 							</c:forEach>
 						</c:if> 
-						<input type="text" id="login" name="login" maxlength="100" value="${ login }" required>
+						<input type="email" id="login" name="login" maxlength="100" value="${ login }" required>
 					</div>
 
 					<div class="input-group-column">

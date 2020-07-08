@@ -7,7 +7,8 @@ import com.kderyabin.core.storage.entity.MailActionEntity;
 import com.kderyabin.core.storage.entity.UserEntity;
 import com.kderyabin.core.storage.repository.MailActionRepository;
 import com.kderyabin.core.storage.repository.UserRepository;
-import com.kderyabin.web.error.MailTokenNotFound;
+import com.kderyabin.web.error.MailTokenNotFoundException;
+import com.kderyabin.web.error.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +55,40 @@ public class AccountManager {
         UserEntity entity = userRepository.findByLoginPwd(login, password);
         return getModel(entity);
     }
+	/**
+	 * Finds user in DB by login.
+	 *
+	 * @param login    User login.
+	 * @return UserModel instance or null if user is not found.
+	 */
+	@Transactional(readOnly = true)
+	public UserModel findUserByLogin(String login) {
+		UserEntity entity = userRepository.findByLogin(login);
+		return getModel(entity);
+	}
 
 	/**
+	 * Checks if user has an account and creates an action for the password reset.
+	 * @param login User email.
+	 * @return	MailAction instance
+	 */
+	@Transactional
+	public MailActionModel registerResetRequest(String login){
+		UserEntity user = userRepository.findByLogin(login);
+		if(user == null) {
+			throw new UserNotFoundException("User not found for login: " + login);
+		}
+		MailActionEntity action = new MailActionEntity();
+		action.setUser(user);
+		action.setAction(MailAction.RESET);
+		action.setToken( UUID.randomUUID().toString() );
+
+		action = mailActionRepository.save(action);
+
+		return getModel(action);
+	}
+	/**
+	 * Creates a user account.
 	 * Process few actions during account creation :
 	 * 1. Creates user in DB
 	 * 2. Creates confirmation mail action in DB
@@ -109,7 +142,7 @@ public class AccountManager {
 		LOG.debug("Start activateAccount: processing token " + token);
     	MailActionEntity entity = mailActionRepository.findByToken(token);
     	if(entity == null) {
-    		throw new MailTokenNotFound("Mail confirmation token not found: " + token);
+    		throw new MailTokenNotFoundException("Mail confirmation token not found: " + token);
 		}
 		LOG.debug("Found mail action record" );
 		entity.getUser().setIsConfirmed(true);
@@ -117,6 +150,25 @@ public class AccountManager {
     	mailActionRepository.delete(entity);
 		LOG.debug("End activateAccount" );
     	return getModel(user);
+	}
+
+	/**
+	 * Find an action by token.
+	 * @param token Mail action token
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	public MailActionModel findMailActionByToken(String token) {
+		return getModel(mailActionRepository.findByToken(token));
+	}
+
+	/**
+	 * Deletes an action in DB.
+	 * @param action MailActionModel
+	 */
+	@Transactional
+	public void deleteMailAction(MailActionModel action) {
+		mailActionRepository.delete(getEntity(action));
 	}
     /**
      * Converts UserEntity into UserModel.
@@ -206,4 +258,5 @@ public class AccountManager {
 
 		return target;
 	}
+
 }

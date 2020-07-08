@@ -1,4 +1,4 @@
-package com.kderyabin.web.dto;
+package com.kderyabin.web.bean;
 
 import javax.validation.constraints.*;
 
@@ -15,8 +15,7 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class SignupDTO {
-
+public class Signup {
 	/**
 	 * User name
 	 */
@@ -27,7 +26,6 @@ public class SignupDTO {
 	 */
 	@Email(message = "error.email_invalid")
 	private String login;
-
 	/**
 	 * User password
 	 */

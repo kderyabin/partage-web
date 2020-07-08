@@ -1,4 +1,4 @@
-package com.kderyabin.web.dto;
+package com.kderyabin.web.bean;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;

@@ -14,7 +14,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 	/**
 	 * Finds user by login.
 	 * @param login User login.
-	 * @param pwd	User password.
 	 * @return UserEntity instance or null if user is not found.
 	 */
 	public UserEntity findByLogin(String login);
