@@ -17,6 +17,11 @@
                     <c:if test="${success}">
                         <p><fmt:message key="msg.password_update_success" /></p>
                     </c:if>
+                    <c:if test="${!empty errors && !empty errors.generic}">
+                        <c:forEach items="${ errors.generic }" var="errorMsg">
+                            <span class="input-error"><fmt:message key="${ errorMsg }" /></span>
+                        </c:forEach>
+                    </c:if>
                     <div class="input-group-column">
                         <label for="pwd"><fmt:message key="password" /> <span class="required">*</span></label>
                         <c:if test="${!empty errors && !empty errors.pwd}">

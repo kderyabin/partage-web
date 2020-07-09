@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ import com.kderyabin.core.model.UserModel;
 import com.kderyabin.core.services.AccountManager;
 import com.kderyabin.web.bean.Signin;
 import com.kderyabin.web.bean.Signup;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -191,6 +193,7 @@ public class AuthController {
      */
     @GetMapping("{lang}/confirm-email/{token}")
     public String validateEmail(@PathVariable String lang, @PathVariable String token, Model viewModel, HttpServletRequest request) {
+        getValidMailAction(token, MailAction.CONFIRM);
         try {
             // Success
             UserModel user = accountManager.activateAccount(token);
@@ -251,31 +254,45 @@ public class AuthController {
     }
 
     /**
-     * Displays page for email sending in case of a password reset
+     * Fetches mail action in database and checks if it matches the use case.
      *
-     * @return View name
+     * @return MailActionModel
+     * @throws ResponseStatusException 404 error
      */
-    @GetMapping("{lang}/password-reset/{token}")
-    public String displayPasswordReset(@PathVariable String token, Model viewModel) {
+    private MailActionModel getValidMailAction(String token, MailAction useCase) {
         MailActionModel action = accountManager.findMailActionByToken(token);
-        if(action==null) {
-            viewModel.addAttribute("error", "");
+        if (action == null || action.getAction() != useCase) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return "password-reset";
+
+        return action;
     }
 
     /**
      * Displays page for email sending in case of a password reset
      *
      * @return View name
+     * @throws ResponseStatusException 404 error if token is not valid
+     */
+    @GetMapping("{lang}/password-reset/{token}")
+    public String displayPasswordReset(@PathVariable String token, Model viewModel) {
+        getValidMailAction(token, MailAction.RESET);
+        return "password-reset";
+    }
+
+    /**
+     * Handles password reset form
+     *
+     * @return View name
+     * @throws ResponseStatusException 404 error if token is not valid
      */
     @PostMapping("{lang}/password-reset/{token}")
     public String handleResetPassword(@PathVariable String token, @ModelAttribute ResetPassword bean, Model viewModel) {
+        MailActionModel action = getValidMailAction(token, MailAction.RESET);
         FormValidator<ResetPassword> validator = new ResetPasswordValidation();
         validator.validate(bean);
 
         if (validator.isValid()) {
-            MailActionModel action = accountManager.findMailActionByToken(token);
             UserModel user = action.getUser();
             user.setPwd(securityService.getHashedPassword(bean.getPwd().trim()));
             accountManager.save(user);
