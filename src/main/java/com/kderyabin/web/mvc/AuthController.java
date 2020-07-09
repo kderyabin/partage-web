@@ -193,6 +193,7 @@ public class AuthController {
      */
     @GetMapping("{lang}/confirm-email/{token}")
     public String validateEmail(@PathVariable String lang, @PathVariable String token, Model viewModel, HttpServletRequest request) {
+
         getValidMailAction(token, MailAction.CONFIRM);
         try {
             // Success
