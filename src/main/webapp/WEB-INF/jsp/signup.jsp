@@ -5,7 +5,6 @@
 <fmt:setLocale value="${ lang }" />
 <fmt:setBundle basename="messages" />
 
-
 <jsp:include page="partial/header.jsp" />
 <main class="main-container">
 	<div class="content-column">
@@ -14,9 +13,16 @@
 		</h1>
 		<form method="post">
 			<div class="partage-auth">
-
 				<div class="mdc-card partage-auth-form">
-
+                    <div class="input-group-column">
+						<label for="name"><fmt:message key="name" /><span class="required">*</span> </label>
+						<c:if test="${!empty errors && !empty errors.name}">
+							<c:forEach items="${ errors.name }" var="errorMsg">
+							<span class="input-error"><fmt:message key="${ errorMsg }" /></span>
+							</c:forEach>
+						</c:if>
+						<input type="text" id="name" name="name" maxlength="100" value="${ name }" required>
+					</div>
 					<div class="input-group-column">
 					
 						<label for="login"><fmt:message key="email" /><span class="required">*</span> </label>
@@ -25,7 +31,7 @@
 							<span class="input-error"><fmt:message key="${ errorMsg }" /></span> 
 							</c:forEach>
 						</c:if> 
-						<input type="text" id="login" name="login" maxlength="100" value="${ login }" required>
+						<input type="email" id="login" name="login" maxlength="100" value="${ login }" required>
 					</div>
 
 					<div class="input-group-column">

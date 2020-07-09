@@ -31,34 +31,6 @@ public class StorageManager {
 	PersonRepository personRepository;
 	BoardItemRepository itemRepository;
 	SettingRepository settingRepository;
-	UserRepository userRepository;
-	
-	@Transactional(readOnly = true)
-	public boolean isUserExists(UserModel model) {
-		Example<UserEntity> e  = Example.of(getEntity(model));
-		return userRepository.exists(e);
-	}
-	/**
-	 * Finds user in DB by login and password.
-	 * @param login User login.
-	 * @param password user password.
-	 * @return UserModel instance or null if user is not found.
-	 */
-	@Transactional(readOnly = true)
-	public UserModel findUserByLoginPassword(String login, String password) {
-    	UserEntity entity = userRepository.findByLoginPwd(login, password);
-    	return getModel( entity);
-	}
-	
-	@Transactional
-	public UserModel save(UserModel model) {
-		LOG.debug("Start UserModel saving ");
-		UserEntity entity = getEntity(model);
-		entity = userRepository.saveAndFlush(entity);
-		model = getModel(entity);
-		LOG.debug("End UserModel saving");
-		return model;
-	}
 
 	@Transactional
 	public List<BoardPersonTotal> getBoardPersonTotal(long boardId) {
@@ -318,45 +290,7 @@ public class StorageManager {
 		return target;
 	}
 	
-	/**
-	 * Converts UserEntity into UserModel.
-	 * @param entity UserEntity instance. 
-	 * @return UserModel instance.
-	 */
-	public UserModel getModel( UserEntity source) {
-		
-		if( source == null) {
-			return null;
-		}
-		
-		UserModel target = new UserModel();
-		target.setId(source.getId());
-		target.setLogin(source.getLogin());
-		target.setPwd(source.getPwd());
-		target.setToken(source.getToken());
-		
-		return target;
-	}
-	
-	/**
-	 * Converts UserModel into UserEntity.
-	 * @param entity UserModel instance. 
-	 * @return UserEntity instance or null if source parameter is null.
-	 */
-	public UserEntity getEntity( UserModel source) {
-		
-		if( source == null) {
-			return null;
-		}
-		
-		UserEntity target = new UserEntity();
-		target.setId(source.getId());
-		target.setLogin(source.getLogin());
-		target.setPwd(source.getPwd());
-		target.setToken(source.getToken());
-		
-		return target;
-	}
+
 	/*
 	 * Getters / Setters
 	 */
@@ -366,10 +300,7 @@ public class StorageManager {
 		this.boardRepository = boardRepository;
 	}
 
-	@Autowired
-	public void setUserRepository(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
+
 
 	@Autowired
 	public void setPersonRepository(PersonRepository personRepository) {

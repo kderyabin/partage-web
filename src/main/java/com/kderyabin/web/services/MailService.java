@@ -11,6 +11,7 @@ import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -33,7 +34,9 @@ public class MailService {
 	
 	/**
 	 * Application Sender email address.
+	 * From application settings.
 	 */
+	@Value("${app.mail.senderEmail}")
 	private String senderAddress;
 	/**
 	 * Locale used for email localization.
@@ -47,6 +50,13 @@ public class MailService {
 	 * Application resource bundle with messages.
 	 */
 	private MessageSource messageSource;
+	/**
+	 * Flag saying if generated email must be sent.
+	 * From application settings.
+	 * Default true. Can be set to false in dev env.
+	 */
+	@Value("${app.mail.send}")
+	private Boolean sendMail;
 
 	@Autowired
 	private SpringTemplateEngine templateEngine;
@@ -64,17 +74,25 @@ public class MailService {
 	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
-	
+
+	public void setSendMail(Boolean sendMail) {
+		this.sendMail = sendMail;
+	}
+
+	public Boolean isSendMail() {
+		return sendMail;
+	}
+
 	/**
 	 * Application From address.
-	 * @param senderAddress Email address.
+	 * @param senderAddress EmailXXX address.
 	 */
 	public void setSenderAddress(String senderAddress) {
 		this.senderAddress = senderAddress;
 	}
 
 	/**
-	 * Sends email to confirm an email address.
+	 * Sends email to newly registered user for email address confirmation.
 	 * 
 	 * @param recipientEmail Receiver email.
 	 * @param recipientName  Receiver name.
@@ -84,8 +102,7 @@ public class MailService {
 	 */
 	public void sendConfirmationMail(String recipientEmail, String recipientName, String host, String token)
 			throws MessagingException {
-		MimeMessage message = mailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+		MimeMessageHelper helper = getMessageHelper();
 	
 		Map<String, Object> templateModel = new HashMap<>();
 
@@ -95,13 +112,23 @@ public class MailService {
 		templateModel.put("token", token);
 
 		String htmlBody = getMailContent("mail/confirm.html", locale, templateModel);
-		
+
+		LOG.debug("Email confirmation: generated email content for " + recipientEmail);
+		LOG.debug( htmlBody );
+		LOG.debug("Sender: " + senderAddress);
+
 		helper.setFrom(senderAddress);
 		helper.setTo(recipientEmail);
 		helper.setText(htmlBody, true);
 		helper.setSubject(messageSource.getMessage("email.confirm.subject", null, locale));
-		
-		mailSender.send(message);
+
+		LOG.debug("Mail sending application status: " + isSendMail());
+		if(!sendMail) {
+			LOG.warn("Mail sending is disabled by application configuration");
+			return;
+		}
+
+		mailSender.send(helper.getMimeMessage());
 	}
 
 	/**
@@ -121,5 +148,52 @@ public class MailService {
 		String htmlBody = templateEngine.process(template, context);
 
 		return htmlBody;
+	}
+
+	/**
+	 * Sends email with a password reset link.
+	 * @param email	Receiver email.
+	 * @param name	Receiver name.
+	 * @param link	Reset link.
+	 * @throws MessagingException
+	 */
+	public void sendResetPasswordMail(String email, String name, String link) throws MessagingException {
+
+		MimeMessageHelper helper = getMessageHelper();
+		Map<String, Object> templateModel = new HashMap<>();
+
+		templateModel.put("recipientName", name);
+		templateModel.put("link", link);
+		templateModel.put("lang", locale.getLanguage());
+
+		String htmlBody = getMailContent("mail/reset.html", locale, templateModel);
+
+		LOG.debug("Password reset: Generated email content for " + email);
+		LOG.debug( htmlBody );
+		LOG.debug("Sender: " + senderAddress);
+
+		helper.setFrom(senderAddress);
+		helper.setTo(email);
+		helper.setText(htmlBody, true);
+		helper.setSubject(messageSource.getMessage("email.reset.subject", null, locale));
+
+		LOG.debug("Mail sending application status: " + isSendMail());
+		if(!sendMail) {
+			LOG.warn("Mail sending is disabled by application configuration");
+			return;
+		}
+
+		mailSender.send(helper.getMimeMessage());
+	}
+
+	/**
+	 * Creates new instances of multipart MimeMessage and MimeMessageHelper.
+	 * @return MimeMessageHelper instance.
+	 */
+	private MimeMessageHelper getMessageHelper() throws MessagingException {
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+		return helper;
 	}
 }

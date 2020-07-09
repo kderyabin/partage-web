@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{greetings(${recipientName})}"></p>
+    <p th:text="#{email.reset.message}"></p>
+    <p><a th:href="${link}" th:text="${link}"></a></p>
+    <p th:text="#{email.reset.footer}">&nbsp;</p>
+    <p><span th:text="#{email.footer.bye}"></span>,<br>
+      <span th:text="#{email.footer.team}"></span></p>
+  </body>
+</html>

@@ -48,14 +48,26 @@ create table setting (
 drop table if exists `user`;
 create table `user` (
 	user_id varchar(36) not null,
+    name varchar(100) not null,
 	login varchar(100) not null,
 	pwd varchar(255) not null,
+	confirmed boolean,
 	token varchar(255),
 	primary key(user_id),
-	 constraint unique_login  unique (login),
+	constraint unique_login  unique (login),
 	constraint unique_token  unique (token)
-   
 );
+
+drop table if exists mail;
+ create table mail (
+    mail_id integer auto_increment,
+    `action` varchar(10) not null,
+    creation timestamp not null,
+    token varchar(36) not null,
+    user_id varchar(255),
+	primary key (mail_id)
+);
+
 
 -- Foreign keys
 alter table board_person 
@@ -83,5 +95,11 @@ alter table item
    foreign key (person_id) 
    references person (person_id)
    on delete cascade;
-   
+
+ alter table mail
+    add constraint fk_user_id
+    foreign key (user_id)
+    references user(user_id)
+    on delete cascade;
+
 SET FOREIGN_KEY_CHECKS=0;

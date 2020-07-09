@@ -11,8 +11,11 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-
-public class DefaultValidator<T> {
+/**
+ * Implementation of FormValidator interface.
+ * @param <T>
+ */
+public class FormValidatorImpl<T> implements FormValidator<T> {
 	/**
 	 * Validator instance.
 	 */
@@ -23,7 +26,7 @@ public class DefaultValidator<T> {
 	 */
 	protected Map<String, List<String>> messages = new HashMap<>();
 	
-	public DefaultValidator() {
+	public FormValidatorImpl() {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 	}
@@ -32,6 +35,7 @@ public class DefaultValidator<T> {
 	 * Validates provided object.
 	 * @param bean
 	 */
+	@Override
 	public void validate(T bean) {
 		Set<ConstraintViolation<T>> violations = validator.validate(bean);
 	
@@ -47,6 +51,7 @@ public class DefaultValidator<T> {
 	 * @param key Property name.
 	 * @param message Message.
 	 */
+	@Override
 	public void addMessage(String key, String message) {
 		if(!messages.containsKey(key)) {
 			messages.put(key, new ArrayList<>());
@@ -57,13 +62,14 @@ public class DefaultValidator<T> {
 	 * Get validation status.
 	 * @return TRUE if object is valid FALSE if contains errors.
 	 */
+	@Override
 	public boolean isValid() {
 		return messages.isEmpty();
 	}
 	/**
-	 * 
 	 * @return labeled error messages
 	 */
+	@Override
 	public Map<String, List<String>> getMessages() {
 		return messages;
 	}
