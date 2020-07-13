@@ -1,12 +1,12 @@
 package com.kderyabin.core.services;
 
-import com.kderyabin.core.MailAction;
+import com.kderyabin.web.storage.MailAction;
 import com.kderyabin.core.model.MailActionModel;
 import com.kderyabin.core.model.UserModel;
-import com.kderyabin.core.storage.entity.MailActionEntity;
-import com.kderyabin.core.storage.entity.UserEntity;
-import com.kderyabin.core.storage.repository.MailActionRepository;
-import com.kderyabin.core.storage.repository.UserRepository;
+import com.kderyabin.web.storage.entity.MailActionEntity;
+import com.kderyabin.web.storage.entity.UserEntity;
+import com.kderyabin.web.storage.repository.MailActionRepository;
+import com.kderyabin.web.storage.repository.UserRepository;
 import com.kderyabin.web.error.MailTokenNotFoundException;
 import com.kderyabin.web.error.UserNotFoundException;
 import org.slf4j.Logger;
