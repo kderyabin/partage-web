@@ -1,4 +1,4 @@
-package com.kderyabin.core;
+package com.kderyabin.web.storage;
 
 /**
  * Available through application actions related to the mailing.

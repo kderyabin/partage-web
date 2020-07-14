@@ -3,7 +3,7 @@ package com.kderyabin.core.model;
 
 import java.util.UUID;
 
-import com.kderyabin.core.storage.entity.UserEntity;
+import com.kderyabin.web.storage.entity.UserEntity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +37,8 @@ public class UserModel {
 		super();
 	}
     
-	public UserModel(String login, String pwd) {
+	public UserModel(String name, String login, String pwd) {
+		this.name = name;
 		this.login = login;
 		this.pwd = pwd;
 	}

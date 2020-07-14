@@ -1,4 +1,4 @@
-package com.kderyabin.core.storage.entity;
+package com.kderyabin.web.storage.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +18,7 @@ import lombok.ToString;
  */
 @ToString
 @Entity
-@Table(name = "user",schema = "sharings")
+@Table(name = "user" )
 @NamedNativeQuery(name = "UserEntity.findByLoginPwd", query = "select * from user where login = ?1 and pwd = ?2", resultClass = UserEntity.class)
 public class UserEntity {
 	/**

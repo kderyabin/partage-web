@@ -1,6 +1,6 @@
 package com.kderyabin.core.model;
 
-import com.kderyabin.core.MailAction;
+import com.kderyabin.web.storage.MailAction;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

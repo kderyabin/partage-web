@@ -1,20 +1,17 @@
 package com.kderyabin.web.mvc;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-
-import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import com.kderyabin.core.MailAction;
 import com.kderyabin.core.model.MailActionModel;
+import com.kderyabin.core.model.UserModel;
 import com.kderyabin.web.bean.ResetPassword;
 import com.kderyabin.web.bean.ResetRequest;
+import com.kderyabin.web.bean.Signin;
+import com.kderyabin.web.bean.Signup;
 import com.kderyabin.web.error.MailTokenNotFoundException;
 import com.kderyabin.web.error.UserNotFoundException;
 import com.kderyabin.web.services.MailService;
 import com.kderyabin.web.services.SecurityService;
+import com.kderyabin.web.storage.AccountManager;
+import com.kderyabin.web.storage.MailAction;
 import com.kderyabin.web.validator.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,14 +20,20 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import com.kderyabin.core.model.UserModel;
-import com.kderyabin.core.services.AccountManager;
-import com.kderyabin.web.bean.Signin;
-import com.kderyabin.web.bean.Signup;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Handles account authentication and creation
@@ -38,6 +41,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AuthController {
     final private Logger LOG = LoggerFactory.getLogger(AuthController.class);
+
 
     private AccountManager accountManager;
     private Environment env;
@@ -138,7 +142,8 @@ public class AuthController {
         LOG.debug(dto.toString());
         if (validator.isValid()) {
             // Check if login is in use
-            UserModel userModel = new UserModel(dto.getLogin(), null);
+            UserModel userModel = new UserModel();
+            userModel.setLogin(dto.getLogin());
             boolean exists = accountManager.isUserExists(userModel);
             LOG.debug("User found status: " + exists);
             if (!exists) {
@@ -150,6 +155,7 @@ public class AuthController {
                 MailActionModel actionModel = accountManager.create(userModel);
                 // Send email
                 sendConfirmationEmail(actionModel, lang, env.getProperty("app.host", ""));
+                accountManager.createUserWorkspace(actionModel.getUser().getId());
                 return String.format("redirect:/%s/confirm-email", lang);
             } else {
                 validator.addMessage("login", "error.email_in_use");
@@ -200,6 +206,8 @@ public class AuthController {
             UserModel user = accountManager.activateAccount(token);
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("tenantId", accountManager.getUserWorkspaceName(user.getId()));
             return String.format("redirect:/%s/app/%s/", lang, user.getId());
         } catch (MailTokenNotFoundException e) {
             LOG.warn(e.getMessage());
@@ -210,6 +218,8 @@ public class AuthController {
         viewModel.addAttribute("messages", messages);
         return "confirm-email";
     }
+
+
 
     /**
      * Displays page for email sending in case of a password reset

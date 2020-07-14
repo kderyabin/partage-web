@@ -2,19 +2,30 @@ package com.kderyabin.core.services;
 
 import com.kderyabin.core.model.*;
 import com.kderyabin.core.storage.entity.*;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Example;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.kderyabin.core.storage.repository.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 /**
  * StorageManager is implementing a facade design pattern facilitating work with
@@ -31,6 +42,52 @@ public class StorageManager {
 	PersonRepository personRepository;
 	BoardItemRepository itemRepository;
 	SettingRepository settingRepository;
+
+//	DataSource dataSource;
+//	EntityManagerFactory emf;
+//
+//	@Autowired
+//	public void setEmf(@Qualifier("appEntityManager") EntityManagerFactory emf) {
+//		this.emf = emf;
+//	}
+//
+//	@Autowired
+//	public void setDataSource(DataSource dataSource) {
+//		this.dataSource = dataSource;
+//	}
+//
+//	public void switchDatabase(final String schemaName){
+//		LOG.debug("Start switchDatabase");
+//		try {
+//			Connection connection = dataSource.getConnection();
+//
+//			PreparedStatement stmt = connection.prepareStatement(
+//					String.format("use `%s`", schemaName)
+//			);
+//			stmt.execute();
+//			String schema = connection.getSchema();
+//			LOG.debug("Schema:");
+//			LOG.debug(schema);
+//		} catch (SQLException throwables) {
+//			throwables.printStackTrace();
+//		}
+//
+//
+//		/*EntityManager entityManager = emf.createEntityManager();
+//		entityManager.getTransaction().begin();
+//
+//		Session session = entityManager.unwrap(Session.class);
+//		session.doWork(connection -> {
+//			PreparedStatement stmt = connection.prepareStatement(
+//					String.format("use `%s`", schemaName)
+//			);
+//			stmt.execute();
+//		});
+//		LOG.debug("DB switch to " + schemaName);
+//		entityManager.getTransaction().commit();
+//		entityManager.close();*/
+//		LOG.debug("End switchDatabase");
+//	}
 
 	@Transactional
 	public List<BoardPersonTotal> getBoardPersonTotal(long boardId) {
@@ -52,7 +109,8 @@ public class StorageManager {
 	@Transactional
 	public List<BoardModel> getBoards() {
 		List<BoardModel> result = new LinkedList<>();
-		boardRepository.findAll().forEach(entity -> result.add(getModel(entity)));
+		List<BoardEntity> list = boardRepository.findAll();
+		list.forEach(entity -> result.add(getModel(entity)));
 		return result;
 	}
 
@@ -295,12 +353,11 @@ public class StorageManager {
 	 * Getters / Setters
 	 */
 
+
 	@Autowired
 	public void setBoardRepository(BoardRepository boardRepository) {
 		this.boardRepository = boardRepository;
 	}
-
-
 
 	@Autowired
 	public void setPersonRepository(PersonRepository personRepository) {
@@ -316,5 +373,6 @@ public class StorageManager {
 	public void setSettingRepository(SettingRepository settingRepository) {
 		this.settingRepository = settingRepository;
 	}
+
 
 }

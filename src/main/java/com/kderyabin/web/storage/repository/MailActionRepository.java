@@ -1,6 +1,6 @@
-package com.kderyabin.core.storage.repository;
+package com.kderyabin.web.storage.repository;
 
-import com.kderyabin.core.storage.entity.MailActionEntity;
+import com.kderyabin.web.storage.entity.MailActionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

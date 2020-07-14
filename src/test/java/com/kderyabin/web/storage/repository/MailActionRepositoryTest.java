@@ -1,10 +1,8 @@
-package com.kderyabin.core.storage.repository;
+package com.kderyabin.web.storage.repository;
 
 import com.kderyabin.web.storage.MailAction;
 import com.kderyabin.web.storage.entity.MailActionEntity;
 import com.kderyabin.web.storage.entity.UserEntity;
-import com.kderyabin.web.storage.repository.MailActionRepository;
-import com.kderyabin.web.storage.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

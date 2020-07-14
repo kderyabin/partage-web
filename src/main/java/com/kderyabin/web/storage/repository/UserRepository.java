@@ -1,9 +1,9 @@
-package com.kderyabin.core.storage.repository;
+package com.kderyabin.web.storage.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.kderyabin.core.storage.entity.UserEntity;
+import com.kderyabin.web.storage.entity.UserEntity;
 
 /**
  * Repository interface to work with user table.

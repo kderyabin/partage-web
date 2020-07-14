@@ -1,6 +1,6 @@
-package com.kderyabin.core.storage.entity;
+package com.kderyabin.web.storage.entity;
 
-import com.kderyabin.core.MailAction;
+import com.kderyabin.web.storage.MailAction;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Entity
 @ToString
 @Getter @Setter
-@Table(name = "mail", schema = "sharings")
+@Table(name = "mail")
 public class MailActionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

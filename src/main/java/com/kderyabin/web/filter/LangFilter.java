@@ -32,7 +32,6 @@ public class LangFilter implements Filter{
 			throws IOException, ServletException {
 		
 		HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse res = (HttpServletResponse) response;
         Pattern pattern = Pattern.compile("^/(fr|en)/.*?");
         Matcher matcher = pattern.matcher(req.getRequestURI());
         if(matcher.matches()) {

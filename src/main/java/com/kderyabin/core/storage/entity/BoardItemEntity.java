@@ -45,11 +45,11 @@ public class BoardItemEntity {
 	@Getter @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "item_id", nullable = false)
     private Long id;
 	
 	@Getter @Setter
-    @Column(name = "title", nullable = false, length = 50)
+    @Column(name = "item_title", nullable = false, length = 50)
     private String title;
 
 	@Getter

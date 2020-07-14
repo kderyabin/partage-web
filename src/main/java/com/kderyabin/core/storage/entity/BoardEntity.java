@@ -26,7 +26,7 @@ public class BoardEntity {
 	 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "board_id", nullable = false)
     @Getter @Setter
     private Long id;
     
@@ -34,7 +34,7 @@ public class BoardEntity {
      * Board name.
      */
     @Getter @Setter
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(name = "board_name", nullable = false, length = 50)
     private String name;
     
     /**
@@ -71,8 +71,8 @@ public class BoardEntity {
     @Getter @Setter
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinTable( name="board_person",
-                joinColumns = { @JoinColumn( name = "boardId")},
-                inverseJoinColumns = { @JoinColumn( name = "personId")})
+                joinColumns = { @JoinColumn( name = "board_id")},
+                inverseJoinColumns = { @JoinColumn( name = "person_id")})
     private Set<PersonEntity> participants = new LinkedHashSet<>();
     
     /**

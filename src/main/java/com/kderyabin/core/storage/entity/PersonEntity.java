@@ -16,17 +16,17 @@ import java.util.Set;
 @Table(name = "person")
 @NamedNativeQuery(
         name = "PersonEntity.findAllByBoardId",
-        query = "select p.* from person p inner join board_person bp on bp.personId = p.id where bp.boardId = ?1",
+        query = "select p.* from person p inner join board_person bp on bp.person_id = p.person_id where bp.board_id = ?1",
         resultClass = PersonEntity.class)
 public class PersonEntity {
 	@Getter @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "person_id", nullable = false)
     private Long id;
 	
 	@Getter @Setter
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(name = "person_name", nullable = false, length = 50)
     private String name;
 	
 	@Getter @Setter
