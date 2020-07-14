@@ -104,8 +104,7 @@ public class AuthController {
                 if (!user.getIsConfirmed()) {
                     validator.addMessage("generic", "error.account_confirm_email");
                 } else {
-                    HttpSession session = request.getSession();
-                    session.setAttribute("user", user);
+                    initSessionData(user, request);
                     return ("redirect:app/" + user.getId() + "/");
                 }
             } else {
@@ -204,10 +203,7 @@ public class AuthController {
         try {
             // Success
             UserModel user = accountManager.activateAccount(token);
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            session.setAttribute("userId", user.getId());
-            session.setAttribute("tenantId", accountManager.getUserWorkspaceName(user.getId()));
+            initSessionData(user, request);
             return String.format("redirect:/%s/app/%s/", lang, user.getId());
         } catch (MailTokenNotFoundException e) {
             LOG.warn(e.getMessage());
@@ -218,8 +214,6 @@ public class AuthController {
         viewModel.addAttribute("messages", messages);
         return "confirm-email";
     }
-
-
 
     /**
      * Displays page for email sending in case of a password reset
@@ -316,6 +310,30 @@ public class AuthController {
         return "password-reset";
     }
 
+    /**
+     * Disconnects user.
+     * @param request Current request.
+     * @return Redirectioin command.
+     */
+    @GetMapping("{lang}/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if(session != null) {
+            session.invalidate();
+        }
+        return "redirect:signin";
+    }
+    /**
+     * Sets session data for authenticated user.
+     * @param user UserModel instance
+     * @param request Current request
+     */
+    private void initSessionData(UserModel user, HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        session.setAttribute("user", user);
+        session.setAttribute("userId", user.getId());
+        session.setAttribute("tenantId", accountManager.getUserWorkspaceName(user.getId()));
+    }
     /**
      * Sends asynchronously a confirmation email to the user.
      * Can be done with retry.
