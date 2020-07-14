@@ -6,13 +6,16 @@
 <header class="mdc-top-app-bar">
     <nav class="mdc-top-app-bar__row">
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+            <c:if test="${ !empty navbarBtnBackLink }">
+                <a href="${navbarBtnBackLink}" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
+                   aria-label="Open navigation menu">arrow_back
+                </a>
+            </c:if>
         </section>
         <section class="mdc-top-app-bar__section partage-top-app-bar__section--align-center">
             <span class="mdc-top-app-bar__title">Your boards</span>
         </section>
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-            </section>
             <c:if test="${ navbarBtnPticipants }">
                 <a href="participants.html" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
                    aria-label="Participants">
@@ -45,7 +48,6 @@
                     </ul>
                 </div>
             </div>
-
         </section>
     </nav>
 </header>

@@ -1,9 +1,12 @@
 package com.kderyabin.web.filter;
 
+import com.kderyabin.web.services.SettingsService;
+import com.kderyabin.web.services.Utils;
 import com.kderyabin.web.storage.multitenancy.TenantContext;
 import org.apache.catalina.filters.ExpiresFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -11,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Currency;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +28,12 @@ public class TenantFilter implements Filter {
 
     final private Logger LOG = LoggerFactory.getLogger(TenantFilter.class);
 
+    private SettingsService settingsService;
+
+    @Autowired
+    public void setSettingsService(SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -49,8 +60,18 @@ public class TenantFilter implements Filter {
             }
             LOG.info("TenantFilter: tenantId is OK in session");
             TenantContext.setTenant(tenantId);
+            // Initialize  default settings
+            String lang = (String) request.getAttribute("lang");
+            // Initialize default settings values
+            settingsService.setLanguage(lang);
+            // Try to find the user currency from the header
+            String header = req.getHeader("Accept-Language");
+            LOG.debug("Accept-Language header: " + header);
+            Locale userLocale = Utils.getLocaleFromAcceptLanguageHeader(header);
+            Currency defaultCurrency = Currency.getInstance(userLocale);
+            LOG.debug("Default settings currency will be : " + defaultCurrency.getCurrencyCode());
+            settingsService.setCurrency(defaultCurrency);
         }
         chain.doFilter(request, response);
-
     }
 }

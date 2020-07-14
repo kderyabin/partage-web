@@ -1,6 +1,10 @@
 package com.kderyabin.web.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Currency;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,10 +14,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import com.kderyabin.web.services.SettingsService;
+import com.kderyabin.web.services.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,7 +32,7 @@ public class LangFilter implements Filter{
 	
 
 	final private Logger LOG = LoggerFactory.getLogger(LangFilter.class);
-	
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -35,11 +41,11 @@ public class LangFilter implements Filter{
         Pattern pattern = Pattern.compile("^/(fr|en)/.*?");
         Matcher matcher = pattern.matcher(req.getRequestURI());
         if(matcher.matches()) {
-        	request.setAttribute("lang", matcher.group(1));
+        	String lang = matcher.group(1);
+        	request.setAttribute("lang", lang);
         	LOG.debug("Matched language: " + matcher.group(1));
         }
-		
-		chain.doFilter(request, response);		
+		chain.doFilter(request, response);
 	}
 
 }

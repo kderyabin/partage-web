@@ -13,10 +13,10 @@
         <h1 class="starter-label">
             <fmt:message key="start"></fmt:message>
         </h1>
-        <button type="submit" class="mdc-button mdc-button--unelevated button-rounded starter-button">
+        <a href="board/new" type="submit" class="mdc-button mdc-button--unelevated button-rounded starter-button">
             <span class="mdc-button__ripple"></span>
             <fmt:message key="add_board"></fmt:message>
-        </button>
+        </a>
         <img class="starter-image" src="${contextPath}/images/team-1721x1160.png" alt="Collaborating">
     </div>
 </main>
