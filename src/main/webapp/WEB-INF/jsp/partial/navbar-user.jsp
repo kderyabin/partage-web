@@ -27,6 +27,10 @@
                    aria-label="Add board">add
                 </a>
             </c:if>
+            <c:if test="${ navbarBtnSave }">
+                <button id="navbarBtnSave" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+                        aria-label="Save">done</button>
+            </c:if>
             <div class="mdc-menu-surface--anchor">
                 <button id="settings-btn" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
                         aria-label="Settings">more_vert
