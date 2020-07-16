@@ -43,52 +43,6 @@ public class StorageManager {
 	BoardItemRepository itemRepository;
 	SettingRepository settingRepository;
 
-//	DataSource dataSource;
-//	EntityManagerFactory emf;
-//
-//	@Autowired
-//	public void setEmf(@Qualifier("appEntityManager") EntityManagerFactory emf) {
-//		this.emf = emf;
-//	}
-//
-//	@Autowired
-//	public void setDataSource(DataSource dataSource) {
-//		this.dataSource = dataSource;
-//	}
-//
-//	public void switchDatabase(final String schemaName){
-//		LOG.debug("Start switchDatabase");
-//		try {
-//			Connection connection = dataSource.getConnection();
-//
-//			PreparedStatement stmt = connection.prepareStatement(
-//					String.format("use `%s`", schemaName)
-//			);
-//			stmt.execute();
-//			String schema = connection.getSchema();
-//			LOG.debug("Schema:");
-//			LOG.debug(schema);
-//		} catch (SQLException throwables) {
-//			throwables.printStackTrace();
-//		}
-//
-//
-//		/*EntityManager entityManager = emf.createEntityManager();
-//		entityManager.getTransaction().begin();
-//
-//		Session session = entityManager.unwrap(Session.class);
-//		session.doWork(connection -> {
-//			PreparedStatement stmt = connection.prepareStatement(
-//					String.format("use `%s`", schemaName)
-//			);
-//			stmt.execute();
-//		});
-//		LOG.debug("DB switch to " + schemaName);
-//		entityManager.getTransaction().commit();
-//		entityManager.close();*/
-//		LOG.debug("End switchDatabase");
-//	}
-
 	@Transactional
 	public List<BoardPersonTotal> getBoardPersonTotal(long boardId) {
 		List<BoardPersonTotal> result = new ArrayList<>();

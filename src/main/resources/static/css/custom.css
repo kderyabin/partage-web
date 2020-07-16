@@ -32,6 +32,9 @@
 	display: block;
 	clear: both;
 }
+.hidden {
+	visibility: hidden;
+}
 
 .divider {
 	height: 0;

@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "board")
 @NamedNativeQuery(
         name="BoardEntity.loadRecent",
-        query = "select b.* from board b order by b.update desc limit ?1",
+        query = "select b.* from board b order by b.updated desc limit ?1",
         resultClass = BoardEntity.class
 )
 public class BoardEntity {
@@ -62,7 +62,7 @@ public class BoardEntity {
      * Board's update time.
      */
     @Getter @Setter
-    @Column(name = "update", nullable = false)
+    @Column(name = "updated", nullable = false)
     private Timestamp update = new Timestamp(System.currentTimeMillis());
     
     /**

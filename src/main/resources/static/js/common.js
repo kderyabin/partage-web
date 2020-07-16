@@ -7,3 +7,15 @@ window.onload = () => {
         });
     }
 }
+const JsonRequest = (url, dto) => {
+    return $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: url,
+        data: JSON.stringify(dto),
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        }
+    });
+}

@@ -1,11 +1,15 @@
 package com.kderyabin.web.mvc.app;
 
+import com.kderyabin.core.model.BoardModel;
 import com.kderyabin.core.model.PersonModel;
 import com.kderyabin.core.services.StorageManager;
+import com.kderyabin.web.bean.Board;
 import com.kderyabin.web.bean.JsonResponseBody;
 import com.kderyabin.web.services.SettingsService;
 import com.kderyabin.web.utils.SimpleHttpServletRequest;
 import com.kderyabin.web.utils.SimpleHttpServletResponse;
+import com.kderyabin.web.validator.FormValidator;
+import com.kderyabin.web.validator.FormValidatorImpl;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
@@ -15,10 +19,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -75,20 +76,22 @@ public class BoardController {
     }
 
     /**
-     * Displays a board form for a board creation.
-     *
-     * @return Template name
+     * Initializes data to render in edit board template
+     * @param viewModel
+     * @param request
+     * @return
      */
-    @GetMapping("/new")
-    public String displayCreateForm(Model viewModel, HttpServletRequest request) {
+    protected Model initEditFormModel(Model viewModel, HttpServletRequest request){
         HttpSession session = request.getSession(false);
         String lang = (String) request.getAttribute("lang");
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
+        BoardModel model = new BoardModel();
         // Init board currency
         List<Currency> currencies = SettingsService.getAllCurrencies();
         viewModel.addAttribute("currencies", currencies);
         viewModel.addAttribute("userCurrency", settingsService.getCurrency());
+        model.setCurrency(settingsService.getCurrency());
         // Get list of all persons registered in all boards for selection list
         List<PersonModel> persons = storageManager.getPersons();
         viewModel.addAttribute("persons", persons);
@@ -107,8 +110,21 @@ public class BoardController {
         scripts.add("edit-board.js");
         viewModel.addAttribute("scripts", scripts);
 
+        viewModel.addAttribute("model", model);
+
+        return viewModel;
+    }
+    /**
+     * Displays a board form for a board creation.
+     * @return Template name
+     */
+    @GetMapping("/new")
+    public String displayCreateForm(Model viewModel, HttpServletRequest request ) {
+        viewModel = initEditFormModel(viewModel, request);
+        HttpSession session = request.getSession(false);
+
         // Init session data
-        session.setAttribute("persons", persons);
+        session.setAttribute("persons", viewModel.getAttribute("persons"));
         session.setAttribute("participants", new ArrayList<PersonModel>());
         session.setAttribute(MODE_CREATE, true);
 
@@ -119,13 +135,12 @@ public class BoardController {
      * Checks id participant cab ne added to board.
      * If yes: generates a line of participant in html format.
      * If no: outputs the error message.
-     *
      * @param person  PersonModel instance
      * @param request Current request (required for language settings)
      * @return
      * @throws Exception
      */
-    @PostMapping(value = "add-participant", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/add-participant", consumes = "application/json", produces = "application/json")
     public ResponseEntity<JsonResponseBody> addParticipantItem(
             @RequestBody PersonModel person,
             HttpServletRequest request) throws Exception {
@@ -173,13 +188,77 @@ public class BoardController {
         return ResponseEntity.ok(responseBody);
     }
 
+    @PostMapping(value = "/remove-participant", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<JsonResponseBody> removeParticipantItem(
+            @RequestBody PersonModel person,
+            HttpServletRequest request) throws Exception {
+
+        LOG.debug("Received participant:" + person.toString());
+
+        JsonResponseBody responseBody = new JsonResponseBody();
+        String lang = (String) request.getAttribute("lang");
+        Locale locale = new Locale(lang);
+        HttpSession session = request.getSession(false);
+        LOG.debug("Session exits: " + (session != null));
+
+        if ((Boolean) session.getAttribute(MODE_CREATE)) {
+
+            List<PersonModel> participants = (ArrayList<PersonModel>) session.getAttribute("participants");
+            LOG.debug("participants in sessioin: " + participants.size());
+            // Check id the person is already registered for the board
+            List<PersonModel> found = participants.stream()
+                    .filter(p -> p.getName().toLowerCase().equals(person.getName().toLowerCase()))
+                    .collect(Collectors.toList());
+            if (found.size() > 0) {
+                participants.remove(found.get(0));
+            }
+
+            LOG.debug("participants in session: " + participants.size());
+        }
+
+        return ResponseEntity.ok(responseBody);
+    }
+
     /**
      * Handle board form submission.
-     *
      * @return Template name in case of errors or redirection command.
      */
     @PostMapping("/new")
-    public String handleCreateForm() {
+    public String handleCreateForm(@ModelAttribute Board bean, Model viewModel, HttpServletRequest request) {
+
+        FormValidator<Board> validator = new FormValidatorImpl<>();
+        validator.validate(bean);
+        BoardModel model = new BoardModel();
+        model.setCurrency(bean.getCurrency());
+        model.setName(bean.getName());
+        model.setDescription(bean.getDescription());
+        HttpSession session = request.getSession(false);
+        List<PersonModel> participants = (ArrayList<PersonModel>) session.getAttribute("participants");
+        model.setParticipants(participants);
+        if(participants.size() == 0) {
+            validator.addMessage("participants", "msg.provide_participants");
+        }
+        if (validator.isValid()) {
+            try{
+                model = storageManager.save(model, true);
+                // Remove session data
+                session.removeAttribute("persons");
+                session.removeAttribute("participants");
+                session.removeAttribute(MODE_CREATE);
+                // @TODO: Redirect to the next step
+                return "redirect:";
+
+            } catch (Exception e) {
+                LOG.info("Failed to save in DB: " + e.getMessage());
+                validator.addMessage("participants", "msg.generic_error");
+            }
+        }
+        viewModel = initEditFormModel(viewModel, request);
+        viewModel.addAttribute("model", model);
+
+        if (!validator.isValid()) {
+            viewModel.addAttribute("errors", validator.getMessages());
+        }
         return "app/board-edit";
     }
 
