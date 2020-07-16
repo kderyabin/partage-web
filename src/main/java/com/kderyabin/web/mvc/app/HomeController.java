@@ -2,9 +2,11 @@ package com.kderyabin.web.mvc.app;
 
 import com.kderyabin.core.model.BoardModel;
 import com.kderyabin.core.services.StorageManager;
+import com.kderyabin.web.services.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,9 @@ import java.util.List;
 public class HomeController {
     final private Logger LOG = LoggerFactory.getLogger(HomeController.class);
 
+    /**
+     * Storage manager to work with user database.
+     */
     private StorageManager storageManager;
 
     @Autowired
@@ -36,7 +41,9 @@ public class HomeController {
             return displayStarter(viewModel);
         }
         LOG.debug("Boards are found. Displaying boards' list.");
-        return "test";
+
+        viewModel.addAttribute("boards", boards);
+        return displayBoards(viewModel);
     }
 
     public String displayStarter(Model viewModel) {
@@ -46,5 +53,16 @@ public class HomeController {
         viewModel.addAttribute("stylesheetsExt", stylesheetsExt);
         viewModel.addAttribute("title", "Title");
         return "app/starter";
+    }
+
+    public String displayBoards(Model viewModel){
+
+        viewModel.addAttribute("title", "Title");
+        // Attach JS scripts
+        List<String> scripts = new ArrayList<>();
+        scripts.add("mdc.dialog.js");
+        scripts.add("home.js");
+        viewModel.addAttribute("scripts", scripts);
+        return "app/home";
     }
 }

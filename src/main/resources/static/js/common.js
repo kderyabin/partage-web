@@ -1,12 +1,3 @@
-window.onload = () => {
-    // Settings drop down menu
-    const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
-    if(menu) {
-        document.querySelector('#settings-btn').addEventListener('click', () => {
-            menu.open = true;
-        });
-    }
-}
 const JsonRequest = (url, dto) => {
     return $.ajax({
         type: "POST",
@@ -18,4 +9,13 @@ const JsonRequest = (url, dto) => {
             withCredentials: true
         }
     });
+}
+window.onload = () => {
+    // Settings drop down menu
+    const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
+    if(menu) {
+        document.querySelector('#settings-btn').addEventListener('click', () => {
+            menu.open = true;
+        });
+    }
 }
