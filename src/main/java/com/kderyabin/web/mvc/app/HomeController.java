@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,9 @@ public class HomeController {
     @GetMapping("{lang}/app/{userId}/")
     public String displayHome(Model viewModel) {
         List<BoardModel> boards = storageManager.getBoards();
+        // Enable common buttons in the navbar
+        viewModel.addAttribute("navbarBtnParticipantsLink", "participants");
+        viewModel.addAttribute("navbarBtnAddBoardLink", "board/new");
         if (boards.isEmpty()) {
             LOG.debug("No boards found. Displaying starter page.");
             return displayStarter(viewModel);

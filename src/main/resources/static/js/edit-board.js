@@ -4,7 +4,7 @@ window.onload = () => {
     const dialog = new mdc.dialog.MDCDialog(document.querySelector('.mdc-dialog'));
     const mode = $("#form-board-edit").data("mode");
     const personInput = $("#person");
-    const participantInput = $("#participant");
+    const participantSelect = $("#participant");
     const participantResetBtn = $("#participant-reset-button");
     const addParticipant = (name) => {
         let content = $("#participant-item").html();
@@ -48,9 +48,14 @@ window.onload = () => {
     // Handle participants form submission
     $("#form-participants").on("submit", (event) => {
         event.preventDefault();
-        let name = personInput.val().trim();
-        if (name.length > 0) {
-            let dto = {name: name, id: null};
+        let dto = {name: "", id: null};
+        if(participantSelect.val() !== "") {
+            dto.name = participantSelect.find("option:selected").text();
+            dto.id = parseInt(participantSelect.val());
+        } else {
+            dto.name = personInput.val().trim();
+        }
+        if (dto.name.length > 0) {
             JsonRequest("add-participant", dto)
                 .done(response => {
                     console.log(response);
@@ -58,7 +63,7 @@ window.onload = () => {
                         $("#my-dialog-content").html(response.errMsg);
                         dialog.open();
                     } else {
-                        addParticipant(name);
+                        addParticipant(dto.name);
                     }
                     // Reset participants choice
                     participantResetBtn.trigger("click");
