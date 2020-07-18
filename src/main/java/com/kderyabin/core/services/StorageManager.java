@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import com.kderyabin.core.storage.repository.*;
 
@@ -66,6 +67,15 @@ public class StorageManager {
 		List<BoardEntity> list = boardRepository.findAll();
 		list.forEach(entity -> result.add(getModel(entity)));
 		return result;
+	}
+
+	/**
+	 * Get BoardModel by ID.
+	 * @return BoardModel instance or null if not found
+	 */
+	public BoardModel findBoardById(Long id) {
+		Optional<BoardEntity> entity = boardRepository.findById(id);
+		return entity.map(this::getModel).orElse(null);
 	}
 
 	@Transactional
@@ -220,6 +230,20 @@ public class StorageManager {
 	public void removeBoard(BoardModel board) {
 		boardRepository.deleteById(board.getId());
 	}
+
+	/**
+	 * Removes persons items for some board.
+	 * @param persons List of persons ID
+	 * @param boardId Board ID
+	 */
+	@Transactional
+	public void removePersonItems(List<Long> persons, Long boardId) {
+		LOG.debug("Start removePersonItems");
+		LOG.debug("Items to remove for persons: " + persons.toString());
+		LOG.debug("Items to remove for Board: " + boardId);
+		persons.forEach( p -> itemRepository.removeByBoardAndPerson(boardId, p));
+	}
+
 
 	// Converters
 

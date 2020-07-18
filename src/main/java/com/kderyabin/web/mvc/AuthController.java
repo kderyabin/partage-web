@@ -73,6 +73,15 @@ public class AuthController {
      *
      * @return View name.
      */
+    @GetMapping("/")
+    public String displayIndex() {
+        return "redirect:/en/signin";
+    }
+    /**
+     * Display sign in form.
+     *
+     * @return View name.
+     */
     @GetMapping("{lang}/signin")
     public String displaySignin() {
 

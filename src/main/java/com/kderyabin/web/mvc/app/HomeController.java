@@ -65,7 +65,9 @@ public class HomeController {
         // Attach JS scripts
         List<String> scripts = new ArrayList<>();
         scripts.add("mdc.dialog.js");
+        scripts.add("jquery-3.5.1.js");
         scripts.add("home.js");
+
         viewModel.addAttribute("scripts", scripts);
         return "app/home";
     }

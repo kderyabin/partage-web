@@ -3,8 +3,19 @@ window.onload = () => {
     const dialogChoiceListener = (event) => {
         console.log(event.detail.action);
         if(event.detail.action === 'accept') {
-            console.log(boardToDelete);
-            console.log(boardToDelete.dataset.deleteBtn);
+            const boardId = boardToDelete.dataset.deleteBtn;
+            const dto = { id : boardId};
+            removeLine(boardToDelete);
+            JsonRequest("board/remove-board", dto)
+                .done(response => {
+                    console.log(response);
+                    if (response.error) {
+                        $("#my-dialog-content").html(response.errMsg);
+                        dialog.open();
+                    } else {
+                        removeLine(boardToDelete);
+                    }
+                });
         }
         boardToDelete = null;
     };
@@ -31,4 +42,9 @@ window.onload = () => {
     document.querySelector('#settings-btn').addEventListener('click', () => {
         menu.open = true;
     });
+
+    const removeLine =  (btn) => {
+        const element = $(btn);
+        element.closest(".list-item").remove();
+    }
 }

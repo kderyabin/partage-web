@@ -10,6 +10,13 @@
 <main class="main-container">
     <div class="content-column">
         <form id="form-board-edit" method="post" data-mode="create">
+            <c:if test="${!empty errors && !empty errors.generic}">
+                <p>
+                <c:forEach items="${ errors.generic }" var="errorMsg">
+                    <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                </c:forEach>
+                </p>
+            </c:if>
             <div class="input-group-column">
                 <label for="name" class="label-inline-block"><fmt:message key="name"/></label>
                 <c:if test="${!empty errors && !empty errors.name}">
