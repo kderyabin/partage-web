@@ -333,6 +333,7 @@ public class BoardEditController {
                 session.removeAttribute("persons");
                 session.removeAttribute("participants");
                 session.removeAttribute(EDIT_MODE);
+                session.setAttribute("msgDisplay", messageSource.getMessage("msg.board_saved_success", null, settingsService.getLanguage()));
 
                 return redirectLink.toString();
 

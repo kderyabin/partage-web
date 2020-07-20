@@ -2,6 +2,7 @@ package com.kderyabin.web.mvc.app;
 
 import com.kderyabin.core.model.BoardModel;
 import com.kderyabin.core.services.StorageManager;
+import com.kderyabin.web.bean.Notification;
 import com.kderyabin.web.services.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class HomeController {
      * @return Template name.
      */
     @GetMapping("{lang}/app/{userId}/")
-    public String displayHome(Model viewModel) {
+    public String displayHome(Model viewModel,  HttpServletRequest request) {
         List<BoardModel> boards = storageManager.getBoards();
         // Enable common buttons in the navbar
         viewModel.addAttribute("navbarBtnParticipantsLink", "participants");
@@ -47,7 +50,7 @@ public class HomeController {
         LOG.debug("Boards are found. Displaying boards' list.");
 
         viewModel.addAttribute("boards", boards);
-        return displayBoards(viewModel);
+        return displayBoards(viewModel, request);
     }
 
     public String displayStarter(Model viewModel) {
@@ -59,8 +62,16 @@ public class HomeController {
         return "app/starter";
     }
 
-    public String displayBoards(Model viewModel){
+    public String displayBoards(Model viewModel, HttpServletRequest request){
 
+        HttpSession session = request.getSession(false);
+
+        if(session.getAttribute("msgDisplay") != null) {
+            Notification notification = new Notification();
+            notification.setDisplay( (String) session.getAttribute("msgDisplay") );
+            viewModel.addAttribute("notification", notification);
+            session.removeAttribute("msgDisplay");
+        }
         viewModel.addAttribute("title", "Title");
         // Attach JS scripts
         List<String> scripts = new ArrayList<>();

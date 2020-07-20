@@ -43,6 +43,7 @@ public class TenantFilter implements Filter {
 
         Pattern pattern = Pattern.compile("^/[a-z]{2}/app/([a-z0-9A-Z\\-]{36})/.*?");
         Matcher matcher = pattern.matcher(req.getRequestURI());
+        TenantContext.setTenant(TenantContext.DEFAULT_TENANT_IDENTIFIER);
         if(matcher.matches()) {
             LOG.info("TenantFilter: user space pattern matched");
             HttpSession session = req.getSession( false );

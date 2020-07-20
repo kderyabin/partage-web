@@ -1,4 +1,4 @@
-window.onload = () => {
+window.addEventListener('load', () => {
     // init delete confirmation dialog
     const dialogChoiceListener = (event) => {
         console.log(event.detail.action);
@@ -9,10 +9,10 @@ window.onload = () => {
             JsonRequest("board/remove-board", dto)
                 .done(response => {
                     console.log(response);
-                    if (response.error) {
-                        $("#my-dialog-content").html(response.errMsg);
-                        dialog.open();
-                    } else {
+
+                    const msg = response.error ? response.errMsg : response.output;
+                    Notification.show(msg)
+                    if(!response.error){
                         removeLine(boardToDelete);
                     }
                 });
@@ -38,13 +38,9 @@ window.onload = () => {
             dialog.open();
         };
     });
-    const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
-    document.querySelector('#settings-btn').addEventListener('click', () => {
-        menu.open = true;
-    });
 
     const removeLine =  (btn) => {
         const element = $(btn);
         element.closest(".list-item").remove();
     }
-}
+});

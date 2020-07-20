@@ -10,12 +10,28 @@ const JsonRequest = (url, dto) => {
         }
     });
 }
-window.onload = () => {
+const Notification = {
+    snackbar : null,
+    init: function(snackbar) {
+        this.snackbar = snackbar;
+    },
+    show: function (msg) {
+        this.snackbar.labelText = msg;
+        this.snackbar.open();
+    }
+}
+
+window.addEventListener( "load",  (event) => {
     // Settings drop down menu
     const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
-    if(menu) {
+    if (menu) {
         document.querySelector('#settings-btn').addEventListener('click', () => {
             menu.open = true;
         });
     }
-}
+
+    Notification.init(new mdc.snackbar.MDCSnackbar(document.querySelector('.mdc-snackbar')));
+    if( typeof notifications !== 'undefined' && notifications.display) {
+        Notification.show(notifications.display);
+    }
+});
