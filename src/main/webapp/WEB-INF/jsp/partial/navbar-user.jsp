@@ -17,7 +17,7 @@
             </c:if>
         </section>
         <section class="mdc-top-app-bar__section partage-top-app-bar__section--align-center">
-            <span class="mdc-top-app-bar__title"><fmt:message key="title.your_boards"/></span>
+            <span class="mdc-top-app-bar__title">${title}</span>
         </section>
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
             <c:if test="${ !empty navbarBtnParticipantsLink }">
@@ -25,6 +25,12 @@
                    class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
                    aria-label="<fmt:message key="participants"/>">
                     <span aria-hidden="true">people_outline</span>
+                </a>
+            </c:if>
+            <c:if test="${ !empty navbarBtnBalanceLink }">
+                <a href="${ navbarBtnBalanceLink }" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+                   aria-label="<fmt:message key="balance"/>">
+                    <span aria-hidden="true">equalizer</span>
                 </a>
             </c:if>
             <c:if test="${ !empty navbarBtnAddBoardLink }">
@@ -35,7 +41,7 @@
             </c:if>
             <c:if test="${ !empty navbarBtnAddItemLink }">
                 <a href="${ navbarBtnAddItemLink }" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
-                   aria-label="Add board">
+                   aria-label="<fmt:message key="add_expense"/>">
                     <span aria-hidden="true">add</span>
                 </a>
             </c:if>
@@ -45,6 +51,7 @@
                     <span aria-hidden="true">done</span>
                 </button>
             </c:if>
+            <c:if test="${ ! empty navbarBtnSettings }">
             <div class="mdc-menu-surface--anchor">
                 <button id="settings-btn" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
                         aria-label="<fmt:message key="settings"/>">
@@ -67,6 +74,7 @@
                     </ul>
                 </div>
             </div>
+            </c:if>
         </section>
     </nav>
 </header>

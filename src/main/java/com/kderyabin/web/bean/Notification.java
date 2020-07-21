@@ -26,4 +26,13 @@ public class Notification {
     public Notification(String display) {
         this.display = display;
     }
+
+    /**
+     * Add message to dictionary.
+     * @param key   Message key
+     * @param msg   Message
+     */
+    public void addMessage(String key, String msg ){
+        i18n.put(key, msg);
+    }
 }

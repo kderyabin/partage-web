@@ -67,6 +67,7 @@ public class ItemEditController {
      * @return          Model with data.
      */
     protected Model initFormModel(Model viewModel, String lang, String userId, Long boardId) {
+        // Default item.
         viewModel.addAttribute("model", new Item());
         // Init "Go back" link
         viewModel.addAttribute("navbarBtnBackLink", String.format("/%s/app/%s/board/%s/details", lang, userId, boardId));
@@ -102,6 +103,7 @@ public class ItemEditController {
         if (itemId != null) {
             BoardItemModel itemModel = storageManager.findItemById(itemId);
             if (itemModel == null || !itemModel.getBoard().getId().equals(boardId)) {
+                LOG.warn("Item not found in databse: " + itemId);
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             model = Item.getItem(itemModel);
@@ -173,7 +175,7 @@ public class ItemEditController {
                 HttpSession session = request.getSession(false);
                 session.setAttribute("notification", notification);
 
-                return "redirect:" + String.format("/%s/app/%s/board/%s/details", lang, userId);
+                return "redirect:" + String.format("/%s/app/%s/board/%s/details", lang, userId, boardId);
 
             } catch (Exception e)  {
                LOG.warn(e.getMessage());

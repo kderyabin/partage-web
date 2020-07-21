@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
+import com.kderyabin.core.model.BoardPersonTotal;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,14 +23,14 @@ import lombok.ToString;
                 name = "BoardItemEntity.getBoardPersonTotal",
                 query = "select " +
                         "SUM(i.amount) as total, " +
-                        "p.id as personId, " +
-                        "p.name as personName," +
-                        "bp.boardid as boardId  " +
+                        "p.person_id as personId, " +
+                        "p.person_name as personName," +
+                        "bp.board_id as boardId  " +
                         "from board_person as bp  " +
-                        "join person AS p on bp.personid = p.id " +
-                        "left join item as i on i.person_id = p.id and i.board_id = bp.boardid " +
-                        "where bp.boardid = ?1 " +
-                        "group by p.id " +
+                        "join person AS p on bp.person_id = p.person_id " +
+                        "left join item as i on i.person_id = p.person_id and i.board_id = bp.board_id " +
+                        "where bp.board_id = ?1 " +
+                        "group by p.person_id " +
                         "order by personName"
         ),
         @NamedNativeQuery(

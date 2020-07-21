@@ -48,8 +48,11 @@ public class StorageManager {
 	public List<BoardPersonTotal> getBoardPersonTotal(long boardId) {
 		List<BoardPersonTotal> result = new ArrayList<>();
 		itemRepository.getBoardPersonTotal(boardId).stream().forEach(row -> {
-			BoardPersonTotal item = new BoardPersonTotal((BigDecimal) row[0], (Long) row[1], (String) row[2],
-					(Long) row[3]);
+			BoardPersonTotal item = new BoardPersonTotal(
+					(BigDecimal) row[0],
+					Long.valueOf(row[1].toString()),
+					(String) row[2],
+					Long.valueOf(row[3].toString()));
 			result.add(item);
 		});
 		return result;

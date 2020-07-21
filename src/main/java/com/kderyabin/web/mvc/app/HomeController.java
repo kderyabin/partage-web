@@ -43,6 +43,7 @@ public class HomeController {
         // Enable common buttons in the navbar
         viewModel.addAttribute("navbarBtnParticipantsLink", "participants");
         viewModel.addAttribute("navbarBtnAddBoardLink", "board/new");
+        viewModel.addAttribute("navbarBtnSettings", true );
         if (boards.isEmpty()) {
             LOG.debug("No boards found. Displaying starter page.");
             return displayStarter(viewModel);

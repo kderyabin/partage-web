@@ -13,7 +13,7 @@
 
         <c:if test="${ !empty boards}">
             <c:forEach items="${boards}" var="board">
-                <a class="list-item" href="/html/board-details.html">
+                <a class="list-item" href="board/${board.id}/details">
                     <div class="list-item-content">
                         <span class="list-item-title">${board.name}</span>
                         <span class="list-item-info"><fmt:message key="updated_on"/> <fmt:formatDate value="${board.update}" type="DATE" dateStyle="LONG" /></span>
