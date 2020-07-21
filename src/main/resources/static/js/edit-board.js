@@ -1,6 +1,4 @@
-window.onload = () => {
-
-
+window.addEventListener( 'load',  () => {
     const dialog = new mdc.dialog.MDCDialog(document.querySelector('.mdc-dialog'));
     const mode = $("#form-board-edit").data("mode");
     const personInput = $("#person");
@@ -22,7 +20,6 @@ window.onload = () => {
             let dto = {name: name.text(), id: null};
             JsonRequest("remove-participant", dto)
                 .done(response => {
-                    console.log(response);
                     if (response.error) {
                         $("#my-dialog-content").html(response.errMsg);
                         dialog.open();
@@ -58,7 +55,6 @@ window.onload = () => {
         if (dto.name.length > 0) {
             JsonRequest("add-participant", dto)
                 .done(response => {
-                    console.log(response);
                     if (response.error) {
                         $("#my-dialog-content").html(response.errMsg);
                         dialog.open();
@@ -75,4 +71,4 @@ window.onload = () => {
         }
         return false;
     });
-}
+});

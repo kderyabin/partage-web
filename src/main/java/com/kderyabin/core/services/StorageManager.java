@@ -89,8 +89,13 @@ public class StorageManager {
 
 	@Transactional
 	public List<PersonModel> getParticipants(BoardModel model) {
+		return getParticipantsByBoardId(model.getId());
+	}
+
+	@Transactional
+	public List<PersonModel> getParticipantsByBoardId(Long id) {
 		List<PersonModel> result = new ArrayList<>();
-		personRepository.findAllByBoardId(model.getId()).forEach(e -> result.add(getModel(e)));
+		personRepository.findAllByBoardId(id).forEach(e -> result.add(getModel(e)));
 
 		return result;
 	}
@@ -143,7 +148,7 @@ public class StorageManager {
 
 	@Transactional
 	public void save(BoardItemModel model) {
-		LOG.debug("BoardItemModel: save participants size: " + model.getBoard().getParticipants().size());
+		LOG.debug("Start BoardItemModel save");
 		BoardItemEntity entity = getEntity(model);
 		// Reload the board
 		LOG.debug("BoardItemModel: Reload the board: " + model.getBoard().getId());
@@ -192,6 +197,17 @@ public class StorageManager {
 			});
 		}
 		return result;
+	}
+
+	/**
+	 * Fetches item in database by its ID.
+	 * @param id	Item id
+	 * @return Model instance or null id item is not found.
+	 */
+	@Transactional(readOnly = true)
+	public BoardItemModel findItemById(Long id ) {
+		Optional<BoardItemEntity> option = itemRepository.findById(id);
+		return option.map(this::getModel).orElse(null);
 	}
 
 	/**

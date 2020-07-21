@@ -125,7 +125,7 @@
                     class="mdc-button mdc-button--unelevated list-condensed-button"
                     aria-label="<fmt:message key="remove"/> {{name}}">
                 <span class="mdc-button__ripple"></span>
-                <span class="material-icons">delete</span>
+                <span class="material-icons" aria-hidden="true">delete</span>
             </button>
         </div>
     </li>
@@ -138,16 +138,16 @@
              aria-labelledby="my-dialog-title"
              aria-describedby="my-dialog-content">
             <div class="mdc-dialog__content" id="my-dialog-content">
-                Are you sure you want to continue?
+                <fmt:message key="confirm_to_continue"/>
             </div>
             <div class="mdc-dialog__actions">
-                <%--                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">--%>
-                <%--                    <div class="mdc-button__ripple"></div>--%>
-                <%--                    <span class="mdc-button__label">Cancel</span>--%>
-                <%--                </button>--%>
+                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label"><fmt:message key="Cancel"/></span>
+                </button>
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept">
                     <div class="mdc-button__ripple"></div>
-                    <span class="mdc-button__label">OK</span>
+                    <span class="mdc-button__label"><fmt:message key="OK"/></span>
                 </button>
             </div>
         </div>

@@ -33,6 +33,10 @@ public class BoardModel {
     public BoardModel() {
     }
 
+    public BoardModel(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
     public BoardModel(String name) {
         this.name = name;
     }

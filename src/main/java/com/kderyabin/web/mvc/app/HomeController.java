@@ -67,8 +67,7 @@ public class HomeController {
         HttpSession session = request.getSession(false);
 
         if(session.getAttribute("msgDisplay") != null) {
-            Notification notification = new Notification();
-            notification.setDisplay( (String) session.getAttribute("msgDisplay") );
+            Notification notification = new Notification((String) session.getAttribute("msgDisplay") );
             viewModel.addAttribute("notification", notification);
             session.removeAttribute("msgDisplay");
         }

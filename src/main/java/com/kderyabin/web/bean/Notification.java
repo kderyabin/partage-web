@@ -19,4 +19,11 @@ public class Notification {
      * Dictionary of translated messages.
      */
     private Map<String, String> i18n = new HashMap<>();
+
+    public Notification() {
+    }
+
+    public Notification(String display) {
+        this.display = display;
+    }
 }

@@ -11,7 +11,7 @@
     <nav class="mdc-top-app-bar__row">
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
             <c:if test="${ !empty navbarBtnBackLink }">
-                <a href="${navbarBtnBackLink}" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
+                <a id="back-btn" href="${navbarBtnBackLink}" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
                    aria-label="Open navigation menu">arrow_back
                 </a>
             </c:if>

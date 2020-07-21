@@ -5,6 +5,7 @@ import com.kderyabin.core.model.PersonModel;
 import com.kderyabin.core.services.StorageManager;
 import com.kderyabin.web.bean.Board;
 import com.kderyabin.web.bean.JsonResponseBody;
+import com.kderyabin.web.bean.Notification;
 import com.kderyabin.web.services.SettingsService;
 import com.kderyabin.web.utils.StaticResources;
 import com.kderyabin.web.validator.FormValidator;
@@ -307,6 +308,7 @@ public class BoardEditController {
         if (participants.size() == 0) {
             validator.addMessage("participants", "msg.provide_participants");
         }
+        Notification notification = null;
         if (validator.isValid()) {
             LOG.debug("Data is valid");
             try {
@@ -323,12 +325,11 @@ public class BoardEditController {
                 model = storageManager.save(model, true);
                 StringBuilder redirectLink = new StringBuilder("redirect:");
                 if (session.getAttribute(EDIT_MODE) == MODE_CREATE) {
-                    // @TODO: redirect to item creation
-                    redirectLink.append(String.format("/%s/app/%s/", lang, userId));
+                    redirectLink.append(String.format("/%s/app/%s/board/%s/item", lang, userId, model.getId()));
                 } else {
-                    // @TODO: redirect to board details
-                    redirectLink.append(String.format("/%s/app/%s/", lang, userId));
+                    redirectLink.append(String.format("/%s/app/%s/board/%s/details", lang, userId, model.getId()));
                 }
+                //redirectLink.append(String.format("/%s/app/%s/board/%s/item", lang, userId, model.getId()));
                 // Remove session data
                 session.removeAttribute("persons");
                 session.removeAttribute("participants");
@@ -339,14 +340,18 @@ public class BoardEditController {
 
             } catch (Exception e) {
                 LOG.info("Failed to save in DB: " + e.getMessage());
-                validator.addMessage("generic", "msg.generic_error");
+                //validator.addMessage("generic", "msg.generic_error");
+                notification = new Notification(messageSource.getMessage("msg.generic_error", null, settingsService.getLanguage() ));
             }
         }
         viewModel = initEditFormModel(viewModel, request);
         viewModel.addAttribute("model", model);
 
-        if (!validator.isValid()) {
+//        if (!validator.isValid()) {
             viewModel.addAttribute("errors", validator.getMessages());
+//        }
+        if( notification != null) {
+            viewModel.addAttribute("notification", notification);
         }
 
         return "app/board-edit";
