@@ -67,7 +67,7 @@ public class AuthController {
     public void setSecurityService(SecurityService securityService) {
         this.securityService = securityService;
     }
-    
+
     /**
      * Display sign in form.
      *
