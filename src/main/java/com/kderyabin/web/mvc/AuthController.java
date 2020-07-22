@@ -67,16 +67,7 @@ public class AuthController {
     public void setSecurityService(SecurityService securityService) {
         this.securityService = securityService;
     }
-
-    /**
-     * Display sign in form.
-     *
-     * @return View name.
-     */
-    @GetMapping("/")
-    public String displayIndex() {
-        return "redirect:/en/signin";
-    }
+    
     /**
      * Display sign in form.
      *

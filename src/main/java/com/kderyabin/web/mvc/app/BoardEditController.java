@@ -346,10 +346,9 @@ public class BoardEditController {
         }
         viewModel = initEditFormModel(viewModel, request);
         viewModel.addAttribute("model", model);
-
-//        if (!validator.isValid()) {
+        if (!validator.isValid()) {
             viewModel.addAttribute("errors", validator.getMessages());
-//        }
+        }
         if( notification != null) {
             viewModel.addAttribute("notification", notification);
         }

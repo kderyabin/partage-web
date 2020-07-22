@@ -24,7 +24,7 @@ public class Item {
     private String title;
     @NotNull( message = "msg.amount_is_required")
     private Float amount;
-    @NotNull
+    @NotEmpty( message = "msg.date_is_required")
     private String date;
     @NotNull(message = "msg.person_is_required")
     private Long participant;
@@ -91,9 +91,10 @@ public class Item {
     }
 
     /**
-     * Converts date represented with pattern into a Date instacne.
+     * Converts date represented with pattern into a Date instance.
+     * If date can not be retrieved from the pattern the current date (today) is returned.
      * @param date String representation of the date.
-     * @return Date instance or NULL in case of error.
+     * @return Date instance
      */
     public static java.sql.Date convertStringToDate(String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -102,8 +103,8 @@ public class Item {
             return new java.sql.Date(d.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
+            return new java.sql.Date(System.currentTimeMillis());
         }
-        return null;
     }
 
 }
