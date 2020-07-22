@@ -251,6 +251,15 @@ public class StorageManager {
 	}
 
 	/**
+	 * Removes person
+	 * @param model PersonModel instance
+	 */
+	@Transactional
+	public void removePerson(PersonModel model) {
+		personRepository.deleteById(model.getId());
+	}
+
+	/**
 	 * Removes persons items for some board.
 	 * @param persons List of persons ID
 	 * @param boardId Board ID

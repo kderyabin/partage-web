@@ -12,5 +12,6 @@ public class StaticResources {
     public static final String JS_DETAILS = "details.js";
     public static final String JS_BALANCE = "balance.js";
     public static final String JS_CHARTS = "highcharts.js";
+    public static final String JS_PARTICIPANTS = "participants.js" ;
 }
 

@@ -5,11 +5,8 @@ window.addEventListener('load', () => {
         if(event.detail.action === 'accept') {
             const boardId = boardToDelete.dataset.deleteBtn;
             const dto = { id : boardId};
-            removeLine(boardToDelete);
             JsonRequest("board/remove-board", dto)
                 .done(response => {
-                    console.log(response);
-
                     const msg = response.error ? response.errMsg : response.output;
                     Notification.show(msg)
                     if(!response.error){
