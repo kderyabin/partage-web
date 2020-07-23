@@ -196,6 +196,7 @@ public class ParticipantsController {
 
     /**
      * Removes a participant from database.
+     * Ajax request.
      * @param person    Populated by Spring instance of PersonModel
      * @return          Message and status of the operation.
      */

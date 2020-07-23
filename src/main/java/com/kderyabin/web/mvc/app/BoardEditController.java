@@ -106,8 +106,14 @@ public class BoardEditController {
     @GetMapping("{lang}/app/{userId}/board/new")
     public String displayCreateForm(Model viewModel, HttpServletRequest request) {
         viewModel = initEditFormModel(viewModel, request);
-        HttpSession session = request.getSession(false);
+        viewModel.addAttribute("editMode", MODE_CREATE);
+        viewModel.addAttribute("title", messageSource.getMessage(
+                "new_board",
+                null,
+                settingsService.getLanguage()
+        ));
 
+        HttpSession session = request.getSession(false);
         // Init session data
         session.setAttribute("persons", viewModel.getAttribute("persons"));
         session.setAttribute("participants", new ArrayList<PersonModel>());
@@ -260,6 +266,9 @@ public class BoardEditController {
         model.setParticipants(participants);
         viewModel = initEditFormModel(viewModel, request);
         viewModel.addAttribute("model", model);
+        viewModel.addAttribute("editMode", MODE_EDIT);
+        viewModel.addAttribute("title", model.getName());
+
         HttpSession session = request.getSession(false);
         // Init session data
         session.setAttribute("persons", viewModel.getAttribute("persons"));
@@ -309,42 +318,45 @@ public class BoardEditController {
             validator.addMessage("participants", "msg.provide_participants");
         }
         Notification notification = null;
+        String editMode = (String) session.getAttribute(EDIT_MODE);
         if (validator.isValid()) {
             LOG.debug("Data is valid");
             try {
-                if (session.getAttribute(EDIT_MODE) == MODE_EDIT) {
-                    List<PersonModel> participantsPrev = storageManager.getParticipants(model);
-                    // For removed participants: removed their items
-                    participantsPrev.removeAll(model.getParticipants());
-                    LOG.debug("Remove items for participants: " + participantsPrev.size());
-                    if(!participantsPrev.isEmpty()) {
-                        List<Long> ids = participantsPrev.stream().map(PersonModel::getId).collect(Collectors.toList());
-                        storageManager.removePersonItems(ids, model.getId());
-                    }
-                }
+//                @TODO: add trigger in database to remove items
+//                if (editMode.equals(MODE_EDIT)) {
+//                    List<PersonModel> participantsPrev = storageManager.getParticipants(model);
+//                    // For removed participants: removed their items
+//                    participantsPrev.removeAll(model.getParticipants());
+//                    LOG.debug("Remove items for participants: " + participantsPrev.size());
+//                    if(!participantsPrev.isEmpty()) {
+//                        List<Long> ids = participantsPrev.stream().map(PersonModel::getId).collect(Collectors.toList());
+//                        storageManager.removePersonItems(ids, model.getId());
+//                    }
+//                }
                 model = storageManager.save(model, true);
                 StringBuilder redirectLink = new StringBuilder("redirect:");
-                if (session.getAttribute(EDIT_MODE) == MODE_CREATE) {
+                if (editMode.equals(MODE_CREATE)) {
                     redirectLink.append(String.format("/%s/app/%s/board/%s/item", lang, userId, model.getId()));
                 } else {
                     redirectLink.append(String.format("/%s/app/%s/board/%s/details", lang, userId, model.getId()));
                 }
-                //redirectLink.append(String.format("/%s/app/%s/board/%s/item", lang, userId, model.getId()));
                 // Remove session data
                 session.removeAttribute("persons");
                 session.removeAttribute("participants");
                 session.removeAttribute(EDIT_MODE);
-                session.setAttribute("msgDisplay", messageSource.getMessage("msg.board_saved_success", null, settingsService.getLanguage()));
-
+                notification = new Notification(
+                        messageSource.getMessage("msg.board_saved_success", null, settingsService.getLanguage())
+                );
+                session.setAttribute("notification", notification);
                 return redirectLink.toString();
 
             } catch (Exception e) {
-                LOG.info("Failed to save in DB: " + e.getMessage());
-                //validator.addMessage("generic", "msg.generic_error");
+                LOG.warn("Failed to save in DB: " + e.getMessage());
                 notification = new Notification(messageSource.getMessage("msg.generic_error", null, settingsService.getLanguage() ));
             }
         }
         viewModel = initEditFormModel(viewModel, request);
+        viewModel.addAttribute("editMode", editMode);
         viewModel.addAttribute("model", model);
         if (!validator.isValid()) {
             viewModel.addAttribute("errors", validator.getMessages());

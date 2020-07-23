@@ -1,40 +1,64 @@
-window.addEventListener( 'load',  () => {
+window.addEventListener('load', () => {
     const dialog = new mdc.dialog.MDCDialog(document.querySelector('.mdc-dialog'));
     const mode = $("#form-board-edit").data("mode");
     const personInput = $("#person");
     const participantSelect = $("#participant");
     const participantResetBtn = $("#participant-reset-button");
+    const participants = $("#participants");
     const addParticipant = (name) => {
         let content = $("#participant-item").html();
         content = content.replaceAll("{{name}}", name);
         const element = $(content);
         const btnRemove = element.find("button");
         btnRemove.on("click", removeParticipant);
-        $("#participants").append(element);
+        participants.append(element);
+        participants.removeClass("hidden");
     }
-    // Attached to remove button
-    const removeParticipant = function () {
-        const btn = $(this);
-        const name = btn.prev()
-        if (mode === 'create') {
-            let dto = {name: name.text(), id: null};
-            JsonRequest("remove-participant", dto)
-                .done(response => {
-                    if (response.error) {
-                        $("#my-dialog-content").html(response.errMsg);
-                        dialog.open();
-                    } else {
-                        btn.closest("li").remove();
-                    }
-                }).fail((jqXHR, textStatus, errorThrown) => {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-            });
+    /**
+     * Listen to user choice
+      * @param event
+     */
+    const dialogChoiceListener = (event) => {
+        if (event.detail.action === 'accept') {
+            doRemoval();
+        } else {
+            participantToDelete = null;
         }
+    };
+    dialog.listen('MDCDialog:closing', dialogChoiceListener);
+    let participantToDelete = null;
+    /**
+     * Sends request to the server to remove participant from the board.
+     */
+    const doRemoval = () => {
+        const btn = $(participantToDelete);
+        const name = btn.prev()
+        let dto = {name: name.text(), id: null};
+        JsonRequest("remove-participant", dto)
+            .done(response => {
+                if (response.error) {
+                    Notification.show(response.errMsg);
+                } else {
+                    btn.closest("li").remove();
+                    if (participants.children().length === 0) {
+                        participants.addClass("hidden");
+                    }
+                }
+                participantToDelete = null;
+            });
+    }
+    // Event handler to remove user
+    const removeParticipant = function () {
+        participantToDelete = this;
+        if (mode === "create") {
+            doRemoval();
+            return;
+        }
+        // Warn that expenses will be removed also.
+        // The removal is done through Dialog callback.
+        dialog.open();
     }
     // Attach remove event for each participant
-    const participants = $("#participants");
     if (participants.children("li").length > 0) {
         participants.find("button").on("click", removeParticipant);
     }
@@ -46,7 +70,7 @@ window.addEventListener( 'load',  () => {
     $("#form-participants").on("submit", (event) => {
         event.preventDefault();
         let dto = {name: "", id: null};
-        if(participantSelect.val() !== "") {
+        if (participantSelect.val() !== "") {
             dto.name = participantSelect.find("option:selected").text();
             dto.id = parseInt(participantSelect.val());
         } else {
@@ -56,18 +80,13 @@ window.addEventListener( 'load',  () => {
             JsonRequest("add-participant", dto)
                 .done(response => {
                     if (response.error) {
-                        $("#my-dialog-content").html(response.errMsg);
-                        dialog.open();
+                        Notification.show(response.errMsg);
                     } else {
                         addParticipant(dto.name);
                     }
                     // Reset participants choice
                     participantResetBtn.trigger("click");
-                }).fail((jqXHR, textStatus, errorThrown) => {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-            });
+                });
         }
         return false;
     });

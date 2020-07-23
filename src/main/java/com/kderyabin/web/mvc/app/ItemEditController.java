@@ -100,15 +100,18 @@ public class ItemEditController {
             @RequestParam(name = "iid", required = false) Long itemId
     ) {
         Item model;
+        String title;
         if (itemId != null) {
             BoardItemModel itemModel = storageManager.findItemById(itemId);
             if (itemModel == null || !itemModel.getBoard().getId().equals(boardId)) {
-                LOG.warn("Item not found in databse: " + itemId);
+                LOG.warn("Item not found in database: " + itemId);
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             model = Item.getItem(itemModel);
+            title = model.getTitle();
         } else {
             model = new Item();
+            title = messageSource.getMessage("new_entry", null, settingsService.getLanguage());
         }
 
         // Get list of all persons registered in all boards for selection list
@@ -116,6 +119,16 @@ public class ItemEditController {
         viewModel = initFormModel(viewModel, lang, userId, boardId);
         viewModel.addAttribute("participants", participants);
         viewModel.addAttribute("model", model);
+
+        viewModel.addAttribute("title", title);
+        HttpSession session = request.getSession(false);
+
+        // Notification from a board creation.
+        Notification notification = (Notification) session.getAttribute("notification");
+        if(notification != null) {
+            viewModel.addAttribute("notification", notification);
+            session.removeAttribute("notification");
+        }
 
         return "app/item-edit";
     }
@@ -185,10 +198,16 @@ public class ItemEditController {
         viewModel = initFormModel(viewModel, lang, userId, boardId);
         viewModel.addAttribute("participants", participants);
         viewModel.addAttribute("model", bean);
-        viewModel.addAttribute("errors", validator.getMessages());
+        if(!validator.isValid()) {
+            viewModel.addAttribute("errors", validator.getMessages());
+        }
         if( notification != null) {
             viewModel.addAttribute("notification", notification);
         }
+        String title = itemId != null
+                ? bean.getTitle()
+                : messageSource.getMessage("new_entry", null, settingsService.getLanguage());
+        viewModel.addAttribute("title", title);
 
         return "app/item-edit";
     }

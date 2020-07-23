@@ -55,20 +55,22 @@ public class BoardController {
 
     /**
      * Loads chart data from DB and prepares it for the PieChart
+     *
      * @param model BoardModel instance.
      */
-    private  Map<String, Double> initDataChart(BoardModel model) {
+    private Map<String, Double> initDataChart(BoardModel model) {
         Map<String, Double> chartData = new HashMap<>();
         LOG.debug("Init chart data");
-        List<BoardPersonTotal> list =  storageManager.getBoardPersonTotal(model.getId());
+        List<BoardPersonTotal> list = storageManager.getBoardPersonTotal(model.getId());
         list.forEach(item -> {
-            String name =  item.getPerson().getName();
+            String name = item.getPerson().getName();
             Double amount = item.getTotal().doubleValue();
             chartData.put(name, amount);
         });
         LOG.debug("End Init chart data");
         return chartData;
     }
+
     /**
      * Displays board's details.
      *
@@ -84,8 +86,8 @@ public class BoardController {
     ) {
         LOG.debug("Displaying details for board: " + boardId);
         BoardModel model = storageManager.findBoardById(boardId);
-        if(model == null) {
-            throw new ResponseStatusException( HttpStatus.NOT_FOUND);
+        if (model == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         List<BoardItemModel> items = storageManager.getItems(model);
 
@@ -93,26 +95,27 @@ public class BoardController {
         // If there is a notification in session that's the time to display it.
         Notification notification = (Notification) session.getAttribute("notification");
         session.removeAttribute("notification");
-        if(notification == null) {
+        if (notification == null) {
             notification = new Notification();
         }
-        notification.addMessage( "chart.expenses", messageSource.getMessage("expenses", null, settingsService.getLanguage()) );
+        notification.addMessage("chart.expenses", messageSource.getMessage("expenses", null, settingsService.getLanguage()));
 
         viewModel.addAttribute("notification", notification);
 
         viewModel.addAttribute("title", model.getName());
-        viewModel.addAttribute( "currency", model.getCurrencyCode());
+        viewModel.addAttribute("currency", model.getCurrencyCode());
         viewModel.addAttribute("model", model);
         viewModel.addAttribute("items", items);
         viewModel.addAttribute("chartData", initDataChart(model));
 
         // Enable navbar buttons
         viewModel.addAttribute("navbarBtnBackLink", String.format("/%s/app/%s/", lang, userId));
-        viewModel.addAttribute("navbarBtnBalanceLink", "balance");
+        if (items.size() > 0) {
+            viewModel.addAttribute("navbarBtnBalanceLink", "balance");
+        }
         viewModel.addAttribute("navbarBtnAddItemLink", "item");
         // Attach JS scripts
         List<String> scripts = new ArrayList<>();
-        scripts.add(StaticResources.JS_JQUERY);
         scripts.add(StaticResources.JS_CHARTS);
         scripts.add(StaticResources.JS_DETAILS);
         viewModel.addAttribute("scripts", scripts);
@@ -126,21 +129,17 @@ public class BoardController {
      * @return Template name
      */
     @GetMapping("{lang}/app/{userId}/board/{boardId}/balance")
-    public String displayBalance(
-            Model viewModel,
-            @PathVariable String lang,
-            @PathVariable String userId,
-            @PathVariable Long boardId
-    ) {
+    public String displayBalance(Model viewModel, @PathVariable Long boardId) {
         LOG.debug("Displaying balance for board: " + boardId);
         BoardModel model = storageManager.findBoardById(boardId);
-        if(model == null) {
-            throw new ResponseStatusException( HttpStatus.NOT_FOUND);
+        if (model == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         BoardBalance boardBalance = new BoardBalance();
         // Calculate balance for every participant
         boardBalance.setTotals(storageManager.getBoardPersonTotal(boardId));
         LOG.debug("Balance size: " + boardBalance.getTotals().size());
+
         boardBalance.shareBoardTotal();
         viewModel.addAttribute("balances", boardBalance.getTotals());
         // Split debts between participants
@@ -151,19 +150,19 @@ public class BoardController {
         // Set translations for JS
         Notification notification = new Notification();
         Locale language = settingsService.getLanguage();
-        notification.addMessage( "amount", messageSource.getMessage("amount", null, language) );
+        notification.addMessage("amount", messageSource.getMessage("amount", null, language));
         viewModel.addAttribute("notification", notification);
 
         viewModel.addAttribute("title", model.getName());
-        viewModel.addAttribute( "currency", model.getCurrencyCode());
+        viewModel.addAttribute("currency", model.getCurrencyCode());
         viewModel.addAttribute("model", model);
+        viewModel.addAttribute("isEmpty", boardBalance.isEmpty());
 
         // Enable navbar buttons
         viewModel.addAttribute("navbarBtnBackLink", "details");
         viewModel.addAttribute("navbarBtnAddItemLink", "item");
         // Attach JS scripts
         List<String> scripts = new ArrayList<>();
-        scripts.add(StaticResources.JS_JQUERY);
         scripts.add(StaticResources.JS_CHARTS);
         scripts.add(StaticResources.JS_BALANCE);
         viewModel.addAttribute("scripts", scripts);
@@ -173,14 +172,15 @@ public class BoardController {
 
     /**
      * Prepares data to display in a refundment table.
-     * @param boardBalance  Initialized BoardBalance instance
-     * @param currency      Currency attached to the board.
-     * @return              A list of refundments
+     *
+     * @param boardBalance Initialized BoardBalance instance
+     * @param currency     Currency attached to the board.
+     * @return A list of refundments
      */
-    private List<RefundmentModel> getShareData(BoardBalance boardBalance, final Currency currency){
+    private List<RefundmentModel> getShareData(BoardBalance boardBalance, final Currency currency) {
         LOG.debug("Start initShareData");
         List<RefundmentModel> shareData = new ArrayList<>();
-        boardBalance.getShare().forEach( (debtor, data) -> {
+        boardBalance.getShare().forEach((debtor, data) -> {
             // Filter if there is an amount to refund
             data.forEach((personModel, decimal) -> {
                 if (decimal.compareTo(new BigDecimal("0")) > 0) {
@@ -201,17 +201,18 @@ public class BoardController {
 
     /**
      * Prepares data to display in a balance chart which shows paid, overpaid and owed amounts per participant.
-     * @param boardBalance  Initialized BoardBalance instance
-     * @return              A map with a participant as a key and its expenses stats with amounts as a value.
+     *
+     * @param boardBalance Initialized BoardBalance instance
+     * @return A map with a participant as a key and its expenses stats with amounts as a value.
      */
-    public Map<String,  Map<String,Number>> getShareChart(BoardBalance boardBalance){
+    public Map<String, Map<String, Number>> getShareChart(BoardBalance boardBalance) {
         LOG.debug("Start initShareChart");
-        Map<String,  Map<String,Number>> chartData = new LinkedHashMap<>();
-        if(!boardBalance.isEmpty()) {
+        Map<String, Map<String, Number>> chartData = new LinkedHashMap<>();
+        if (!boardBalance.isEmpty()) {
             // Prepare balances for display in the chart
             BigDecimal average = boardBalance.getAverage();
             // loop through balances
-            boardBalance.getBalancePerPerson().forEach( (person, balance) -> {
+            boardBalance.getBalancePerPerson().forEach((person, balance) -> {
                 BigDecimal paid, debt, overpaid;
                 if (balance.compareTo(BigDecimal.ZERO) < 0) {
                     // Negative balance: person owes moneys

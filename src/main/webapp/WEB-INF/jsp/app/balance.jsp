@@ -11,9 +11,13 @@
 <main class="main-container">
     <div class="content-column">
         <h2 class="align-center"><fmt:message key="expenses"/></h2>
+        <c:if test="${ isEmpty}">
+            <h3 class="align-center"><fmt:message key="no_data_to_display"/> </h3>
+        </c:if>
 
+        <c:if test="${ !isEmpty}">
         <figure class="highcharts-figure board-balance-chart">
-            <div id="chart-container"></div>
+            <div id="chartContainer"></div>
         </figure>
 
         <h3 class="align-center"><fmt:message key="balance"/></h3>
@@ -64,6 +68,7 @@
             </c:forEach>
             </tbody>
         </table>
+        </c:if>
     </div>
 </main>
 

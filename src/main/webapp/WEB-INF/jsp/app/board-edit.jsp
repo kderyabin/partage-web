@@ -9,7 +9,7 @@
 <jsp:include page="../partial/navbar-user.jsp"/>
 <main class="main-container">
     <div class="content-column">
-        <form id="form-board-edit" method="post" data-mode="create">
+        <form id="form-board-edit" method="post" data-mode="${ editMode }">
             <c:if test="${!empty errors && !empty errors.generic}">
                 <p>
                 <c:forEach items="${ errors.generic }" var="errorMsg">
@@ -59,7 +59,7 @@
                         <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <ul class="mdc-list list-condensed" id="participants" aria-live="assertive">
+                <ul class="mdc-list list-condensed ${ empty model.participants ? 'hidden' : ''}" id="participants" aria-live="assertive">
                     <c:if test="${ !empty model.participants}">
                         <c:forEach items="${model.participants}" var="participant">
                             <li class="mdc-list-item" tabindex="0">
@@ -88,7 +88,7 @@
                 <input type="text" name="person" id="person" maxlength="50">
             </div>
             <c:if test="${ !empty persons}">
-                <span class="h1 align-center"><fmt:message key="or"/></span>
+                <div class="h1 align-center"><fmt:message key="or"/></div>
 
                 <div class="input-group-column">
                     <label for="participant" class="label-inline-block"><fmt:message
@@ -138,7 +138,7 @@
              aria-labelledby="my-dialog-title"
              aria-describedby="my-dialog-content">
             <div class="mdc-dialog__content" id="my-dialog-content">
-                <fmt:message key="confirm_to_continue"/>
+                <fmt:message key="msg.confirm_delete_participant"/>
             </div>
             <div class="mdc-dialog__actions">
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">

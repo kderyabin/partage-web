@@ -1,7 +1,6 @@
 window.addEventListener('load', () => {
     // init delete confirmation dialog
     const dialogChoiceListener = (event) => {
-        console.log(event.detail.action);
         if(event.detail.action === 'accept') {
             const boardId = boardToDelete.dataset.deleteBtn;
             const dto = { id : boardId};
@@ -12,9 +11,11 @@ window.addEventListener('load', () => {
                     if(!response.error){
                         removeLine(boardToDelete);
                     }
+                    boardToDelete = null;
                 });
+        } else {
+            boardToDelete = null;
         }
-        boardToDelete = null;
     };
     const dialog = new mdc.dialog.MDCDialog(document.querySelector('.mdc-dialog'));
     dialog.listen('MDCDialog:closing', dialogChoiceListener );

@@ -8,6 +8,10 @@ const JsonRequest = (url, dto) => {
         xhrFields: {
             withCredentials: true
         }
+    }).fail((jqXHR, textStatus, errorThrown) => {
+        console.error(jqXHR);
+        console.error(textStatus);
+        console.error(errorThrown)
     });
 }
 const Notification = {

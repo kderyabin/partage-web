@@ -1,28 +1,30 @@
 window.addEventListener('load', () => {
-    Highcharts.chart('chart-container', {
-        chart: {
-            type: 'bar'
-        },
-        title: {
-            text: ''
-        },
-        xAxis: {
-            categories: chartData.categories
-        },
-        yAxis: {
-            min: 0,
+    if(document.querySelector("#chartContainer")) {
+        Highcharts.chart('chartContainer', {
+            chart: {
+                type: 'bar'
+            },
             title: {
-                text: notifications.i18n.amount
-            }
-        },
-        legend: {
-            reversed: true
-        },
-        plotOptions: {
-            series: {
-                stacking: 'normal'
-            }
-        },
-        series: chartData.series
-    });
+                text: ''
+            },
+            xAxis: {
+                categories: chartData.categories
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: notifications.i18n.amount
+                }
+            },
+            legend: {
+                reversed: true
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+            series: chartData.series
+        });
+    }
 });

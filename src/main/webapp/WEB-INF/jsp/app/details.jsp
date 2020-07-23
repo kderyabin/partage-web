@@ -11,13 +11,19 @@
 
 <main class="main-container">
     <div class="content-column">
+
         <c:if test="${ !empty model.description}">
-        <h2>${ model.description }</h2>
+        <h2 class="align-center">${ model.description }</h2>
         </c:if>
-        <figure class="highcharts-figure board-balance-chart">
-            <div id="container"></div>
-        </figure>
+
+        <c:if test="${ empty items}">
+            <h3 class="align-center"><fmt:message key="no_data_to_display"/> </h3>
+        </c:if>
+
         <c:if test="${ !empty items}">
+        <figure class="highcharts-figure board-balance-chart}">
+            <div id="chartContainer"></div>
+        </figure>
         <c:forEach items="${items}" var="item">
             <a class="list-item" href="item?iid=${item.id}">
                 <div class="list-item-content">
