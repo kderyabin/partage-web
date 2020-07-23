@@ -15,7 +15,8 @@ drop table if exists person;
 create table person (
    person_id integer auto_increment,
 	person_name varchar(50) not null,
-	primary key (person_id)
+	primary key (person_id),
+   constraint unique_person_name unique (person_name)
 );
 
 drop table if exists board_person;

@@ -12,7 +12,7 @@ window.addEventListener('load', () => {
         }
         const id = participantToDelete.dataset.deleteBtn;
         const dto = {id: id};
-        JsonRequest("participants/remove", dto)
+        JsonRequest("remove", dto)
             .done(function (response) {
                 const msg = response.error ? response.errMsg : response.output;
                 Notification.show(msg)

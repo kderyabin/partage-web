@@ -64,7 +64,7 @@ public class StorageManager {
 		return boardRepository.loadRecent(limit).stream().map(this::getModel).collect(Collectors.toList());
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<BoardModel> getBoards() {
 		List<BoardModel> result = new LinkedList<>();
 		List<BoardEntity> list = boardRepository.findAll();
@@ -76,12 +76,13 @@ public class StorageManager {
 	 * Get BoardModel by ID.
 	 * @return BoardModel instance or null if not found
 	 */
+	@Transactional(readOnly = true)
 	public BoardModel findBoardById(Long id) {
 		Optional<BoardEntity> entity = boardRepository.findById(id);
 		return entity.map(this::getModel).orElse(null);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public BoardModel loadParticipants(BoardModel model) {
 		LOG.debug("loadParticipants: Participants in model before fetching:" + model.getParticipants().size());
 		model.getParticipants().clear();
@@ -90,12 +91,12 @@ public class StorageManager {
 		return model;
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<PersonModel> getParticipants(BoardModel model) {
 		return getParticipantsByBoardId(model.getId());
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<PersonModel> getParticipantsByBoardId(Long id) {
 		List<PersonModel> result = new ArrayList<>();
 		personRepository.findAllByBoardId(id).forEach(e -> result.add(getModel(e)));
@@ -106,6 +107,20 @@ public class StorageManager {
 	@Transactional
 	public List<PersonModel> getPersons() {
 		return personRepository.findAll().stream().map(this::getModel).collect(Collectors.toList());
+	}
+
+	/**
+	 * Fetched person bu its ID
+	 * @param id	Person ID
+	 * @return		PersonModel instance or null if the person is not found.
+	 */
+	@Transactional(readOnly = true)
+	public PersonModel findPersonById(Long id){
+		Optional<PersonEntity> entity = personRepository.findById(id);
+		if(entity.isEmpty()) {
+			return null;
+		}
+		return getModel(entity.get());
 	}
 
 	@Transactional
