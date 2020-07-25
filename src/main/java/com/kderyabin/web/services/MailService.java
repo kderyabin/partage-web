@@ -100,16 +100,14 @@ public class MailService {
 	 * @param token          User token for account confirmation.
 	 * @throws MessagingException
 	 */
-	public void sendConfirmationMail(String recipientEmail, String recipientName, String host, String token)
+	public void sendConfirmationMail(String recipientEmail, String recipientName, String link)
 			throws MessagingException {
 		MimeMessageHelper helper = getMessageHelper();
 	
 		Map<String, Object> templateModel = new HashMap<>();
 
 		templateModel.put("recipientName", recipientName);
-		templateModel.put("host", host);
-		templateModel.put("lang", locale.getLanguage());
-		templateModel.put("token", token);
+		templateModel.put("link", link);
 
 		String htmlBody = getMailContent("mail/confirm.html", locale, templateModel);
 

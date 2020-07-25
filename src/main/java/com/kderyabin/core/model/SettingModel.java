@@ -7,13 +7,11 @@ import lombok.ToString;
 import java.util.Objects;
 
 @ToString
+@Getter @Setter
 public class SettingModel {
 
-    @Getter @Setter
     private Long id;
-    @Getter @Setter
     private String name;
-    @Getter @Setter
     private String value;
 
     public SettingModel() {

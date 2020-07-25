@@ -9,6 +9,7 @@ import com.kderyabin.web.bean.Signup;
 import com.kderyabin.web.error.MailTokenNotFoundException;
 import com.kderyabin.web.error.UserNotFoundException;
 import com.kderyabin.web.services.MailService;
+import com.kderyabin.web.services.MailWorkerService;
 import com.kderyabin.web.services.SecurityService;
 import com.kderyabin.web.storage.AccountManager;
 import com.kderyabin.web.storage.MailAction;
@@ -44,23 +45,17 @@ public class AuthController {
 
 
     private AccountManager accountManager;
-    private Environment env;
-    private MailService mailService;
     private SecurityService securityService;
+    private MailWorkerService mailWorkerService;
+
+    @Autowired
+    public void setMailWorkerService(MailWorkerService mailWorkerService) {
+        this.mailWorkerService = mailWorkerService;
+    }
 
     @Autowired
     public void setAccountManager(AccountManager accountManager) {
         this.accountManager = accountManager;
-    }
-
-    @Autowired
-    public void setEnv(Environment env) {
-        this.env = env;
-    }
-
-    @Autowired
-    public void setMailService(MailService mailService) {
-        this.mailService = mailService;
     }
 
     @Autowired
@@ -153,7 +148,7 @@ public class AuthController {
                 userModel.setPwd(hashPwd);
                 MailActionModel actionModel = accountManager.create(userModel);
                 // Send email
-                sendConfirmationEmail(actionModel, lang, env.getProperty("app.host", ""));
+                mailWorkerService.sendConfirmationEmail(actionModel, lang);
                 accountManager.createUserWorkspace(actionModel.getUser().getId());
                 return String.format("redirect:/%s/confirm-email", lang);
             } else {
@@ -239,14 +234,7 @@ public class AuthController {
         if (validator.isValid()) {
             try {
                 MailActionModel action = accountManager.registerResetRequest(bean.getLogin());
-                String link = String.format(
-                        "%s/%s/password-reset/%s",
-                        env.getProperty("app.host", ""),
-                        lang,
-                        securityService.getEncryptedToken(action.getToken())
-                );
-                LOG.debug("Password reset generated link: " + link);
-                sendResetEmail(action.getUser().getLogin(), action.getUser().getName(), link, lang);
+                mailWorkerService.sendResetEmail(action, lang);
                 viewModel.addAttribute("email_sent", true);
             } catch (UserNotFoundException e) {
                 validator.addMessage("login", "error.account_not_found");
@@ -333,52 +321,5 @@ public class AuthController {
         session.setAttribute("user", user);
         session.setAttribute("userId", user.getId());
         session.setAttribute("tenantId", accountManager.getUserWorkspaceName(user.getId()));
-    }
-    /**
-     * Sends asynchronously a confirmation email to the user.
-     * Can be done with retry.
-     *
-     * @param actionModel ActionModel instance related to the current registration
-     * @param lang        User language for email localization.
-     * @param host        Application host.
-     */
-    private void sendConfirmationEmail(MailActionModel actionModel, String lang, String host) {
-        CompletableFuture.runAsync(() -> {
-            LOG.info("Start sending confirmation email");
-            try {
-                mailService.setLocale(new Locale(lang));
-                mailService.sendConfirmationMail(
-                        actionModel.getUser().getLogin(),
-                        actionModel.getUser().getName(),
-                        host,
-                        actionModel.getToken()
-                );
-            } catch (MessagingException e) {
-                LOG.warn(e.toString());
-            }
-            LOG.info("End sending confirmation email");
-        });
-    }
-
-    /**
-     * Sends asynchronously a password reset link by email to the user.
-     * Can be done with retry.
-     *
-     * @param email User email
-     * @param name  User name
-     * @param link  Password reset link
-     * @param lang  User language for email localization.
-     */
-    private void sendResetEmail(String email, String name, String link, String lang) {
-        CompletableFuture.runAsync(() -> {
-            LOG.info("Start sending reset email");
-            try {
-                mailService.setLocale(new Locale(lang));
-                mailService.sendResetPasswordMail(email, name, link);
-            } catch (MessagingException e) {
-                LOG.warn(e.toString());
-            }
-            LOG.info("End sending reset email");
-        });
     }
 }

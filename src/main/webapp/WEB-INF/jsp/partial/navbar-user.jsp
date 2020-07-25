@@ -61,7 +61,7 @@
                     <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
                         <li class="mdc-list-item" role="menuitem">
                             <span class="mdc-list-item__ripple"></span>
-                            <a href="settings.html" class="mdc-list-item__text">
+                            <a href="/${lang}/app/${userId}/settings/" class="mdc-list-item__text">
                                 <fmt:message key="settings"></fmt:message>
                             </a>
                         </li>

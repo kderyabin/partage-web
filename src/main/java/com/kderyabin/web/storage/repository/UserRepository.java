@@ -10,7 +10,7 @@ import com.kderyabin.web.storage.entity.UserEntity;
  * @author Konstantin Deryabin
  */
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, String> {
 	/**
 	 * Finds user by login.
 	 * @param login User login.

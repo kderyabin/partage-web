@@ -61,18 +61,29 @@ public class TenantFilter implements Filter {
             }
             LOG.info("TenantFilter: tenantId is OK in session");
             TenantContext.setTenant(tenantId);
-            // Initialize  default settings
-            String lang = (String) request.getAttribute("lang");
-            // Initialize default settings values
-            settingsService.setLanguage(lang);
-            // Try to find the user currency from the header
-            String header = req.getHeader("Accept-Language");
-            LOG.debug("Accept-Language header: " + header);
-            Locale userLocale = Utils.getLocaleFromAcceptLanguageHeader(header);
-            Currency defaultCurrency = Currency.getInstance(userLocale);
-            LOG.debug("Default settings currency will be : " + defaultCurrency.getCurrencyCode());
-            settingsService.setCurrency(defaultCurrency);
+            // Initialize user settings
+            initUserSettings(req);
         }
         chain.doFilter(request, response);
+    }
+
+    /**
+     * Initialize user settings.
+     * The method must be run after TenantContext is switched to user space
+     * @param req Request
+     */
+    protected void initUserSettings(HttpServletRequest req) {
+        // Initialize  default settings
+        String lang = (String) req.getAttribute("lang");
+        settingsService.setLanguage(lang);
+        // Try to find the user currency from the header
+        String header = req.getHeader("Accept-Language");
+        LOG.debug("Accept-Language header: " + header);
+        Locale userLocale = Utils.getLocaleFromAcceptLanguageHeader(header);
+        Currency defaultCurrency = Currency.getInstance(userLocale);
+        settingsService.setCurrency(defaultCurrency);
+        LOG.debug("Default settings currency will be : " + defaultCurrency.getCurrencyCode());
+        // Load user settings
+        settingsService.load();
     }
 }

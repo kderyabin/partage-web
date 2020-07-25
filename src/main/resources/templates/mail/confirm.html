@@ -6,7 +6,7 @@
   <body>
     <p th:text="#{greetings(${recipientName})}"></p>
     <p th:text="#{email.confirm.message}"></p>
-    <p><a th:href="#{email.confirm.url(${host}, ${lang}, ${token})}" th:text="#{email.confirm.url(${host}, ${lang}, ${token})}"></a></p>
+    <p><a th:href="${link}" th:text="${link}"></a></p>
     <p>&nbsp;</p>
     <p th:text="#{email.footer}"></p>
   </body>

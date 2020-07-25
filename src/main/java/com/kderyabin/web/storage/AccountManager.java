@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -175,9 +176,12 @@ public class AccountManager {
      * @return UserModel instance or null if user is not found.
      */
     @Transactional(readOnly = true)
-    public UserModel findUserByLogin(String login) {
-        UserEntity entity = userRepository.findByLogin(login);
-        return getModel(entity);
+    public UserModel findUserById(String id) {
+        Optional<UserEntity> entity = userRepository.findById(id);
+        if(entity.isEmpty()) {
+            return null;
+        }
+        return getModel(entity.get());
     }
 
     /**
@@ -203,9 +207,9 @@ public class AccountManager {
     }
 
     /**
-     * Creates a user account.
+     * Creates or updates user account and creates an email confirmation record.
      * Process few actions during account creation :
-     * 1. Creates user in DB
+     * 1. Saves user in DB
      * 2. Creates confirmation mail action in DB
      *
      * @param model UserModel
@@ -215,7 +219,10 @@ public class AccountManager {
     public MailActionModel create(UserModel model) {
         LOG.debug("Start account creation");
 
-        model.generateId();
+        if(model.getId() == null) {
+            model.generateId();
+        }
+
         model.setIsConfirmed(false);
         UserEntity user = getEntity(model);
         user = userRepository.save(user);
@@ -231,7 +238,6 @@ public class AccountManager {
         LOG.debug("End account creation");
         return actionModel;
     }
-
 
     /**
      * Updates existing user in database.

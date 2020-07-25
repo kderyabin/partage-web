@@ -89,7 +89,7 @@ a.mdc-top-app-bar__navigation-icon {
 	display: flex;
 	justify-content: space-between;
 }
-.partage-auth-button-box {
+.partage-auth-button-box, .button-size-auto  {
 	width: auto;
 	margin:0 auto;
 }

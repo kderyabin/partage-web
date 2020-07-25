@@ -24,7 +24,49 @@ const Notification = {
         this.snackbar.open();
     }
 }
+/**
+ * Verifies if a form is updated and triggers warning message display before redirection.
+ * @param formSelector
+ */
+const handleCommonBackButtonEvent = (formSelector) => {
+    const form = $(formSelector);
+    if(form.length === 0) {
+        console.debug("Form not found: " + formSelector);
+        return;
+    }
+    const dialog = new mdc.dialog.MDCDialog(document.querySelector('.mdc-dialog'));
+    if(!dialog) {
+        console.debug("Dialog not found");
+        return;
+    }
+    const backBtn = $("#back-btn");
+    if(backBtn.length === 0) {
+        console.debug("Back button not found");
+        return;
+    }
 
+    // Watch for the form changes
+    let isFormUpdated = false;
+    form.find(":input").on('change', () => isFormUpdated = true);
+    // Check if form is updated.
+    const canGoBack = () => {
+        return !isFormUpdated;
+    }
+    const dialogChoiceListener = (event) => {
+        if(event.detail.action === 'accept') {
+            window.location.assign( backBtn.prop("href"));
+        }
+    };
+
+    dialog.listen('MDCDialog:closing', dialogChoiceListener );
+
+    backBtn.on('click', function (event) {
+        if(!canGoBack()) {
+            event.preventDefault();
+            dialog.open();
+        }
+    });
+}
 window.addEventListener( "load",  (event) => {
     // Settings drop down menu
     const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));

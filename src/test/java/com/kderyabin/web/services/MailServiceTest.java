@@ -24,50 +24,22 @@ class MailServiceTest {
 	void getMailContent() {
 		Map<String, Object> templateModel = new HashMap<>();
 		Locale locale = Locale.FRENCH;
-
 		mailService.setLocale(locale);
 		
 		String recipientName = "Konstantin Deryabin";
-		String host = "http://localhost:8080";
-		String token = "xxxxxxxxxxxxxxxxxxx";
+		String link = "http://localhost:8080/fr/xxxxxxxxxxxxxxxxxxx";
 		templateModel.put("recipientName", recipientName);
-		templateModel.put("host", host);
 		templateModel.put("lang", locale.getLanguage());
-		templateModel.put("token", token);
+		templateModel.put("link", link);
 
 		String htmlBody = mailService.getMailContent("mail/confirm.html", locale, templateModel);
 
-		// Test language is applied.		
-		if(locale.getLanguage().equals((Locale.ENGLISH).getLanguage())) {
-			assertTrue(htmlBody.contains("Hello"));
-		} else if (locale.getLanguage().equals((Locale.FRENCH).getLanguage())) {
-			assertTrue(htmlBody.contains("Bonjour"));
-		} 
-		
+		// Test language is applied.
+		assertTrue(htmlBody.contains("Bonjour"));
 		assertTrue(htmlBody.contains(recipientName));
-		assertTrue(htmlBody.contains(host));
-		assertTrue(htmlBody.contains(token));
+		assertTrue(htmlBody.contains(link));
 	}
-	
-	@Test
-	void sendConfirmationMail() {
-		
-		Locale locale = Locale.ENGLISH;
-		
-		mailService.setLocale(locale);
-		mailService.setSenderAddress("konst93@hotmail.com");
-		String recipientEmail = "kderyabin@orange.fr";
-		String recipientName = "Konstantin Deryabin";
-		String host = "http://localhost:8080";
-		String token = "xxxxxxxxxxxxxxxxxxx";
-		
-		try {
-			mailService.sendConfirmationMail(recipientEmail, recipientName, host, token);
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
 
-	}
 
     @Test
     void isSendMail() {
