@@ -6,9 +6,11 @@ import com.kderyabin.web.model.MailActionModel;
 import com.kderyabin.web.model.UserModel;
 import com.kderyabin.web.storage.entity.MailActionEntity;
 import com.kderyabin.web.storage.entity.UserEntity;
+import com.kderyabin.web.storage.multitenancy.TenantContext;
 import com.kderyabin.web.storage.repository.MailActionRepository;
 import com.kderyabin.web.storage.repository.UserRepository;
 import org.hibernate.Session;
+import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -121,12 +124,11 @@ public class AccountManager {
     }
 
     /**
-     * Create user database with tables.
-     *
-     * @param userId User id
+     * Creates user database.
+     * @param userId user ID.
      */
-    public void createUserWorkspace(String userId) {
-        LOG.debug("Start createUserSpace");
+    public void createUserDatabase(String userId) {
+        LOG.debug("Start createUserDatabase");
         final String schemaName = getUserWorkspaceName(userId);
         LOG.info("User DB: " + schemaName);
         EntityManager entityManager = emf.createEntityManager();
@@ -135,13 +137,30 @@ public class AccountManager {
         Session session = entityManager.unwrap(Session.class);
 
         session.doWork(connection -> connection.createStatement().execute(getDbCreateSQL(schemaName)));
+        entityManager.getTransaction().commit();
+        entityManager.close();
+        LOG.debug("End createUserDatabase");
+    }
+
+    /**
+     * Populates user database with tables.
+     *
+     * @param userId User id
+     */
+    public void populateUserDatabase(String userId) {
+        LOG.debug("Start user database initialization");
+        // Switch to user database
+        TenantContext.setTenant(getUserWorkspaceName(userId));
+        EntityManager entityManager = emf.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        Session session = entityManager.unwrap(Session.class);
 
         final ArrayList<String> list;
         try {
             list = readFromInputStream(getClass().getResourceAsStream("/" + userSchemaFileName));
             session.doWork(connection -> {
                 try {
-                    connection.createStatement().execute(getDatabaseChoiceSQL(schemaName));
                     list.forEach(sql -> {
                         try {
                             connection.createStatement().execute(sql);
@@ -149,7 +168,7 @@ public class AccountManager {
                             LOG.warn(throwables.getMessage());
                         }
                     });
-                } catch (SQLException throwables) {
+                } catch (Exception throwables) {
                     LOG.warn(throwables.getMessage());
                 }
             });
@@ -160,6 +179,17 @@ public class AccountManager {
         entityManager.getTransaction().commit();
         entityManager.close();
         LOG.debug("End createUserSpace");
+    }
+
+    /**
+     * Create user database with tables.
+     * The process uses 2 different connections.
+     *
+     * @param userId User id
+     */
+    public void createUserWorkspace(String userId) {
+       createUserDatabase(userId);
+       populateUserDatabase(userId);
     }
 
     /**
