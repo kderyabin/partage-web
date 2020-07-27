@@ -51,7 +51,6 @@ public class PersonEntity {
      */
     @ToString.Exclude
     @OneToMany(mappedBy = "person", cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<BoardItemEntity> items = new LinkedHashSet<>();
 
     public PersonEntity() {

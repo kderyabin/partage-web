@@ -22,7 +22,7 @@ import java.util.Set;
 @Table(name = "board")
 @NamedNativeQuery(
         name = "BoardEntity.loadRecent",
-        query = "select b.* from board b order by b.updated desc limit ?1",
+        query = "select b.* from board b order by b.update desc limit ?1",
         resultClass = BoardEntity.class
 )
 public class BoardEntity {
@@ -78,7 +78,6 @@ public class BoardEntity {
      */
     @ToString.Exclude
     @OneToMany(mappedBy = "board", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<BoardItemEntity> items = new LinkedHashSet<>();
 
     public BoardEntity() {

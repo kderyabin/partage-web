@@ -322,17 +322,6 @@ public class BoardEditController {
         if (validator.isValid()) {
             LOG.debug("Data is valid");
             try {
-//                @TODO: add trigger in database to remove items
-//                if (editMode.equals(MODE_EDIT)) {
-//                    List<PersonModel> participantsPrev = storageManager.getParticipants(model);
-//                    // For removed participants: removed their items
-//                    participantsPrev.removeAll(model.getParticipants());
-//                    LOG.debug("Remove items for participants: " + participantsPrev.size());
-//                    if(!participantsPrev.isEmpty()) {
-//                        List<Long> ids = participantsPrev.stream().map(PersonModel::getId).collect(Collectors.toList());
-//                        storageManager.removePersonItems(ids, model.getId());
-//                    }
-//                }
                 model = storageManager.save(model, true);
                 StringBuilder redirectLink = new StringBuilder("redirect:");
                 if (editMode.equals(MODE_CREATE)) {
