@@ -1,399 +1,378 @@
 package com.kderyabin.core.services;
 
 import com.kderyabin.core.model.*;
-import com.kderyabin.core.storage.entity.*;
-import org.hibernate.Session;
+import com.kderyabin.core.storage.entity.BoardEntity;
+import com.kderyabin.core.storage.entity.BoardItemEntity;
+import com.kderyabin.core.storage.entity.PersonEntity;
+import com.kderyabin.core.storage.entity.SettingEntity;
+import com.kderyabin.core.storage.repository.BoardItemRepository;
+import com.kderyabin.core.storage.repository.BoardRepository;
+import com.kderyabin.core.storage.repository.PersonRepository;
+import com.kderyabin.core.storage.repository.SettingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Example;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import com.kderyabin.core.storage.repository.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 
 /**
- * StorageManager is implementing a facade design pattern facilitating work with
- * database.
- * 
+ * StorageManager implements a facade design pattern facilitating the work with different repositories.
+ *
  * @author Konstantin Deryabin
  */
 @Service
 public class StorageManager {
 
-	final private Logger LOG = LoggerFactory.getLogger(StorageManager.class);
+    final private Logger LOG = LoggerFactory.getLogger(StorageManager.class);
 
-	BoardRepository boardRepository;
-	PersonRepository personRepository;
-	BoardItemRepository itemRepository;
-	SettingRepository settingRepository;
+    BoardRepository boardRepository;
+    PersonRepository personRepository;
+    BoardItemRepository itemRepository;
+    SettingRepository settingRepository;
 
-	@Transactional
-	public List<BoardPersonTotal> getBoardPersonTotal(long boardId) {
-		List<BoardPersonTotal> result = new ArrayList<>();
-		itemRepository.getBoardPersonTotal(boardId).stream().forEach(row -> {
-			BoardPersonTotal item = new BoardPersonTotal(
-					(BigDecimal) row[0],
-					Long.valueOf(row[1].toString()),
-					(String) row[2],
-					Long.valueOf(row[3].toString()));
-			result.add(item);
-		});
-		return result;
-	}
+    /*
+     * Getters / Setters
+     */
+    @Autowired
+    public void setBoardRepository(BoardRepository boardRepository) {
+        this.boardRepository = boardRepository;
+    }
 
-	@Transactional
-	public List<BoardModel> getRecentBoards(int limit) {
+    @Autowired
+    public void setPersonRepository(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
 
-		return boardRepository.loadRecent(limit).stream().map(this::getModel).collect(Collectors.toList());
-	}
+    @Autowired
+    public void setItemRepository(BoardItemRepository itemRepository) {
+        this.itemRepository = itemRepository;
+    }
 
-	@Transactional(readOnly = true)
-	public List<BoardModel> getBoards() {
-		List<BoardModel> result = new LinkedList<>();
-		List<BoardEntity> list = boardRepository.findAll();
-		list.forEach(entity -> result.add(getModel(entity)));
-		return result;
-	}
+    @Autowired
+    public void setSettingRepository(SettingRepository settingRepository) {
+        this.settingRepository = settingRepository;
+    }
 
-	/**
-	 * Get BoardModel by ID.
-	 * @return BoardModel instance or null if not found
-	 */
-	@Transactional(readOnly = true)
-	public BoardModel findBoardById(Long id) {
-		Optional<BoardEntity> entity = boardRepository.findById(id);
-		return entity.map(this::getModel).orElse(null);
-	}
+    /**
+     * Fetches total amount spent by every participant.
+     *
+     * @param boardId Board ID
+     * @return List of BoardPersonTotal instances
+     */
+    @Transactional(readOnly = true)
+    public List<BoardPersonTotal> getBoardPersonTotal(long boardId) {
+        List<BoardPersonTotal> result = new ArrayList<>();
+        itemRepository.getBoardPersonTotal(boardId).forEach(row -> {
+            BoardPersonTotal item = new BoardPersonTotal(
+                    (BigDecimal) row[0],
+                    Long.valueOf(row[1].toString()),
+                    (String) row[2],
+                    Long.valueOf(row[3].toString()));
+            result.add(item);
+        });
+        return result;
+    }
 
-	@Transactional(readOnly = true)
-	public BoardModel loadParticipants(BoardModel model) {
-		LOG.debug("loadParticipants: Participants in model before fetching:" + model.getParticipants().size());
-		model.getParticipants().clear();
-		personRepository.findAllByBoardId(model.getId()).forEach(e -> model.addParticipant(getModel(e)));
-		LOG.debug("loadParticipants: Participants in model after fetching:" + model.getParticipants().size());
-		return model;
-	}
+    /**
+     * Fetches passed in parameter number of boards sorted by update date.
+     *
+     * @param limit Number of board to fetch
+     * @return List of boards
+     */
+    @Transactional(readOnly = true)
+    public List<BoardModel> getRecentBoards(int limit) {
+        return boardRepository.loadRecent(limit).stream().map(EntityModelConverter::getModel).collect(Collectors.toList());
+    }
 
-	@Transactional(readOnly = true)
-	public List<PersonModel> getParticipants(BoardModel model) {
-		return getParticipantsByBoardId(model.getId());
-	}
+    /**
+     * Fetches all user's boards.
+     *
+     * @return List of boards
+     */
+    @Transactional(readOnly = true)
+    public List<BoardModel> getBoards() {
+        List<BoardModel> result = new LinkedList<>();
+        List<BoardEntity> list = boardRepository.findAll();
+        list.forEach(entity -> result.add(EntityModelConverter.getModel(entity)));
+        return result;
+    }
 
-	@Transactional(readOnly = true)
-	public List<PersonModel> getParticipantsByBoardId(Long id) {
-		List<PersonModel> result = new ArrayList<>();
-		personRepository.findAllByBoardId(id).forEach(e -> result.add(getModel(e)));
+    /**
+     * Get BoardModel by ID.
+     *
+     * @return BoardModel instance or null if not found
+     */
+    @Transactional(readOnly = true)
+    public BoardModel findBoardById(Long id) {
+        Optional<BoardEntity> entity = boardRepository.findById(id);
+        return entity.map(EntityModelConverter::getModel).orElse(null);
+    }
 
-		return result;
-	}
+    /**
+     * Fetches board's participants and appends them to the board model.
+     *
+     * @param model BoardModel instance
+     * @return Same instance with participants
+     */
+    @Transactional(readOnly = true)
+    public BoardModel loadParticipants(BoardModel model) {
+        LOG.debug("loadParticipants: Participants in model before fetching:" + model.getParticipants().size());
+        model.getParticipants().clear();
+        personRepository.findAllByBoardId(model.getId()).forEach(e -> model.addParticipant(EntityModelConverter.getModel(e)));
+        LOG.debug("loadParticipants: Participants in model after fetching:" + model.getParticipants().size());
+        return model;
+    }
 
-	@Transactional
-	public List<PersonModel> getPersons() {
-		return personRepository.findAll().stream().map(this::getModel).collect(Collectors.toList());
-	}
+    /**
+     * Fetches board's participants
+     *
+     * @param model BoardModel instance
+     * @return List of participants
+     */
+    @Transactional(readOnly = true)
+    public List<PersonModel> getParticipants(BoardModel model) {
+        return getParticipantsByBoardId(model.getId());
+    }
 
-	/**
-	 * Fetched person bu its ID
-	 * @param id	Person ID
-	 * @return		PersonModel instance or null if the person is not found.
-	 */
-	@Transactional(readOnly = true)
-	public PersonModel findPersonById(Long id){
-		Optional<PersonEntity> entity = personRepository.findById(id);
-		if(entity.isEmpty()) {
-			return null;
-		}
-		return getModel(entity.get());
-	}
+    /**
+     * Fetches board's participants by board ID.
+     *
+     * @param id Board ID.
+     * @return List of participants
+     */
+    @Transactional(readOnly = true)
+    public List<PersonModel> getParticipantsByBoardId(Long id) {
+        List<PersonModel> result = new ArrayList<>();
+        personRepository.findAllByBoardId(id).forEach(e -> result.add(EntityModelConverter.getModel(e)));
 
-	@Transactional
-	public PersonModel save(PersonModel model) {
-		LOG.debug("Start PersonModel saving ");
-		PersonEntity entity = getEntity(model);
-		entity = personRepository.saveAndFlush(entity);
-		model = getModel(entity);
-		LOG.debug("End PersonModel saving");
-		return model;
-	}
+        return result;
+    }
 
-	@Transactional
-	public BoardModel save(BoardModel model, boolean participants) {
-		LOG.debug("Start board saving ");
-		LOG.debug("Participants size:" + model.getParticipants().size());
-		BoardEntity entity = getEntity(model);
-		if (participants) {
-			for (PersonModel person : model.getParticipants()) {
-				PersonEntity pe = getEntity(person);
-				// Should persist new entity?
-				if (pe.getId() == null) {
-					pe = personRepository.save(pe);
-					person.setId(pe.getId());
-				}
-				// add to the board
-				entity.addParticipant(pe);
-			}
-			LOG.debug("Participants: " + model.getParticipants().toString());
-		}
+    /**
+     * Fetches all registered in application participants.
+     *
+     * @return List of participants
+     */
+    @Transactional
+    public List<PersonModel> getPersons() {
+        return personRepository.findAll().stream().map(EntityModelConverter::getModel).collect(Collectors.toList());
+    }
 
-		entity.initUpdateTime();
-		LOG.debug("Entity: " + entity.toString());
-		entity = boardRepository.saveAndFlush(entity);
-		BoardModel result = getModel(entity);
-		if (participants) {
-			result.setParticipants(model.getParticipants());
-		}
-		LOG.debug("Entity saved ");
-		LOG.debug("Participants in returned model: " + result.getParticipants().toString());
-		return result;
-	}
+    /**
+     * Fetches person by its ID
+     *
+     * @param id Person ID
+     * @return PersonModel instance or null if the person is not found.
+     */
+    @Transactional(readOnly = true)
+    public PersonModel findPersonById(Long id) {
+        Optional<PersonEntity> entity = personRepository.findById(id);
+        if (entity.isEmpty()) {
+            return null;
+        }
+        return EntityModelConverter.getModel(entity.get());
+    }
 
-	@Transactional
-	public void save(BoardItemModel model) {
-		LOG.debug("Start BoardItemModel save");
-		BoardItemEntity entity = getEntity(model);
-		// Reload the board
-		LOG.debug("BoardItemModel: Reload the board: " + model.getBoard().getId());
-		BoardEntity board = boardRepository.getOne(model.getBoard().getId());
-		board.initUpdateTime();
-		board = boardRepository.save(board);
-		entity.setBoard(board);
-		// reload participants
-		LOG.debug("BoardItemModel: Reload the participant: " + model.getPerson().getId());
-		PersonEntity person = personRepository.getOne(model.getPerson().getId());
-		entity.setPerson(person);
+    /**
+     * Creates or updates a PersonModel instance in database.
+     *
+     * @param model PersonModel instance
+     * @return New PersonModel's instance, the copy of what is saved in database.
+     */
+    @Transactional
+    public PersonModel save(PersonModel model) {
+        LOG.debug("Start PersonModel saving ");
+        PersonEntity entity = EntityModelConverter.getEntity(model);
+        entity = personRepository.saveAndFlush(entity);
+        model = EntityModelConverter.getModel(entity);
+        LOG.debug("End PersonModel saving");
+        return model;
+    }
 
-		LOG.debug(">>> Start BoardItemModel saving ");
-		itemRepository.saveAndFlush(entity);
-		LOG.debug(">>> Saved BoardItemModel ");
-	}
+    /**
+     * Creates or updates a BoardModel instance with participants in database.
+     * Participants' saving is optional.
+     *
+     * @param model        BoardModel instance
+     * @param participants Flag saying if attached participants must be saved as well.
+     * @return
+     */
+    @Transactional
+    public BoardModel save(BoardModel model, boolean participants) {
+        LOG.debug("Start board saving ");
+        LOG.debug("Participants size:" + model.getParticipants().size());
+        BoardEntity entity = EntityModelConverter.getEntity(model);
+        if (participants) {
+            for (PersonModel person : model.getParticipants()) {
+                PersonEntity pe = EntityModelConverter.getEntity(person);
+                // Should persist new entity?
+                if (pe.getId() == null) {
+                    pe = personRepository.save(pe);
+                    person.setId(pe.getId());
+                }
+                // add to the board
+                entity.addParticipant(pe);
+            }
+            LOG.debug("Participants: " + model.getParticipants().toString());
+        }
 
-	@Transactional(readOnly = true)
-	public BoardModel loadItems(BoardModel model) {
-		List<BoardItemEntity> items = itemRepository.findAllByBoardId(model.getId());
-		if (!items.isEmpty()) {
-			model.setItems(items.stream().map(e -> {
-				BoardItemModel i = getModel(e);
-				i.setBoard(model);
-				return i;
-			}).collect(Collectors.toList()));
-		}
-		return model;
-	}
+        entity.initUpdateTime();
+        LOG.debug("Entity: " + entity.toString());
+        entity = boardRepository.saveAndFlush(entity);
+        BoardModel result = EntityModelConverter.getModel(entity);
+        if (participants) {
+            result.setParticipants(model.getParticipants());
+        }
+        LOG.debug("Entity saved ");
+        LOG.debug("Participants in returned model: " + result.getParticipants().toString());
+        return result;
+    }
 
-	/**
-	 * Fetches board items.
-	 *
-	 * @param model Instance of BoardModel
-	 * @return List of BoardItemModels
-	 */
-	@Transactional(readOnly = true)
-	public List<BoardItemModel> getItems(BoardModel model) {
-		List<BoardItemEntity> items = itemRepository.findAllByBoardId(model.getId());
-		List<BoardItemModel> result = new ArrayList<>();
-		if (!items.isEmpty()) {
-			items.forEach(e -> {
-				BoardItemModel m = getModel(e);
-				m.setBoard(model);
-				result.add(m);
-			});
-		}
-		return result;
-	}
+    /**
+     * Creates or updated a BoardItemModel instance in database.
+     *
+     * @param model BoardItemModel instance
+     */
+    @Transactional
+    public void save(BoardItemModel model) {
+        LOG.debug("Start BoardItemModel save");
+        BoardItemEntity entity = EntityModelConverter.getEntity(model);
+        // Reload the board
+        LOG.debug("BoardItemModel: Reload the board: " + model.getBoard().getId());
+        BoardEntity board = boardRepository.getOne(model.getBoard().getId());
+        board.initUpdateTime();
+        board = boardRepository.save(board);
+        entity.setBoard(board);
+        // reload participants
+        LOG.debug("BoardItemModel: Reload the participant: " + model.getPerson().getId());
+        PersonEntity person = personRepository.getOne(model.getPerson().getId());
+        entity.setPerson(person);
 
-	/**
-	 * Fetches item in database by its ID.
-	 * @param id	Item id
-	 * @return Model instance or null id item is not found.
-	 */
-	@Transactional(readOnly = true)
-	public BoardItemModel findItemById(Long id ) {
-		Optional<BoardItemEntity> option = itemRepository.findById(id);
-		return option.map(this::getModel).orElse(null);
-	}
+        LOG.debug(">>> Start BoardItemModel saving ");
+        itemRepository.saveAndFlush(entity);
+        LOG.debug(">>> Saved BoardItemModel ");
+    }
 
-	/**
-	 * Retrieves a list of SettingModel objects.
-	 * 
-	 * @return list of stored settings.
-	 */
-	@Transactional(readOnly = true)
-	public List<SettingModel> getSettings() {
-		List<SettingModel> result = new ArrayList<>();
-		List<SettingEntity> items = settingRepository.findAll();
-		if (!items.isEmpty()) {
-			result.addAll(items.stream().map(this::getModel).collect(Collectors.toList()));
-		}
+    /**
+     * Fetches board's items in database and append them to the passed in parameter BoardModel instance
+     *
+     * @param model BoardModel instance
+     * @return BoardModel with attached items
+     */
+    @Transactional(readOnly = true)
+    public BoardModel loadItems(BoardModel model) {
+        List<BoardItemModel> itemsList = getItems(model);
+        if (!itemsList.isEmpty()) {
+            model.setItems(itemsList);
+        }
+        return model;
+    }
 
-		return result;
-	}
+    /**
+     * Fetches board's items in database
+     *
+     * @param model BoardModel instance
+     * @return List of items.
+     */
+    @Transactional(readOnly = true)
+    public List<BoardItemModel> getItems(BoardModel model) {
+        List<BoardItemEntity> items = itemRepository.findAllByBoardId(model.getId());
+        List<BoardItemModel> result = new ArrayList<>();
+        if (!items.isEmpty()) {
+            items.forEach(e -> {
+                BoardItemModel m = EntityModelConverter.getModel(e);
+                m.setBoard(model);
+                result.add(m);
+            });
+        }
+        return result;
+    }
 
-	/**
-	 * Saves a list of models in DB and returns a new list of models synced with DB.
-	 * 
-	 * @param list List of SettingModel
-	 * @return List of SettingModel or empty list in case of error.
-	 */
-	@Transactional
-	public List<SettingModel> save(List<SettingModel> list) {
-		List<SettingEntity> entities, saved;
-		entities = list.stream().map(this::getEntity).collect(Collectors.toList());
+    /**
+     * Fetches item in database by its ID.
+     *
+     * @param id Item id
+     * @return Model instance or null id item is not found.
+     */
+    @Transactional(readOnly = true)
+    public BoardItemModel findItemById(Long id) {
+        Optional<BoardItemEntity> option = itemRepository.findById(id);
+        return option.map(EntityModelConverter::getModel).orElse(null);
+    }
 
-		saved = settingRepository.saveAll(entities);
-		return saved.stream().map(this::getModel).collect(Collectors.toList());
+    /**
+     * Retrieves a list of SettingModel objects.
+     *
+     * @return list of stored settings.
+     */
+    @Transactional(readOnly = true)
+    public List<SettingModel> getSettings() {
+        List<SettingModel> result = new ArrayList<>();
+        List<SettingEntity> items = settingRepository.findAll();
+        if (!items.isEmpty()) {
+            result.addAll(items.stream().map(EntityModelConverter::getModel).collect(Collectors.toList()));
+        }
 
-	}
+        return result;
+    }
 
-	@Transactional
-	public void removeBoard(BoardModel board) {
-		boardRepository.deleteById(board.getId());
-	}
+    /**
+     * Saves a list of SettingModel instances in database and returns a new list of models synced with DB.
+     *
+     * @param list List of SettingModel instances.
+     * @return List of SettingModel or empty list in case of error.
+     */
+    @Transactional
+    public List<SettingModel> save(List<SettingModel> list) {
+        List<SettingEntity> entities, saved;
+        entities = list.stream().map(EntityModelConverter::getEntity).collect(Collectors.toList());
 
-	/**
-	 * Removes person
-	 * @param model PersonModel instance
-	 */
-	@Transactional
-	public void removePerson(PersonModel model) {
-		personRepository.deleteById(model.getId());
-	}
+        saved = settingRepository.saveAll(entities);
+        return saved.stream().map(EntityModelConverter::getModel).collect(Collectors.toList());
 
-	/**
-	 * Removes persons items for some board.
-	 * @param persons List of persons ID
-	 * @param boardId Board ID
-	 */
-	@Transactional
-	public void removePersonItems(List<Long> persons, Long boardId) {
-		LOG.debug("Start removePersonItems");
-		LOG.debug("Items to remove for persons: " + persons.toString());
-		LOG.debug("Items to remove for Board: " + boardId);
-		persons.forEach( p -> itemRepository.removeByBoardAndPerson(boardId, p));
-	}
+    }
 
+    /**
+     * Removes board from database.
+     * As database is relational that will removed related items and participants.
+     *
+     * @param board BoardModel instance
+     */
+    @Transactional
+    public void removeBoard(BoardModel board) {
+        boardRepository.deleteById(board.getId());
+    }
 
-	// Converters
+    /**
+     * Removes person from database.
+     * This will remove related items and board belonging
+     *
+     * @param model PersonModel instance
+     */
+    @Transactional
+    public void removePerson(PersonModel model) {
+        personRepository.deleteById(model.getId());
+    }
 
-	public BoardEntity getEntity(BoardModel model) {
-		BoardEntity entity = new BoardEntity();
-		entity.setId(model.getId());
-		entity.setName(model.getName());
-		entity.setDescription(model.getDescription());
-		entity.setCreation(model.getCreation());
-		entity.setUpdate(model.getUpdate());
-		entity.setCurrency(model.getCurrencyCode());
-		return entity;
-	}
-
-	public BoardModel getModel(BoardEntity entity) {
-		BoardModel model = new BoardModel();
-		model.setId(entity.getId());
-		model.setName(entity.getName());
-		model.setDescription(entity.getDescription());
-		model.setCreation(entity.getCreation());
-		model.setUpdate(entity.getUpdate());
-		model.setCurrency(entity.getCurrency());
-
-		return model;
-	}
-
-	public PersonEntity getEntity(PersonModel model) {
-		PersonEntity entity = new PersonEntity();
-		entity.setId(model.getId());
-		entity.setName(model.getName());
-
-		return entity;
-	}
-
-	public PersonModel getModel(PersonEntity source) {
-		PersonModel target = new PersonModel();
-		target.setId(source.getId());
-		target.setName(source.getName());
-
-		return target;
-	}
-
-	public BoardItemEntity getEntity(BoardItemModel source) {
-		BoardItemEntity target = new BoardItemEntity();
-		target.setId(source.getId());
-		target.setTitle(source.getTitle());
-		target.setAmount(source.getAmount());
-		target.setDate(source.getDate());
-		target.setPerson(getEntity(source.getPerson()));
-		target.setBoard(getEntity(source.getBoard()));
-		return target;
-	}
-
-	public BoardItemModel getModel(BoardItemEntity source) {
-		BoardItemModel target = new BoardItemModel();
-		target.setId(source.getId());
-		target.setTitle(source.getTitle());
-		target.setAmount(source.getAmount());
-		target.setDate(source.getDate());
-		target.setPerson(getModel(source.getPerson()));
-		target.setBoard(getModel(source.getBoard()));
-		return target;
-	}
-
-	public SettingEntity getEntity(SettingModel source) {
-		SettingEntity target = new SettingEntity();
-		target.setId(source.getId());
-		target.setName(source.getName());
-		target.setValue(source.getValue());
-
-		return target;
-	}
-
-	public SettingModel getModel(SettingEntity source) {
-		SettingModel target = new SettingModel();
-		target.setId(source.getId());
-		target.setName(source.getName());
-		target.setValue(source.getValue());
-
-		return target;
-	}
-	
-
-	/*
-	 * Getters / Setters
-	 */
-
-
-	@Autowired
-	public void setBoardRepository(BoardRepository boardRepository) {
-		this.boardRepository = boardRepository;
-	}
-
-	@Autowired
-	public void setPersonRepository(PersonRepository personRepository) {
-		this.personRepository = personRepository;
-	}
-
-	@Autowired
-	public void setItemRepository(BoardItemRepository itemRepository) {
-		this.itemRepository = itemRepository;
-	}
-
-	@Autowired
-	public void setSettingRepository(SettingRepository settingRepository) {
-		this.settingRepository = settingRepository;
-	}
-
-
+    /**
+     * Removes persons items for some board.
+     * @deprecated Replaced by database trigger
+     * @param persons List of persons ID
+     * @param boardId Board ID
+     */
+    @Deprecated
+    @Transactional
+    public void removePersonItems(List<Long> persons, Long boardId) {
+        LOG.debug("Start removePersonItems");
+        LOG.debug("Items to remove for persons: " + persons.toString());
+        LOG.debug("Items to remove for Board: " + boardId);
+        persons.forEach(p -> itemRepository.removeByBoardAndPerson(boardId, p));
+    }
 }

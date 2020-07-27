@@ -1,4 +1,4 @@
-package com.kderyabin.core.model;
+package com.kderyabin.web.model;
 
 
 import java.util.UUID;
@@ -21,17 +21,11 @@ import lombok.ToString;
 public class UserModel {
 	
     private String id;
-
     private String name;
-    
     private String login;
-    
     private String pwd;
-
 	private Boolean isConfirmed;
-    
     private String token;
-    
 
 	public UserModel() {
 		super();
@@ -44,7 +38,7 @@ public class UserModel {
 	}
 	
 	/**
-	 * 
+	 * Generates and sets an ID in UUID format.
 	 */
 	public void generateId() {
 		id = UUID.randomUUID().toString();

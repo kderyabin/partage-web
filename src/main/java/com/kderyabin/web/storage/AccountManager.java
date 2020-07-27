@@ -1,18 +1,17 @@
 package com.kderyabin.web.storage;
 
-import com.kderyabin.core.model.MailActionModel;
-import com.kderyabin.core.model.UserModel;
+import com.kderyabin.web.error.MailTokenNotFoundException;
+import com.kderyabin.web.error.UserNotFoundException;
+import com.kderyabin.web.model.MailActionModel;
+import com.kderyabin.web.model.UserModel;
 import com.kderyabin.web.storage.entity.MailActionEntity;
 import com.kderyabin.web.storage.entity.UserEntity;
 import com.kderyabin.web.storage.repository.MailActionRepository;
 import com.kderyabin.web.storage.repository.UserRepository;
-import com.kderyabin.web.error.MailTokenNotFoundException;
-import com.kderyabin.web.error.UserNotFoundException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -20,19 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Manages interaction with DB.
+ * Manages interaction with main database.
  */
 @Service
 public class AccountManager {
@@ -65,6 +62,13 @@ public class AccountManager {
         this.emf = emf;
     }
 
+    /**
+     * Reads some data from a file.
+     *
+     * @param inputStream Initialized input stream to read from
+     * @return Content of the file
+     * @throws IOException
+     */
     private ArrayList<String> readFromInputStream(InputStream inputStream) throws IOException {
         ArrayList<String> result = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -76,6 +80,12 @@ public class AccountManager {
         return result;
     }
 
+    /**
+     * Returns user database name
+     *
+     * @param userId User id
+     * @return User database name
+     */
     public String getUserWorkspaceName(String userId) {
         return String.format(userDbNamePattern, userId);
     }
@@ -101,16 +111,18 @@ public class AccountManager {
 
     /**
      * Generates SQL for DB schema creation.
+     *
      * @param databaseName Database name.
      * @return SQL statement.
      */
-    public String getDbCreateSQL(String databaseName){
-        // Common for H2 and MySQL. May be add a switch for other DB types.
+    public String getDbCreateSQL(String databaseName) {
+        // Common for H2 and MySQL.
         return String.format("create schema if not exists `%s`", databaseName);
     }
 
     /**
      * Create user database with tables.
+     *
      * @param userId User id
      */
     public void createUserWorkspace(String userId) {
@@ -150,6 +162,13 @@ public class AccountManager {
         LOG.debug("End createUserSpace");
     }
 
+    /**
+     * Verifies if user exists in database.
+     * Based on Example usage that mean all non null fields will be used to query the database.
+     *
+     * @param model UserModel instance
+     * @return TRUE if user exists FALSE otherwise
+     */
     @Transactional(readOnly = true)
     public boolean isUserExists(UserModel model) {
         Example<UserEntity> e = Example.of(getEntity(model));
@@ -172,13 +191,13 @@ public class AccountManager {
     /**
      * Finds user in DB by login.
      *
-     * @param login User login.
+     * @param id User ID.
      * @return UserModel instance or null if user is not found.
      */
     @Transactional(readOnly = true)
     public UserModel findUserById(String id) {
         Optional<UserEntity> entity = userRepository.findById(id);
-        if(entity.isEmpty()) {
+        if (entity.isEmpty()) {
             return null;
         }
         return getModel(entity.get());
@@ -219,7 +238,7 @@ public class AccountManager {
     public MailActionModel create(UserModel model) {
         LOG.debug("Start account creation");
 
-        if(model.getId() == null) {
+        if (model.getId() == null) {
             model.generateId();
         }
 

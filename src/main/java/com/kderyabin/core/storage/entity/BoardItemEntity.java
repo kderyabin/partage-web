@@ -1,18 +1,21 @@
 package com.kderyabin.core.storage.entity;
 
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.Objects;
-
-import javax.persistence.*;
-
-import com.kderyabin.core.model.BoardPersonTotal;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.Objects;
+
+/**
+ * Expenses table mapping.
+ */
 @ToString
+@Getter
+@Setter
 @Entity
 @Table(name = "item")
 @NamedQuery(
@@ -39,39 +42,40 @@ import lombok.ToString;
         )
 }
 )
-
 public class BoardItemEntity {
-    @Getter
-    @Setter
+    /**
+     * Table ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id", nullable = false)
     private Long id;
-
-    @Getter
-    @Setter
+    /**
+     * Item title
+     */
     @Column(name = "item_title", nullable = false, length = 50)
     private String title;
-
-    @Getter
+    /**
+     * Amount
+     */
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
-
-    @Getter
-    @Setter
+    /**
+     * The date of payment
+     */
     @Column(name = "pay_date", nullable = false)
     private Date date = new Date(System.currentTimeMillis());
-
+    /**
+     * Person to whom the expense is attached
+     */
     @ToString.Exclude
-    @Getter
-    @Setter
     @ManyToOne
     @JoinColumn(name = "person_id", foreignKey = @ForeignKey(name = "fk_person_id"))
     private PersonEntity person;
-
+    /**
+     * Related board
+     */
     @ToString.Exclude
-    @Getter
-    @Setter
     @ManyToOne
     @JoinColumn(name = "board_id", foreignKey = @ForeignKey(name = "fk_board_id"))
     private BoardEntity board;
@@ -90,7 +94,6 @@ public class BoardItemEntity {
     public void setAmount(String amount) {
         this.amount = new BigDecimal(amount);
     }
-
 
     @Override
     public boolean equals(Object o) {

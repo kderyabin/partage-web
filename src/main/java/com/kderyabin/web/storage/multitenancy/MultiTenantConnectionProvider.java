@@ -12,30 +12,42 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Multitenancy connection provider implementation.
+ */
 public class MultiTenantConnectionProvider extends AbstractMultiTenantConnectionProvider {
 
     final private Logger LOG = LoggerFactory.getLogger(MultiTenantConnectionProvider.class);
 
+    /**
+     * Map of connection providers.
+     */
     private final Map<String, ConnectionProvider> connectionProviderMap = new HashMap<>();
 
-//    @Autowired
-//    DataSource dataSource;
-
+    /**
+     * Constructor.
+     * Sets default connection provider.
+     */
     public MultiTenantConnectionProvider() {
         addTenantConnectionProvider(TenantContext.DEFAULT_TENANT_IDENTIFIER);
     }
 
+    /**
+     * Loads from the system connection settings.
+     * Adjusts a database name when access to user database is required.
+     * @param tenantId tenant ID
+     */
     private void addTenantConnectionProvider(String tenantId) {
         LOG.info(">>> Initializing tenant with Id: " + tenantId);
         Properties properties = new Properties();
         try {
-            //LOG.info(">>> DataSource class name: " + dataSource.getClass().getName());
-            if( tenantId.equals(TenantContext.DEFAULT_TENANT_IDENTIFIER)) {
+
+            if (tenantId.equals(TenantContext.DEFAULT_TENANT_IDENTIFIER)) {
                 properties.load(getClass().getResourceAsStream("/hibernate-db-main.properties"));
             } else {
                 properties.load(getClass().getResourceAsStream("/hibernate-db-user.properties"));
                 String url = String.format(properties.getProperty("hibernate.connection.url"), tenantId);
-                properties.put("hibernate.connection.url",  url);
+                properties.put("hibernate.connection.url", url);
 
             }
             DriverManagerConnectionProviderImpl connectionProvider = new DriverManagerConnectionProviderImpl();
@@ -55,9 +67,9 @@ public class MultiTenantConnectionProvider extends AbstractMultiTenantConnection
 
     @Override
     protected ConnectionProvider selectConnectionProvider(String tenantIdentifier) {
-        LOG.info(">>> selectConnectionProvider for: " + tenantIdentifier);
+        LOG.debug(">>> selectConnectionProvider for: " + tenantIdentifier);
         // Kind of a lazy loading: initialize on request.
-        if(!connectionProviderMap.containsKey(tenantIdentifier)) {
+        if (!connectionProviderMap.containsKey(tenantIdentifier)) {
             addTenantConnectionProvider(tenantIdentifier);
         }
         return connectionProviderMap.get(tenantIdentifier);

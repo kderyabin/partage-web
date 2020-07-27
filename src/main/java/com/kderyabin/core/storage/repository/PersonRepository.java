@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import com.kderyabin.core.storage.entity.PersonEntity;
 
+/**
+ * DAO for persons table.
+ */
 @Repository
 public interface PersonRepository extends JpaRepository<PersonEntity, Long> {
     List<PersonEntity> findAllByBoardId(Long boardId);

@@ -6,24 +6,30 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * Table with user application settings.
+ */
 @ToString
+@Getter @Setter
 @Entity
 @Table(name = "setting")
 public class SettingEntity {
-
+    /**
+     * ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "setting_id", nullable = false)
-    @Getter @Setter
     private Long id;
-
-
-    @Getter @Setter
+    /**
+     * Setting's name
+     */
     @Column(name="setting_name", length = 30, nullable = false, unique = true)
     private String name;
 
-
-    @Getter @Setter
+    /**
+     * Setting's value
+     */
     @Column(name="setting_value")
     private String value;
 

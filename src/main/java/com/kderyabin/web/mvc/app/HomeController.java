@@ -54,7 +54,7 @@ public class HomeController {
      */
     @GetMapping("{lang}/app/{userId}/")
     public String displayHome(Model viewModel, HttpServletRequest request) {
-        List<BoardModel> boards = storageManager.getBoards();
+        List<BoardModel> boards = storageManager.getRecentBoards(30);
         // Enable common buttons in the navbar
         viewModel.addAttribute("navbarBtnParticipantsLink", "participants/");
         viewModel.addAttribute("navbarBtnAddBoardLink", "board/new");

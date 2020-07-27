@@ -8,7 +8,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-
+/**
+ * Model derived from {@link com.kderyabin.core.storage.entity.BoardItemEntity}
+ * @see com.kderyabin.core.storage.entity.BoardItemEntity for detailed description of class fields.
+ */
 @ToString
 @Getter
 @Setter

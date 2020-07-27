@@ -1,5 +1,8 @@
 package com.kderyabin.web.error;
 
+/**
+ * Thrown when user login is already registered in database.
+ */
 public class DupplicateLoginException extends RuntimeException {
     public DupplicateLoginException() {
     }

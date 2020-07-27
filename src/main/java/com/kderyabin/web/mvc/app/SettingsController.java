@@ -1,8 +1,8 @@
 package com.kderyabin.web.mvc.app;
 
-import com.kderyabin.core.model.MailActionModel;
+import com.kderyabin.web.model.MailActionModel;
 import com.kderyabin.core.model.SettingModel;
-import com.kderyabin.core.model.UserModel;
+import com.kderyabin.web.model.UserModel;
 import com.kderyabin.core.services.StorageManager;
 import com.kderyabin.web.bean.Notification;
 import com.kderyabin.web.bean.Settings;

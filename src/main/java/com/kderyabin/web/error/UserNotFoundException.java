@@ -1,5 +1,8 @@
 package com.kderyabin.web.error;
 
+/**
+ * thrown in case if user is not found in database.
+ */
 public class UserNotFoundException extends RuntimeException{
     public UserNotFoundException() {
         super();

@@ -42,12 +42,4 @@ public class SecurityService {
         }
         return hexString.toString();
     }
-    /**
-     * Encrypts token.
-     * @param token
-     * @return
-     */
-    public String getEncryptedToken(String token){
-        return token;
-    }
 }

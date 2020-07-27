@@ -8,24 +8,29 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Table with pending actions triggered by email.
+ * Table with pending actions sent by email.
  */
 @Entity
 @ToString
 @Getter @Setter
 @Table(name = "mail")
 public class MailActionEntity {
+    /**
+     * Action ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mail_id")
     private Long id;
-
+    /**
+     * User triggered the action
+     */
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_id"))
     private UserEntity user;
 
     /**
-     * Action
+     * Action type
      * @see MailAction
      */
     @Enumerated(value = EnumType.STRING)

@@ -6,6 +6,10 @@ import lombok.ToString;
 
 import java.util.Objects;
 
+/**
+ *  Settings model derived from {@link com.kderyabin.core.storage.entity.SettingEntity}
+ * @see com.kderyabin.core.storage.entity.SettingEntity for detailed description of class fields.
+ */
 @ToString
 @Getter @Setter
 public class SettingModel {

@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
+/**
+ * Model derived from {@link com.kderyabin.core.storage.entity.PersonEntity}
+ * @see com.kderyabin.core.storage.entity.PersonEntity for detailed description of class fields.
+ */
 @Getter
 @Setter
 @ToString
@@ -43,7 +46,7 @@ public class PersonModel {
         items.add(item);
     }
 
-    public void removedItem(BoardItemModel item){
+    public void removeItem(BoardItemModel item){
         items.remove(item);
     }
 

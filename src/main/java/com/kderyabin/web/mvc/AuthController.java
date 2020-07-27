@@ -1,14 +1,13 @@
 package com.kderyabin.web.mvc;
 
-import com.kderyabin.core.model.MailActionModel;
-import com.kderyabin.core.model.UserModel;
+import com.kderyabin.web.model.MailActionModel;
+import com.kderyabin.web.model.UserModel;
 import com.kderyabin.web.bean.ResetPassword;
 import com.kderyabin.web.bean.ResetRequest;
 import com.kderyabin.web.bean.Signin;
 import com.kderyabin.web.bean.Signup;
 import com.kderyabin.web.error.MailTokenNotFoundException;
 import com.kderyabin.web.error.UserNotFoundException;
-import com.kderyabin.web.services.MailService;
 import com.kderyabin.web.services.MailWorkerService;
 import com.kderyabin.web.services.SecurityService;
 import com.kderyabin.web.storage.AccountManager;
@@ -17,7 +16,6 @@ import com.kderyabin.web.validator.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,13 +26,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Handles account authentication and creation
@@ -85,7 +80,7 @@ public class AuthController {
     @PostMapping("{lang}/signin")
     public String authenticate(@ModelAttribute Signin model, Model viewModel, HttpServletRequest request) {
 
-        FormValidator<Signin> validator = new SigninValidator();
+        FormValidator<Signin> validator = new FormValidatorImpl<>();
         validator.validate(model);
         if (validator.isValid()) {
             LOG.debug(model.toString());
@@ -229,7 +224,7 @@ public class AuthController {
      */
     @PostMapping("{lang}/password-reset")
     public String resetSendEmail(@PathVariable String lang, @ModelAttribute ResetRequest bean, Model viewModel) {
-        FormValidator<ResetRequest> validator = new ResetRequestValidator();
+        FormValidator<ResetRequest> validator = new FormValidatorImpl<>();
         validator.validate(bean);
         if (validator.isValid()) {
             try {

@@ -12,69 +12,67 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Sharing table mapping.
+ */
 @ToString
+@Getter
+@Setter
 @Entity
 @Table(name = "board")
 @NamedNativeQuery(
-        name="BoardEntity.loadRecent",
+        name = "BoardEntity.loadRecent",
         query = "select b.* from board b order by b.updated desc limit ?1",
         resultClass = BoardEntity.class
 )
 public class BoardEntity {
-	/**
-	 * Board unique Id.
-	 */
+    /**
+     * Board Id.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id", nullable = false)
-    @Getter @Setter
     private Long id;
-    
+
     /**
      * Board name.
      */
-    @Getter @Setter
     @Column(name = "board_name", nullable = false, length = 50)
     private String name;
-    
+
     /**
      * Description of the board.
      */
-    @Getter @Setter
     @Column(name = "description")
     private String description;
 
     /**
      * Currency for the board's items.
      */
-    @Getter @Setter
     @Column(name = "currency", length = 3)
     private String currency;
-    
+
     /**
      * Board's creation time.
      */
-    @Getter @Setter
     @Column(name = "creation", nullable = false)
     private Timestamp creation = new Timestamp(System.currentTimeMillis());
-    
+
     /**
      * Board's update time.
      */
-    @Getter @Setter
     @Column(name = "updated", nullable = false)
     private Timestamp update = new Timestamp(System.currentTimeMillis());
-    
+
     /**
      * Participants of the board.
      */
-    @Getter @Setter
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    @JoinTable( name="board_person",
-                joinColumns = { @JoinColumn( name = "board_id")},
-                inverseJoinColumns = { @JoinColumn( name = "person_id")})
+    @JoinTable(name = "board_person",
+            joinColumns = {@JoinColumn(name = "board_id")},
+            inverseJoinColumns = {@JoinColumn(name = "person_id")})
     private Set<PersonEntity> participants = new LinkedHashSet<>();
-    
+
     /**
      * Board's items (expenses).
      */
@@ -90,26 +88,51 @@ public class BoardEntity {
         this.name = name;
     }
 
-    public boolean addParticipant(PersonEntity participant){
-        //participant.addBoard(this);
+    /**
+     * Adds person to participants list.
+     *
+     * @param participant PersonEntity instance
+     * @return Status of the operation
+     */
+    public boolean addParticipant(PersonEntity participant) {
         return participants.add(participant);
     }
-    public boolean removeParticipant(PersonEntity participant){
-        //participant.removeBoard(this);
+
+    /**
+     * Removes person from participants list.
+     *
+     * @param participant PersonEntity instance
+     * @return Status of the operation
+     */
+    public boolean removeParticipant(PersonEntity participant) {
         return participants.remove(participant);
     }
 
-    public void addItem(BoardItemEntity item){
+    /**
+     * Adds item (expense) to items list.
+     *
+     * @param item BoardItemEntity instance
+     */
+    public void addItem(BoardItemEntity item) {
         item.setBoard(this);
         items.add(item);
     }
 
-    public void removeItem(BoardItemEntity item){
+    /**
+     * Removes item (expense) from items list
+     *
+     * @param item Item to remove
+     */
+    public void removeItem(BoardItemEntity item) {
         item.setBoard(null);
         items.remove(item);
     }
-    public void removeAllItems(){
-        if(null == items) {
+
+    /**
+     * Empties items list.
+     */
+    public void removeAllItems() {
+        if (null == items) {
             return;
         }
         items.forEach(item -> {
@@ -120,17 +143,18 @@ public class BoardEntity {
     }
 
     /**
-     * Returns current timestamp.
+     * Calculates current timestamp.
+     *
      * @return Current timestamp.
      */
-    private Timestamp getTimestamp(){
+    private Timestamp getTimestamp() {
         return new Timestamp(System.currentTimeMillis());
     }
 
     /**
      * Resets the update time for the board.
      */
-    public void initUpdateTime(){
+    public void initUpdateTime() {
         update = getTimestamp();
     }
 

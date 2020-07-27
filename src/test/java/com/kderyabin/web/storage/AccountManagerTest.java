@@ -1,9 +1,8 @@
 package com.kderyabin.web.storage;
 
-import com.kderyabin.core.model.BoardModel;
-import com.kderyabin.core.model.MailActionModel;
+import com.kderyabin.web.model.MailActionModel;
 import com.kderyabin.core.model.PersonModel;
-import com.kderyabin.core.model.UserModel;
+import com.kderyabin.web.model.UserModel;
 import com.kderyabin.core.services.StorageManager;
 import com.kderyabin.web.storage.multitenancy.TenantContext;
 import org.junit.jupiter.api.Test;

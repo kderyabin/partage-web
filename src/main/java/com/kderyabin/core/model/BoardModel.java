@@ -9,6 +9,10 @@ import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.*;
 
+/**
+ * Model derived from {@link com.kderyabin.core.storage.entity.BoardEntity}
+ * @see com.kderyabin.core.storage.entity.BoardEntity for detailed description of class fields.
+ */
 @ToString
 @Getter
 @Setter

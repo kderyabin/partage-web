@@ -1,6 +1,6 @@
 package com.kderyabin.web.services;
 
-import com.kderyabin.core.model.MailActionModel;
+import com.kderyabin.web.model.MailActionModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,6 @@ public class MailWorkerService {
      *
      * @param actionModel ActionModel instance related to the current registration
      * @param lang        User language for email localization.
-     * @param host        Application host.
      */
     public void sendConfirmationEmail(MailActionModel actionModel, String lang) {
         CompletableFuture.runAsync(() -> {

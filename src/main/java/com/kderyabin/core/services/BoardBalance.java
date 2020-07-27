@@ -1,21 +1,26 @@
 package com.kderyabin.core.services;
 
 
+import com.kderyabin.core.model.BoardPersonTotal;
+import com.kderyabin.core.model.PersonModel;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.kderyabin.core.model.BoardPersonTotal;
-import com.kderyabin.core.model.PersonModel;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
 /**
- *
+ * Calculates statistics on board expenses: average amount, spent, overpaid amount and amount of debt to share.
+ * For participants balance see {@link #getBalancePerPerson()}
+ * For the amount of debt to split between participants see {@link #shareBoardTotal()}
+ * Usage:
+ * BoardBalance boardBalance = new BoardBalance();
+ * List<BoardPersonTotal> totals = ... // fetch a list of BoardPersonTotal objects
+ * boardBalance.setTotals(totals);
  */
 @ToString
 @Service
@@ -68,6 +73,7 @@ public class BoardBalance {
             person.setBoardAverage(average);
         }
     }
+
     public boolean isEmpty() {
         return total == null || total.compareTo(BigDecimal.ZERO) == 0;
     }
@@ -76,7 +82,7 @@ public class BoardBalance {
         if (totals.size() > 0) {
             calculateTotal();
             calculateAverage();
-            if(!isEmpty()) {
+            if (!isEmpty()) {
                 populateParticipants();
             }
         }
@@ -99,7 +105,7 @@ public class BoardBalance {
      * Produces  2 dimensional array where column header represents a creditor
      * and row header represents a debtor.
      * Ex.: given the balance for total amount 180 with average 60: Jane=50, Anna=-60, John=10
-     * 
+     * <p>
      * |        |   Jane    |   Anna    |   John    |
      * | Jane   |   0       |   0       |   0       |
      * | Anna   |   50      |   0       |   10      |
@@ -131,7 +137,7 @@ public class BoardBalance {
                 // Does the otherParticipant need to be payed back?
                 if (friendBalance.compareTo(BigDecimal.ZERO) > 0) {
                     // Yes. Needs to be refunded.
-                    LOG.debug("Creditor: " + friendBalance + " Debtor: " + personBalance + "(" + personBalance.abs() +")");
+                    LOG.debug("Creditor: " + friendBalance + " Debtor: " + personBalance + "(" + personBalance.abs() + ")");
                     if (friendBalance.compareTo(personBalance.abs()) > 0) {
                         LOG.debug("Debt can be refunded partially");
                         // The debt is less then amount payed by the otherParticipant so it can be sold partially

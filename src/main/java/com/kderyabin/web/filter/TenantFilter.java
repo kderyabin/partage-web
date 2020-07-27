@@ -21,7 +21,9 @@ import java.util.regex.Pattern;
 
 /**
  * Controls access to the user space and sets tenant ID for DB initialization.
- * Access requirements: session must be active and must contain tenant ID.
+ * Access requirements:
+ * - session must be active
+ * - it must contain tenant ID which is set during user authentication.
  */
 @Component
 public class TenantFilter implements Filter {

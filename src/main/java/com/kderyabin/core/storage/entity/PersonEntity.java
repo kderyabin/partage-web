@@ -11,7 +11,11 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Person's table mapping.
+ */
 @ToString
+@Getter @Setter
 @Entity
 @Table(name = "person")
 @NamedNativeQuery(
@@ -19,27 +23,34 @@ import java.util.Set;
         query = "select p.* from person p inner join board_person bp on bp.person_id = p.person_id where bp.board_id = ?1",
         resultClass = PersonEntity.class)
 public class PersonEntity {
-	@Getter @Setter
+    /**
+     * Table ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id", nullable = false)
     private Long id;
-	
-	@Getter @Setter
+    /**
+     *  Person name
+     */
     @Column(name = "person_name", nullable = false, length = 50)
     private String name;
-	
-	@Getter @Setter
+
+    /**
+     * List of boards in which the person participates.
+     */
     @ToString.Exclude
     @ManyToMany(
             fetch = FetchType.LAZY,
             cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
             mappedBy = "participants")
     private Set<BoardEntity> boards = new LinkedHashSet<>();
-	
-	@Getter @Setter
+
+    /**
+     * Person's items (expenses).
+     */
     @ToString.Exclude
-    @OneToMany(mappedBy = "person", cascade =  {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<BoardItemEntity> items = new LinkedHashSet<>();
 
@@ -58,10 +69,11 @@ public class PersonEntity {
         return boards.remove(boardModel);
     }
 
-    public void addItem(BoardItemEntity item){
+    public void addItem(BoardItemEntity item) {
         items.add(item);
     }
-    public void removeItem(BoardItemEntity item){
+
+    public void removeItem(BoardItemEntity item) {
         items.remove(item);
     }
 

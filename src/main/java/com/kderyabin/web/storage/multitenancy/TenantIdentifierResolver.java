@@ -2,6 +2,9 @@ package com.kderyabin.web.storage.multitenancy;
 
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 
+/**
+ * TenantIdentifierResolver is used internally by Hibernate to choose an appropriate connection provider.
+ */
 public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver {
 
     @Override
