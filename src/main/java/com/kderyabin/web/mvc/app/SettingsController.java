@@ -126,7 +126,7 @@ public class SettingsController {
         viewModel = initFormModel(viewModel, userId, lang, request);
         viewModel.addAttribute("model", bean);
 
-        return "app/settings";
+        return "app/settings.jsp";
     }
 
     /**
@@ -179,7 +179,7 @@ public class SettingsController {
             viewModel.addAttribute("notification", notification);
         }
 
-        return "app/settings";
+        return "app/settings.jsp";
     }
 
     /**

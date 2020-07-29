@@ -66,7 +66,7 @@ public class AuthController {
     @GetMapping("{lang}/signin")
     public String displaySignin() {
 
-        return "signin";
+        return "signin.jsp";
     }
 
     /**
@@ -105,7 +105,7 @@ public class AuthController {
         if (!validator.isValid()) {
             viewModel.addAttribute("errors", validator.getMessages());
         }
-        return "signin";
+        return "signin.jsp";
     }
 
     /**
@@ -115,7 +115,7 @@ public class AuthController {
      */
     @GetMapping("{lang}/signup")
     public String displaySignup() {
-        return "signup";
+        return "signup.jsp";
     }
 
     /**
@@ -142,6 +142,7 @@ public class AuthController {
                 String hashPwd = securityService.getHashedPassword(dto.getPwd().trim());
                 userModel.setPwd(hashPwd);
                 MailActionModel actionModel = accountManager.create(userModel);
+                LOG.debug("Generated mail action: " + actionModel.toString());
                 // Send email
                 mailWorkerService.sendConfirmationEmail(actionModel, lang);
                 accountManager.createUserWorkspace(actionModel.getUser().getId());
@@ -159,7 +160,7 @@ public class AuthController {
             viewModel.addAttribute("errors", validator.getMessages());
         }
 
-        return "signup";
+        return "signup.jsp";
     }
 
     /**
@@ -169,7 +170,7 @@ public class AuthController {
      */
     @GetMapping("{lang}/confirm-email")
     public ModelAndView displayConfirmEmail() {
-        ModelAndView viewModel = new ModelAndView("confirm-email");
+        ModelAndView viewModel = new ModelAndView("confirm-email.jsp");
         List<String> messages = new ArrayList<>();
         messages.add("msg.confirm_email");
 
@@ -202,7 +203,7 @@ public class AuthController {
         List<String> messages = new ArrayList<>();
         messages.add("error.token_validation_not_found");
         viewModel.addAttribute("messages", messages);
-        return "confirm-email";
+        return "confirm-email.jsp";
     }
 
     /**
@@ -212,7 +213,7 @@ public class AuthController {
      */
     @GetMapping("{lang}/password-reset")
     public String displayResetRequest() {
-        return "password-request";
+        return "password-request.jsp";
     }
 
     /**
@@ -238,7 +239,7 @@ public class AuthController {
         if (!validator.isValid()) {
             viewModel.addAttribute("errors", validator.getMessages());
         }
-        return "password-request";
+        return "password-request.jsp";
     }
 
     /**
@@ -265,7 +266,7 @@ public class AuthController {
     @GetMapping("{lang}/password-reset/{token}")
     public String displayPasswordReset(@PathVariable String token, Model viewModel) {
         getValidMailAction(token, MailAction.RESET);
-        return "password-reset";
+        return "password-reset.jsp";
     }
 
     /**
@@ -290,7 +291,7 @@ public class AuthController {
         if (!validator.isValid()) {
             viewModel.addAttribute("errors", validator.getMessages());
         }
-        return "password-reset";
+        return "password-reset.jsp";
     }
 
     /**

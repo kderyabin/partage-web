@@ -1,4 +1,4 @@
-create table board ( board_id integer auto_increment, board_name varchar(50) not null, description varchar(255), creation timestamp not null,currency varchar(3),`update` timestamp not null, primary key (board_id));
+create table board ( board_id integer auto_increment, board_name varchar(50) not null, description varchar(255), creation timestamp not null,currency varchar(3),`updated` timestamp not null, primary key (board_id));
 create table person ( person_id integer auto_increment,  person_name varchar(50) not null,  primary key (person_id));
 create table board_person (  board_id integer not null,  person_id integer not null,  primary key (board_id, person_id));
 create table item ( item_id integer auto_increment,  amount decimal(19,2) not null,  pay_date date not null,  item_title varchar(50) not null,  board_id integer not null,  person_id integer not null,  primary key (item_id));

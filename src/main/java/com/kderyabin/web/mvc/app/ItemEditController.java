@@ -130,7 +130,7 @@ public class ItemEditController {
             session.removeAttribute("notification");
         }
 
-        return "app/item-edit";
+        return "app/item-edit.jsp";
     }
 
     /**
@@ -209,6 +209,6 @@ public class ItemEditController {
                 : messageSource.getMessage("new_entry", null, settingsService.getLanguage());
         viewModel.addAttribute("title", title);
 
-        return "app/item-edit";
+        return "app/item-edit.jsp";
     }
 }

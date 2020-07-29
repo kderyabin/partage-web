@@ -14,7 +14,7 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
 
     @RequestMapping("/error")
     ModelAndView display(HttpServletRequest request) {
-        ModelAndView modelAndView = new ModelAndView("error");
+        ModelAndView modelAndView = new ModelAndView("error.jsp");
         String errorMsg;
         int httpErrorCode = getErrorCode(request);
 

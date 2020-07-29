@@ -120,7 +120,7 @@ public class BoardController {
         scripts.add(StaticResources.JS_DETAILS);
         viewModel.addAttribute("scripts", scripts);
 
-        return "app/details";
+        return "app/details.jsp";
     }
 
     /**
@@ -167,7 +167,7 @@ public class BoardController {
         scripts.add(StaticResources.JS_BALANCE);
         viewModel.addAttribute("scripts", scripts);
 
-        return "app/balance";
+        return "app/balance.jsp";
     }
 
     /**

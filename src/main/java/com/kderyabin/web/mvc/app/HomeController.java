@@ -79,7 +79,7 @@ public class HomeController {
         List<String> stylesheetsExt = new ArrayList<>();
         stylesheetsExt.add("https://fonts.googleapis.com/css2?family=Nothing+You+Could+Do&display=swap");
         viewModel.addAttribute("stylesheetsExt", stylesheetsExt);
-        return "app/starter";
+        return "app/starter.jsp";
     }
 
     public String displayBoards(Model viewModel, HttpServletRequest request) {
@@ -98,6 +98,6 @@ public class HomeController {
         scripts.add(StaticResources.JS_HOME);
 
         viewModel.addAttribute("scripts", scripts);
-        return "app/home";
+        return "app/home.jsp";
     }
 }

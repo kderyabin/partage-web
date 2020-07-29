@@ -1,6 +1,7 @@
 package com.kderyabin.web.model;
 
 
+import java.util.Objects;
 import java.util.UUID;
 
 import com.kderyabin.web.storage.entity.UserEntity;
@@ -42,5 +43,23 @@ public class UserModel {
 	 */
 	public void generateId() {
 		id = UUID.randomUUID().toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		UserModel userModel = (UserModel) o;
+		return Objects.equals(id, userModel.id) &&
+				Objects.equals(name, userModel.name) &&
+				Objects.equals(login, userModel.login) &&
+				Objects.equals(pwd, userModel.pwd) &&
+				Objects.equals(isConfirmed, userModel.isConfirmed) &&
+				Objects.equals(token, userModel.token);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name, login, pwd, isConfirmed);
 	}
 }

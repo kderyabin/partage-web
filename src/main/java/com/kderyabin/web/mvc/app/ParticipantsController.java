@@ -89,7 +89,7 @@ public class ParticipantsController {
         scripts.add(StaticResources.JS_PARTICIPANTS);
         viewModel.addAttribute("scripts", scripts);
 
-        return "app/participants";
+        return "app/participants.jsp";
     }
 
     /**
@@ -139,7 +139,7 @@ public class ParticipantsController {
         viewModel.addAttribute("model", model);
         viewModel.addAttribute("title", model.getName());
 
-        return "app/participant-edit";
+        return "app/participant-edit.jsp";
     }
 
     /**
@@ -191,7 +191,7 @@ public class ParticipantsController {
             viewModel.addAttribute("notification", notification);
         }
 
-        return "app/participant-edit";
+        return "app/participant-edit.jsp";
     }
 
     /**

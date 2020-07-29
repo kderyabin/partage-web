@@ -17,6 +17,9 @@ public class Utils {
      */
     public static Locale getLocaleFromAcceptLanguageHeader(String header){
         Locale defaultLocale = Locale.FRANCE;
+        if(header == null) {
+            return defaultLocale;
+        }
         String[] chunks = header.split(",");
         if (chunks.length == 0) {
             return defaultLocale;

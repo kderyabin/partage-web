@@ -65,6 +65,10 @@ public class AccountManager {
         this.emf = emf;
     }
 
+    public void setUserSchemaFileName(String userSchemaFileName) {
+        this.userSchemaFileName = userSchemaFileName;
+    }
+
     /**
      * Reads some data from a file.
      *
@@ -163,6 +167,7 @@ public class AccountManager {
                 try {
                     list.forEach(sql -> {
                         try {
+                            //LOG.debug("executing SQL: " + sql);
                             connection.createStatement().execute(sql);
                         } catch (SQLException throwables) {
                             LOG.warn(throwables.getMessage());
@@ -178,6 +183,8 @@ public class AccountManager {
 
         entityManager.getTransaction().commit();
         entityManager.close();
+        // Switch back to main database
+        TenantContext.setTenant(TenantContext.DEFAULT_TENANT_IDENTIFIER);
         LOG.debug("End createUserSpace");
     }
 
@@ -221,16 +228,16 @@ public class AccountManager {
     /**
      * Finds user in DB by login.
      *
-     * @param id User ID.
+     * @param login User ID.
      * @return UserModel instance or null if user is not found.
      */
     @Transactional(readOnly = true)
-    public UserModel findUserById(String id) {
-        Optional<UserEntity> entity = userRepository.findById(id);
-        if (entity.isEmpty()) {
+    public UserModel findUserByLogin(String login) {
+        UserEntity entity = userRepository.findByLogin(login);
+        if (entity==null) {
             return null;
         }
-        return getModel(entity.get());
+        return getModel(entity);
     }
 
     /**
@@ -335,7 +342,16 @@ public class AccountManager {
     public MailActionModel findMailActionByToken(String token) {
         return getModel(mailActionRepository.findByToken(token));
     }
-
+    /**
+     * Find an action by token.
+     *
+     * @param user  UserModel instance
+     * @return      MailActionModel instance or null
+     */
+    @Transactional(readOnly = true)
+    public MailActionModel findMailActionByUser(UserModel user) {
+        return getModel(mailActionRepository.findByUser(getEntity(user)));
+    }
     /**
      * Deletes an action in DB.
      *

@@ -119,7 +119,7 @@ public class BoardEditController {
         session.setAttribute("participants", new ArrayList<PersonModel>());
         session.setAttribute(EDIT_MODE, MODE_CREATE);
 
-        return "app/board-edit";
+        return "app/board-edit.jsp";
     }
 
     /**
@@ -154,7 +154,7 @@ public class BoardEditController {
     }
 
     /**
-     * Checks id participant can be added to board.
+     * Checks if participant can be added to board.
      * If yes: adds it to stored in session list of participants
      * If no: outputs the error message which can be handled be the frontend javascript.
      *
@@ -275,7 +275,7 @@ public class BoardEditController {
         session.setAttribute("participants", participants);
         session.setAttribute(EDIT_MODE, MODE_EDIT);
 
-        return "app/board-edit";
+        return "app/board-edit.jsp";
     }
 
     /**
@@ -292,7 +292,7 @@ public class BoardEditController {
             "{lang}/app/{userId}/board/new",
             "{lang}/app/{userId}/board/{boardId}/edit"
     })
-    protected String handleSubmit(
+    public String handleSubmit(
             @PathVariable String lang,
             @PathVariable String userId,
             @PathVariable(required = false) Long boardId,
@@ -354,7 +354,7 @@ public class BoardEditController {
             viewModel.addAttribute("notification", notification);
         }
 
-        return "app/board-edit";
+        return "app/board-edit.jsp";
     }
 
 }
