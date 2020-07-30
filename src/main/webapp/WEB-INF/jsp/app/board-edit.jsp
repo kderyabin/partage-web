@@ -12,9 +12,9 @@
         <form id="form-board-edit" method="post" data-mode="${ editMode }">
             <c:if test="${!empty errors && !empty errors.generic}">
                 <p>
-                <c:forEach items="${ errors.generic }" var="errorMsg">
-                    <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
-                </c:forEach>
+                    <c:forEach items="${ errors.generic }" var="errorMsg">
+                        <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                    </c:forEach>
                 </p>
             </c:if>
             <div class="input-group-column">
@@ -59,7 +59,8 @@
                         <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <ul class="mdc-list list-condensed ${ empty model.participants ? 'hidden' : ''}" id="participants" aria-live="assertive">
+                <ul class="mdc-list list-condensed ${ empty model.participants ? 'hidden' : ''}" id="participants"
+                    aria-live="assertive">
                     <c:if test="${ !empty model.participants}">
                         <c:forEach items="${model.participants}" var="participant">
                             <li class="mdc-list-item" tabindex="0">
@@ -77,37 +78,38 @@
                     </c:if>
                 </ul>
             </div>
-
-            <div class="input-group-column">
-                <label for="person" class="label-inline-block"><fmt:message key="add_new_participant"/></label>
-                <c:if test="${!empty errors && !empty errors.person}">
-                    <c:forEach items="${ errors.person }" var="errorMsg">
-                        <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
-                    </c:forEach>
-                </c:if>
-                <input type="text" name="person" id="person" maxlength="50">
-            </div>
-            <c:if test="${ !empty persons}">
-                <div class="h1 align-center"><fmt:message key="or"/></div>
-
+            <div class="participants-choice">
                 <div class="input-group-column">
-                    <label for="participant" class="label-inline-block"><fmt:message
-                            key="add_registered_participant"/></label>
-                    <c:if test="${!empty errors && !empty errors.participant}">
-                        <c:forEach items="${ errors.participant }" var="errorMsg">
+                    <label for="person" class="label-inline-block"><fmt:message key="add_new_participant"/></label>
+                    <c:if test="${!empty errors && !empty errors.person}">
+                        <c:forEach items="${ errors.person }" var="errorMsg">
                             <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
                         </c:forEach>
                     </c:if>
-                    <select name="participant" id="participant">
-                        <option value=""><fmt:message key="choose_from_the_list"/></option>
-                        <c:forEach items="${persons}" var="person">
-                            <option value="${person.id}">${person.name}</option>
-                        </c:forEach>
-                    </select>
+                    <input type="text" name="person" id="person" maxlength="50">
                 </div>
-            </c:if>
+                <c:if test="${ !empty persons}">
+                    <div class="h1 align-center"><fmt:message key="or"/></div>
+
+                    <div class="input-group-column">
+                        <label for="participant" class="label-inline-block"><fmt:message
+                                key="add_registered_participant"/></label>
+                        <c:if test="${!empty errors && !empty errors.participant}">
+                            <c:forEach items="${ errors.participant }" var="errorMsg">
+                                <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                            </c:forEach>
+                        </c:if>
+                        <select name="participant" id="participant">
+                            <option value=""><fmt:message key="choose_from_the_list"/></option>
+                            <c:forEach items="${persons}" var="person">
+                                <option value="${person.id}">${person.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </c:if>
+            </div>
             <div class="participant-add-button-box">
-                <button  id="participant-add-button" type="submit"
+                <button id="participant-add-button" type="submit"
                         class="mdc-button mdc-button--unelevated button-rounded">
                     <span class="mdc-button__ripple"></span>
                     <fmt:message key="button.add_participant"/>

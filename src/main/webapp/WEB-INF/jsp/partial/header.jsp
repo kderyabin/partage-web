@@ -22,9 +22,7 @@
             <link href="${stylesheet}" rel="stylesheet">
         </c:forEach>
     </c:if>
-    <link href="${contextPath}/css/main.css" rel="stylesheet">
-    <link href="${contextPath}/css/material-components-web.css" rel="stylesheet">
-    <link href="${contextPath}/css/custom.css" rel="stylesheet">
+    <link href="${contextPath}/css/styles.css" rel="stylesheet">
     <c:if test="${!empty stylesheets}">
         <!-- Application stylesheets URLs per page -->
         <c:forEach items="${stylesheets}" var="stylesheet">

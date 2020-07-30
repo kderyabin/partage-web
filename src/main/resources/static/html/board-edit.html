@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons&family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
           rel="stylesheet">
-    <link href="../css/main.css" rel="stylesheet">
-    <link href="../css/material-components-web.css" rel="stylesheet">
-    <link href="../css/custom.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="../images/appIcon.ico">
     <title>New board</title>
 </head>
@@ -73,20 +71,24 @@
                     </li>
                 </ul>
             </div>
-            <div class="input-group-column">
-                <label for="person" class="label-inline-block">New participant</label>
-                <input type="text" name="person" id="person" maxlength="50">
+            <div class="participants-choice">
+                <div class="input-group-column">
+                    <label for="person" class="label-inline-block">New participant</label>
+                    <input type="text" name="person" id="person" maxlength="50">
+                </div>
+
+                    <span class="h1 align-center">OR</span>
+
+                <div class="input-group-column">
+                    <label for="participant" class="label-inline-block">Registered participant</label>
+                    <select name="participant" id="participant">
+                        <option value="">Choose participant</option>
+                        <option value="1">Camille</option>
+                        <option value="2">Christopher</option>
+                    </select>
+                </div>
             </div>
 
-            <span class="h1 align-center">OR</span>
-            <div class="input-group-column">
-                <label for="participant" class="label-inline-block">Registered participant</label>
-                <select name="participant" id="participant">
-                    <option value="">Choose participant</option>
-                    <option value="1">Camille</option>
-                    <option value="2">Christopher</option>
-                </select>
-            </div>
             <div class="participant-add-button-box">
                 <button type="button" class="mdc-button mdc-button--unelevated button-rounded">
                     <span class="mdc-button__ripple"></span> Add participant
