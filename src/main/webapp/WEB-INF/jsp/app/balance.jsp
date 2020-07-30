@@ -45,7 +45,7 @@
                 </tbody>
             </table>
 
-            <c:if test="${! empty refundment}">
+            <c:if test="${!empty refundments}">
                 <h3 class="align-center"><fmt:message key="refundment"/></h3>
                 <p class="h5"><fmt:message key="currency"/>: ${currency}</p>
 

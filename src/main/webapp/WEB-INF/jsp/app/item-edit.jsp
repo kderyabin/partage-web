@@ -63,20 +63,46 @@
                     </c:forEach>
                 </select>
             </div>
-
+            <c:if test="${ model.id != null}">
+                <input type="hidden" id="itemId" name="id" value="${model.id}">
+            </c:if>
             <button id="btn-form-item-submit" type="submit" class="hidden"><fmt:message key="OK"/></button>
         </form>
     </div>
 </main>
-<div class="mdc-dialog">
+<div class="mdc-dialog" id="go-back-dialog">
     <div class="mdc-dialog__container">
         <div class="mdc-dialog__surface"
              role="alertdialog"
              aria-modal="true"
              aria-labelledby="my-dialog-title"
              aria-describedby="my-dialog-content">
-            <div class="mdc-dialog__content" id="my-dialog-content">
+            <div class="mdc-dialog__content">
                 <fmt:message key="msg.confirm_form_exit"/>
+            </div>
+            <div class="mdc-dialog__actions">
+                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label"><fmt:message key="Cancel"/></span>
+                </button>
+                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label"><fmt:message key="OK"/></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-dialog__scrim"></div>
+</div>
+<div class="mdc-dialog" id="delete-dialog">
+    <div class="mdc-dialog__container">
+        <div class="mdc-dialog__surface"
+             role="alertdialog"
+             aria-modal="true"
+             aria-labelledby="my-dialog-title"
+             aria-describedby="my-dialog-content">
+            <div class="mdc-dialog__content">
+                <fmt:message key="msg.confirm_delete_item"/>
             </div>
             <div class="mdc-dialog__actions">
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">

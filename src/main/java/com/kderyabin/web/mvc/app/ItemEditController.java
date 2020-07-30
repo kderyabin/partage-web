@@ -5,6 +5,7 @@ import com.kderyabin.core.model.BoardModel;
 import com.kderyabin.core.model.PersonModel;
 import com.kderyabin.core.services.StorageManager;
 import com.kderyabin.web.bean.Item;
+import com.kderyabin.web.bean.JsonResponseBody;
 import com.kderyabin.web.bean.Notification;
 import com.kderyabin.web.services.SettingsService;
 import com.kderyabin.web.utils.StaticResources;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -73,6 +76,7 @@ public class ItemEditController {
         viewModel.addAttribute("navbarBtnBackLink", String.format("/%s/app/%s/board/%s/details", lang, userId, boardId));
         // Enable save button
         viewModel.addAttribute("navbarBtnSave", true);
+
         // Attach JS scripts
         List<String> scripts = new ArrayList<>();
         scripts.add(StaticResources.JS_DIALOG);
@@ -119,8 +123,12 @@ public class ItemEditController {
         viewModel = initFormModel(viewModel, lang, userId, boardId);
         viewModel.addAttribute("participants", participants);
         viewModel.addAttribute("model", model);
-
         viewModel.addAttribute("title", title);
+
+        if(itemId != null) {
+            // Enable delete button
+            viewModel.addAttribute("navbarBtnDelete", true);
+        }
         HttpSession session = request.getSession(false);
 
         // Notification from a board creation.
@@ -155,7 +163,7 @@ public class ItemEditController {
             @RequestParam(name = "iid", required = false) Long itemId
     ) {
         LOG.info("Start item handleSubmit");
-        LOG.debug("Recived data: " + bean.toString());
+        LOG.debug("Received data: " + bean.toString());
         Notification notification = null;
         FormValidator<Item> validator = new FormValidatorImpl<>();
         validator.validate(bean);
@@ -210,5 +218,47 @@ public class ItemEditController {
         viewModel.addAttribute("title", title);
 
         return "app/item-edit.jsp";
+    }
+
+    /**
+     *
+     * @param bean
+     * @param lang
+     * @param userId
+     * @param boardId
+     * @param request
+     * @return
+     */
+    @PostMapping("{lang}/app/{userId}/board/{boardId}/item/remove")
+    public String removeItem(
+            @ModelAttribute Item bean,
+            @PathVariable String lang,
+            @PathVariable String userId,
+            @PathVariable String boardId,
+            HttpServletRequest request
+    ) {
+        LOG.debug("Removing item with id: " + bean.getId());
+        Locale locale = new Locale(lang);
+        Notification notification;
+        HttpSession session = request.getSession(false);
+        // Default redirect url
+        String url = String.format("/%s/app/%s/board/%s/details", lang, userId, boardId);
+        if (bean.getId() == null) {
+            // Something went wrong - the item id is lost
+            notification = new Notification(messageSource.getMessage("msg.generic_error",null, locale));
+        } else {
+            try {
+                storageManager.removeItemById(bean.getId());
+                notification = new Notification(messageSource.getMessage("msg.item_delete_success",null, locale));
+                LOG.debug("Item with removed with success, id: " + bean.getId());
+            } catch (Exception e) {
+                LOG.warn(e.getMessage());
+                notification = new Notification(messageSource.getMessage("msg.generic_error",null, locale));
+                url = String.format("/%s/app/%s/board/%s/item?iid=%s", lang, userId, boardId, bean.getId());
+            }
+        }
+
+        session.setAttribute("notification", notification);
+        return "redirect:"+url;
     }
 }

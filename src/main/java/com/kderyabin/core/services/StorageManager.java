@@ -362,6 +362,24 @@ public class StorageManager {
     }
 
     /**
+     * Removes item from database.
+     *
+     * @param model BoardItemModel instance
+     */
+    @Transactional
+    public void removeItem(BoardItemModel model) {
+        itemRepository.deleteById(model.getId());
+    }
+    /**
+     * Removes item from database.
+     *
+     * @param id    Item ID
+     */
+    @Transactional
+    public void removeItemById(Long id) {
+        itemRepository.deleteById(id);
+    }
+    /**
      * Removes persons items for some board.
      * @deprecated Replaced by database trigger
      * @param persons List of persons ID

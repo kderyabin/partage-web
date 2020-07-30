@@ -45,9 +45,15 @@
                     <span aria-hidden="true">add</span>
                 </a>
             </c:if>
+            <c:if test="${ navbarBtnDelete }">
+                <button id="navbarBtnDelete" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+                        aria-label="<fmt:message key="delete"/>">
+                    <span aria-hidden="true">delete</span>
+                </button>
+            </c:if>
             <c:if test="${ navbarBtnSave }">
                 <button id="navbarBtnSave" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
-                        aria-label="Save">
+                        aria-label="<fmt:message key="save"/>">
                     <span aria-hidden="true">done</span>
                 </button>
             </c:if>
@@ -62,14 +68,14 @@
                         <li class="mdc-list-item" role="menuitem">
                             <span class="mdc-list-item__ripple"></span>
                             <a href="/${lang}/app/${userId}/settings/" class="mdc-list-item__text">
-                                <fmt:message key="settings"></fmt:message>
+                                <fmt:message key="settings"/>
                             </a>
                         </li>
                         <li role="separator" class="mdc-list-divider"></li>
                         <li class="mdc-list-item" role="menuitem">
                             <span class="mdc-list-item__ripple"></span>
                             <a href="/${lang}/logout" class="mdc-list-item__text">
-                                <fmt:message key="sign_out"></fmt:message></a>
+                                <fmt:message key="sign_out"/></a>
                         </li>
                     </ul>
                 </div>

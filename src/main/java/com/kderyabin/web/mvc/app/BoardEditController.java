@@ -82,9 +82,9 @@ public class BoardEditController {
         // Init "Go back" link
         String userId = (String) session.getAttribute("userId");
         viewModel.addAttribute("navbarBtnBackLink", String.format("/%s/app/%s/", lang, userId));
-
-        // Enable save button
+        // Enable save & delete button
         viewModel.addAttribute("navbarBtnSave", true);
+
 
         // Attach JS scripts
         List<String> scripts = new ArrayList<>();
