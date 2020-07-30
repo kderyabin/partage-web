@@ -12,62 +12,63 @@
     <div class="content-column">
         <h2 class="align-center"><fmt:message key="expenses"/></h2>
         <c:if test="${ isEmpty}">
-            <h3 class="align-center"><fmt:message key="no_data_to_display"/> </h3>
+            <h3 class="align-center"><fmt:message key="no_data_to_display"/></h3>
         </c:if>
 
         <c:if test="${ !isEmpty}">
-        <figure class="highcharts-figure board-balance-chart">
-            <div id="chartContainer"></div>
-        </figure>
+            <figure class="highcharts-figure board-balance-chart">
+                <div id="chartContainer"></div>
+            </figure>
 
-        <h3 class="align-center"><fmt:message key="balance"/></h3>
-        <p class="h5"><fmt:message key="currency"/>: ${currency}</p>
+            <h3 class="align-center"><fmt:message key="balance"/></h3>
+            <p class="h5"><fmt:message key="currency"/>: ${currency}</p>
 
-        <table class="balance-table">
-            <thead>
-            <tr>
-                <th><fmt:message key="participant"/></th>
-                <th><fmt:message key="expenses"/></th>
-                <th><fmt:message key="average"/></th>
-                <th><fmt:message key="balance"/></th>
-            </tr>
-            </thead>
-            <tfoot></tfoot>
-            <tbody>
-            <c:forEach items="${balances}" var="boardPersonTotal">
+            <table class="balance-table">
+                <thead>
                 <tr>
-                    <td>${boardPersonTotal.person.name}</td>
-                    <td>${boardPersonTotal.total}</td>
-                    <td>${boardPersonTotal.boardAverage}</td>
-                    <td>${boardPersonTotal.balance}</td>
+                    <th><fmt:message key="participant"/></th>
+                    <th><fmt:message key="expenses"/></th>
+                    <th><fmt:message key="average"/></th>
+                    <th><fmt:message key="balance"/></th>
                 </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+                </thead>
+                <tfoot></tfoot>
+                <tbody>
+                <c:forEach items="${balances}" var="boardPersonTotal">
+                    <tr>
+                        <td>${boardPersonTotal.person.name}</td>
+                        <td>${boardPersonTotal.total}</td>
+                        <td>${boardPersonTotal.boardAverage}</td>
+                        <td>${boardPersonTotal.balance}</td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
 
+            <c:if test="${! empty refundment}">
+                <h3 class="align-center"><fmt:message key="refundment"/></h3>
+                <p class="h5"><fmt:message key="currency"/>: ${currency}</p>
 
-        <h3 class="align-center"><fmt:message key="refundment"/></h3>
-        <p class="h5"><fmt:message key="currency"/>: ${currency}</p>
-
-        <table class="balance-table">
-            <thead>
-            <tr>
-                <th><fmt:message key="debtor"/></th>
-                <th><fmt:message key="creditor"/></th>
-                <th><fmt:message key="amount"/></th>
-            </tr>
-            </thead>
-            <tfoot></tfoot>
-            <tbody>
-            <c:forEach items="${refundments}" var="refundment">
-                <tr>
-                    <td>${ refundment.debtor }</td>
-                    <td>${ refundment.creditor }</td>
-                    <td>${ refundment.amount }</td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+                <table class="balance-table">
+                    <thead>
+                    <tr>
+                        <th><fmt:message key="debtor"/></th>
+                        <th><fmt:message key="creditor"/></th>
+                        <th><fmt:message key="amount"/></th>
+                    </tr>
+                    </thead>
+                    <tfoot></tfoot>
+                    <tbody>
+                    <c:forEach items="${refundments}" var="refundment">
+                        <tr>
+                            <td>${ refundment.debtor }</td>
+                            <td>${ refundment.creditor }</td>
+                            <td>${ refundment.amount }</td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </c:if>
         </c:if>
     </div>
 </main>

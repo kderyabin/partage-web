@@ -47,9 +47,6 @@ public class AccountManager {
     @Value("${app.user.schema.filename}")
     String userSchemaFileName;
 
-    @Value("${app.database.type}")
-    String databaseType;
-
     @Autowired
     public void setMailActionRepository(MailActionRepository mailActionRepository) {
         this.mailActionRepository = mailActionRepository;
@@ -97,24 +94,6 @@ public class AccountManager {
         return String.format(userDbNamePattern, userId);
     }
 
-    /**
-     * Generates sql for schema (database) choice.
-     * Currently supported types: MYSQL|H2
-     *
-     * @param databaseName Schema (database) name
-     * @return Sql statement.
-     */
-    public String getDatabaseChoiceSQL(String databaseName) {
-
-        switch (databaseType) {
-            case "MYSQL":
-                return String.format("USE `%s`", databaseName);
-            case "H2":
-                return String.format("SET SCHEMA `%s`", databaseName);
-            default:
-                throw new RuntimeException("Database type is undefined in application settings:" + databaseType);
-        }
-    }
 
     /**
      * Generates SQL for DB schema creation.

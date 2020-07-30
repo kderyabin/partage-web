@@ -145,7 +145,6 @@ public class AuthController {
                 LOG.debug("Generated mail action: " + actionModel.toString());
                 // Send email
                 mailWorkerService.sendConfirmationEmail(actionModel, lang);
-                accountManager.createUserWorkspace(actionModel.getUser().getId());
                 return String.format("redirect:/%s/confirm-email", lang);
             } else {
                 validator.addMessage("login", "error.email_in_use");
@@ -190,10 +189,11 @@ public class AuthController {
     @GetMapping("{lang}/confirm-email/{token}")
     public String validateEmail(@PathVariable String lang, @PathVariable String token, Model viewModel, HttpServletRequest request) {
 
-        getValidMailAction(token, MailAction.CONFIRM);
+        MailActionModel actionModel = getValidMailAction(token, MailAction.CONFIRM);
         try {
             // Success
             UserModel user = accountManager.activateAccount(token);
+            accountManager.createUserWorkspace(actionModel.getUser().getId());
             initSessionData(user, request);
             return String.format("redirect:/%s/app/%s/", lang, user.getId());
         } catch (MailTokenNotFoundException e) {

@@ -31,7 +31,7 @@
                     <span class="list-item-info">${item.person.name}</span>
                 </div>
                 <div  class="list-item-currency">
-                    <span class="list-item-title">${item.amount} ${currency}</span>
+                    <span class="list-item-title">${item.amount}&nbsp;${currency}</span>
                     <span class="list-item-info"><fmt:formatDate type="date" dateStyle="long" value="${item.date}"/></span>
                 </div>
             </a>

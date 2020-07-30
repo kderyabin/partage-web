@@ -70,7 +70,7 @@ window.addEventListener('load', () => {
     $("#form-participants").on("submit", (event) => {
         event.preventDefault();
         let dto = {name: "", id: null};
-        if (participantSelect.val() !== "") {
+        if (participantSelect.length > 0 && participantSelect.val() !== "") {
             dto.name = participantSelect.find("option:selected").text();
             dto.id = parseInt(participantSelect.val());
         } else {

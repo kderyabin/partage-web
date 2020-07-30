@@ -7,3 +7,4 @@ alter table board_person  add constraint fk_partcipants_person   foreign key (pe
 alter table board_person  add constraint fk_partcipants_board   foreign key (board_id)   references board (board_id)   on delete cascade;
 alter table item   add constraint fk_items_board   foreign key (board_id)   references board (board_id)   on delete cascade;
 alter table item   add constraint fk_items_person   foreign key (person_id)   references person (person_id)   on delete cascade;
+create trigger delete_person_items after delete on board_person for each row delete from item where person_id = OLD.person_id and board_id = OLD.board_id;

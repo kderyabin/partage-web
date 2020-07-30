@@ -477,7 +477,7 @@ h6, .h6 {
   text-transform: var(--mdc-typography-overline-text-transform, uppercase);
 }
 
-/*# sourceMappingURL=mdc.typography.css.map*//**
+/**
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
@@ -927,7 +927,7 @@ svg.mdc-button__icon {
   --mdc-ripple-fg-opacity: 0.24;
 }
 
-/*# sourceMappingURL=mdc.button.css.map*//**
+/**
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
@@ -1286,7 +1286,7 @@ svg.mdc-button__icon {
   --mdc-ripple-fg-opacity: 0.12;
 }
 
-/*# sourceMappingURL=mdc.card.css.map*//**
+/**
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
@@ -1609,7 +1609,7 @@ svg.mdc-button__icon {
   overflow: hidden;
 }
 
-/*# sourceMappingURL=mdc.dialog.css.map*//**
+/**
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
@@ -1765,7 +1765,7 @@ svg.mdc-button__icon {
   display: inline;
 }
 
-/*# sourceMappingURL=mdc.menu.css.map*//**
+/**
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
@@ -1847,7 +1847,7 @@ svg.mdc-button__icon {
   width: 100%;
 }
 
-/*# sourceMappingURL=mdc.menu-surface.css.map*//**
+/**
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
@@ -2054,8 +2054,7 @@ svg.mdc-button__icon {
 .mdc-icon-button.mdc-ripple-upgraded {
   --mdc-ripple-fg-opacity: 0.12;
 }
-
-/*# sourceMappingURL=mdc.icon-button.css.map*//**
+/**
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
@@ -3297,7 +3296,7 @@ a.mdc-list-item {
   pointer-events: none;
 }
 
-/*# sourceMappingURL=mdc.list.css.map*//**
+/**
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
@@ -3612,7 +3611,7 @@ a.mdc-list-item {
   }
 }
 
-/*# sourceMappingURL=mdc.top-app-bar.css.map*//**
+/**
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
@@ -3860,7 +3859,7 @@ a.mdc-list-item {
   margin-right: 8px;
 }
 
-/*# sourceMappingURL=mdc.snackbar.css.map*//**
+/**
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
@@ -4050,7 +4049,6 @@ a.mdc-list-item {
   background-color: var(--mdc-theme-secondary, #018786) !important;
 }
 
-/*# sourceMappingURL=mdc.theme.css.map*/@charset "UTF-8";
 /**
  * Override material colors
  */
@@ -4198,7 +4196,7 @@ a.mdc-top-app-bar__navigation-icon {
 }
 
 .starter-button {
-	width: 250px;
+	width: auto;
 	padding: 2rem 2.5rem;
 	font-size: 1.5rem;
 }
