@@ -38,8 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BoardCreationIntegrationTest {
     final private Logger LOG = LoggerFactory.getLogger(BoardCreationIntegrationTest.class);
 
-    final private String USER_ID = "52ba882b-07b3-48e2-8aff-8183b20f1266";
-
     private UserModel user;
 
     @Autowired
@@ -51,29 +49,36 @@ public class BoardCreationIntegrationTest {
     @Autowired
     private StorageManager storageManager;
 
+    /**
+     * Initialize test data
+     */
     @BeforeEach
     void setUp() {
+        // Get current user which is inserted during test start up
         user = accountManager.findUserByLogin("konst93@hotmail.com");
+        // Create user database
         accountManager.createUserWorkspace(user.getId());
+        // Populate user database with test data
         accountManager.setUserSchemaFileName("data.user.sql");
         accountManager.populateUserDatabase(user.getId());
     }
 
     /**
-     * Create an empty board
+     * Create new sharing
      * @throws Exception
      */
     @Test
     void boardCreation() throws Exception {
+        // Simulate session data set in session during authentication
         HttpSession session = new MockHttpSession();
-        // Authentication data
         session.setAttribute("user", user);
         session.setAttribute("userId", user.getId());
         session.setAttribute("tenantId", accountManager.getUserWorkspaceName(user.getId()));
-
+        // Common request headers
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept-Language", "en,en-US;q=0.8,fr-FR;q=0.5,en;q=0.3");
 
+        // Fetch sharing form
         String lang = "en";
         MvcResult mvcResult = mockMvc.perform(get("/{lang}/app/{userId}/board/new", lang, user.getId())
                         .session((MockHttpSession) session)
@@ -85,7 +90,7 @@ public class BoardCreationIntegrationTest {
 
         session = mvcResult.getRequest().getSession();
 
-        // Add participant (5,'Anna')
+        // Add participant (5,'Anna') through AJAX request
         mvcResult = mockMvc.perform(post("/{lang}/app/{userId}/board/add-participant", lang, user.getId())
                     .session((MockHttpSession) session)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +102,7 @@ public class BoardCreationIntegrationTest {
                 .andExpect(jsonPath("$.error").value(false))
                 .andReturn();
         session = mvcResult.getRequest().getSession();
-        //  Add participant (10,'Christopher')
+        //  Add another participant (10,'Christopher') through AJAX request
         mvcResult =mockMvc.perform(post("/{lang}/app/{userId}/board/add-participant", lang, user.getId())
                 .session((MockHttpSession) session)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +119,6 @@ public class BoardCreationIntegrationTest {
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
         data.add("name", "Paris");
         data.add("currency", "RUB");
-
         mockMvc.perform(post("/{lang}/app/{userId}/board/new", lang, user.getId())
                 .session((MockHttpSession) session)
                 .params(data)
@@ -122,7 +126,8 @@ public class BoardCreationIntegrationTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-        // Validate in database.
+        // New sharing must be created inn database.
+        // Validate database.
         List<BoardModel> boards = storageManager.getRecentBoards(1);
         assertNotNull(boards.get(0));
         BoardModel savedBoard = boards.get(0);
