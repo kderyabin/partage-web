@@ -36,18 +36,25 @@ public class TenantFilter implements Filter {
     public void setSettingsService(SettingsService settingsService) {
         this.settingsService = settingsService;
     }
+
+    /**
+     * Controls access to user resource, initializes user database configuration and settings.
+     * @param request
+     * @param response
+     * @param chain
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-
-        Pattern pattern = Pattern.compile("^/[a-z]{2}/app/([a-z0-9A-Z\\-]{36})/.*?");
-        Matcher matcher = pattern.matcher(req.getRequestURI());
         TenantContext.setTenant(TenantContext.DEFAULT_TENANT_IDENTIFIER);
-        if(matcher.matches()) {
-            LOG.info("TenantFilter: user space pattern matched");
+        String userId = getUserId(req.getRequestURI());
+        if(userId != null) {
+            LOG.info("TenantFilter: user space pattern matched " + userId);
             HttpSession session = req.getSession( false );
             if(session == null ){
                 LOG.info("TenantFilter: session is not initialized");
@@ -55,18 +62,40 @@ public class TenantFilter implements Filter {
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-            String tenantId = (String) session.getAttribute("tenantId");
-            if(tenantId == null) {
-                LOG.info("TenantFilter: tenantId is not set in session");
+            // Check if resource can accessed  by the current user
+            if( !userId.equals((String)session.getAttribute("userId"))){
+                LOG.warn("TenantFilter: user path mismatches user ID ");
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-            LOG.info("TenantFilter: tenantId is OK in session");
+            // Initialize tenant for database connexion
+            String tenantId = (String) session.getAttribute("tenantId");
+            if(tenantId == null) {
+                LOG.warn("TenantFilter: tenantId is not set in session");
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            LOG.debug("TenantFilter: tenantId is OK in session");
             TenantContext.setTenant(tenantId);
             // Initialize user settings
             initUserSettings(req);
         }
         chain.doFilter(request, response);
+    }
+
+    /**
+     * Get user ID from the path
+     * @param path  Request path
+     * @return      User ID or null if not found
+     */
+    public static String getUserId(String path) {
+        Pattern pattern = Pattern.compile("^/[a-z]{2}/app/([a-z0-9A-Z\\-]{36})/.*?");
+        Matcher matcher = pattern.matcher(path);
+        if(matcher.matches()){
+            return  matcher.group(1);
+        }
+        return null;
     }
 
     /**
