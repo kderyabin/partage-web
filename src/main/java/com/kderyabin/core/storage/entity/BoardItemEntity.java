@@ -1,6 +1,7 @@
 package com.kderyabin.core.storage.entity;
 
 
+import com.kderyabin.core.model.BoardPersonTotal;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

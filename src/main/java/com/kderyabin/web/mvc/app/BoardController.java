@@ -126,7 +126,9 @@ public class BoardController {
     /**
      * Displays board's balance page.
      *
-     * @return Template name
+     * @param viewModel     Model instance
+     * @param boardId       Board ID
+     * @return              Template name
      */
     @GetMapping("{lang}/app/{userId}/board/{boardId}/balance")
     public String displayBalance(Model viewModel, @PathVariable Long boardId) {
@@ -135,12 +137,9 @@ public class BoardController {
         if (model == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        BoardBalance boardBalance = new BoardBalance();
-        // Calculate balance for every participant
-        boardBalance.setTotals(storageManager.getBoardPersonTotal(boardId));
+        BoardBalance boardBalance = BoardBalance.buildFor(storageManager.getBoardPersonTotal(boardId));
         LOG.debug("Balance size: " + boardBalance.getTotals().size());
 
-        boardBalance.shareBoardTotal();
         viewModel.addAttribute("balances", boardBalance.getTotals());
         // Split debts between participants
         List<RefundmentModel> refundments = getShareData(boardBalance, model.getCurrency());

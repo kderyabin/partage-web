@@ -6,8 +6,6 @@ import com.kderyabin.core.model.PersonModel;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,16 +16,13 @@ import java.util.*;
  * For participants balance see {@link #getBalancePerPerson()}
  * For the amount of debt to split between participants see {@link #shareBoardTotal()}
  * Usage:
- * BoardBalance boardBalance = new BoardBalance();
- * List<BoardPersonTotal> totals = ... // fetch a list of BoardPersonTotal objects
- * boardBalance.setTotals(totals);
+ * BoardBalance boardBalance = BoardBalance.forBoard(storageManager.getBoardPersonTotal(boardId));
  */
 @ToString
-@Service
-@Scope("prototype")
 public class BoardBalance {
 
     final private Logger LOG = LoggerFactory.getLogger(BoardBalance.class);
+
     /**
      * List of totals per participants
      */
@@ -50,6 +45,20 @@ public class BoardBalance {
     private Map<PersonModel, Map<PersonModel, BigDecimal>> share = new HashMap<>();
 
     /**
+     * BoardBalance builder
+     * @param totals
+     * @return
+     */
+    public static BoardBalance buildFor(List<BoardPersonTotal> totals ) {
+        BoardBalance  instance = new BoardBalance();
+        instance.setTotals(totals);
+        instance.init();
+        instance.shareBoardTotal();
+
+        return instance;
+    }
+
+    /**
      * Calculates a total amount of the board.
      */
     public void calculateTotal() {
@@ -57,10 +66,15 @@ public class BoardBalance {
     }
 
     /**
-     *
+     * Calculates average amount of the board.
+     * We loose 1 cent in some cases.
      */
     public void calculateAverage() {
-        average = total.divide(BigDecimal.valueOf(totals.size()), 2, RoundingMode.CEILING);
+        // To avoid rounding problem and bad calculation use scale of 3
+        BigDecimal intermediate = total.divide(BigDecimal.valueOf(totals.size()), 3, RoundingMode.FLOOR);
+        // Truncate by scaling to 2
+        // ex.: 1.987 will be 1.98 and not 1.99
+        average = new BigDecimal(intermediate.toPlainString()).setScale(2, RoundingMode.FLOOR);
     }
 
     /**
@@ -74,10 +88,19 @@ public class BoardBalance {
         }
     }
 
+    /**
+     * Checks if balance is empty.
+     * A balance is considered empty if its total amount is 0 or null.
+     * @return TRUE if empty FALSE otherwise
+     */
     public boolean isEmpty() {
         return total == null || total.compareTo(BigDecimal.ZERO) == 0;
     }
 
+    /**
+     * Calculates all required data.
+     * This method must be called any time the {@link BoardBalance#setTotals(List)} method is used.
+     */
     public void init() {
         if (totals.size() > 0) {
             calculateTotal();
@@ -89,9 +112,10 @@ public class BoardBalance {
     }
 
     /**
-     * Balance per participant based on the average amount.
+     * Returns a map with a Person as a key and amount of the balance as a value.
      * Negative balance means the person owns money.
      * Positive balance means the person payed too much.
+     * @return Map of all persons with their balance
      */
     public Map<PersonModel, BigDecimal> getBalancePerPerson() {
 
@@ -111,10 +135,11 @@ public class BoardBalance {
      * | Anna   |   50      |   0       |   10      |
      * | John   |   0       |   0       |   0       |
      * Ann owes 50 to Jane and 10 to John
+     * </p>
      */
     public void shareBoardTotal() {
         Map<PersonModel, BigDecimal> balances = getBalancePerPerson();
-        LOG.debug(">>> balances mvvm" + balances.toString());
+        LOG.debug(">>> balances: " + balances.toString());
         if (isEmpty()) {
             return;
         }
@@ -172,7 +197,6 @@ public class BoardBalance {
 
     public void setTotals(List<BoardPersonTotal> totals) {
         this.totals = totals;
-        init();
     }
 
     public Map<PersonModel, Map<PersonModel, BigDecimal>> getShare() {
@@ -186,5 +210,4 @@ public class BoardBalance {
     public BigDecimal getAverage() {
         return average;
     }
-
 }
