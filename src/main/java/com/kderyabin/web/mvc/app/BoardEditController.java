@@ -69,7 +69,8 @@ public class BoardEditController {
         String lang = (String) request.getAttribute("lang");
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
-
+        // Load user settings
+        settingsService.load();
         BoardModel model = new BoardModel();
         // Init board currency
         List<Currency> currencies = SettingsService.getAllCurrencies();
@@ -105,12 +106,13 @@ public class BoardEditController {
      */
     @GetMapping("{lang}/app/{userId}/board/new")
     public String displayCreateForm(Model viewModel, HttpServletRequest request) {
+        Locale locale = new Locale((String)request.getAttribute("lang"));
         viewModel = initEditFormModel(viewModel, request);
         viewModel.addAttribute("editMode", MODE_CREATE);
         viewModel.addAttribute("title", messageSource.getMessage(
                 "new_board",
                 null,
-                settingsService.getLanguage()
+                locale
         ));
 
         HttpSession session = request.getSession(false);
@@ -302,6 +304,7 @@ public class BoardEditController {
             )
     {
         LOG.info("Start board handleSubmit");
+        Locale locale = new Locale(lang);
         FormValidator<Board> validator = new FormValidatorImpl<>();
         validator.validate(bean);
         BoardModel model = new BoardModel();
@@ -334,14 +337,18 @@ public class BoardEditController {
                 session.removeAttribute("participants");
                 session.removeAttribute(EDIT_MODE);
                 notification = new Notification(
-                        messageSource.getMessage("msg.board_saved_success", null, settingsService.getLanguage())
+                        messageSource.getMessage("msg.board_saved_success", null, locale)
                 );
                 session.setAttribute("notification", notification);
                 return redirectLink.toString();
 
             } catch (Exception e) {
                 LOG.warn("Failed to save in DB: " + e.getMessage());
-                notification = new Notification(messageSource.getMessage("msg.generic_error", null, settingsService.getLanguage() ));
+                notification = new Notification(messageSource.getMessage(
+                        "msg.generic_error",
+                        null,
+                        locale
+                ));
             }
         }
         viewModel = initEditFormModel(viewModel, request);

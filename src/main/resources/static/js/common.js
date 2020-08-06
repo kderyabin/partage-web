@@ -31,17 +31,14 @@ const Notification = {
 const handleCommonBackButtonEvent = (formSelector) => {
     const form = $(formSelector);
     if(form.length === 0) {
-        console.debug("Form not found: " + formSelector);
         return;
     }
     const dialog = new mdc.dialog.MDCDialog(document.querySelector('.mdc-dialog'));
     if(!dialog) {
-        console.debug("Dialog not found");
         return;
     }
     const backBtn = $("#back-btn");
     if(backBtn.length === 0) {
-        console.debug("Back button not found");
         return;
     }
 

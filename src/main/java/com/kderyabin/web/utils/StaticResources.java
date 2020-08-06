@@ -4,7 +4,9 @@ package com.kderyabin.web.utils;
  * Registry with used CSS and JS scripts.
  */
 public class StaticResources {
-
+	
+	public static final String CSS_HANDWRITE_FONT = "https://fonts.googleapis.com/css2?family=Nothing+You+Could+Do&display=swap";
+	 
     public static final String JS_DIALOG = "mdc.dialog.js";
     public static final String JS_JQUERY = "jquery-3.5.1.js";
     public static final String JS_HOME = "home.js";

@@ -66,7 +66,7 @@ public class SettingsController {
     }
 
     /**
-     * Initilizes settings form model.
+     * Initializes settings form model.
      * @param viewModel
      * @param userId
      * @param lang
@@ -74,9 +74,10 @@ public class SettingsController {
      */
     public Model initFormModel(Model viewModel, String userId, String lang, HttpServletRequest request) {
 
-        Locale locale = settingsService.getLanguage();
-        Locale.setDefault(locale);
 
+        Locale locale = new Locale(lang);
+        // Set default Locale for Java currencies and languages native translation
+        Locale.setDefault(locale);
         List<Locale> languages = settingsService.getAvailableLanguages();
         List<Currency> currencies = SettingsService.getAllCurrencies();
 
@@ -116,9 +117,11 @@ public class SettingsController {
     public String displayForm(Model viewModel, @PathVariable String userId, @PathVariable String lang, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         UserModel user = (UserModel) session.getAttribute("user");
-
+        settingsService.load();
         Settings bean = new Settings();
         bean.setCurrency(settingsService.getCurrency().getCurrencyCode());
+        // Languages set in the settings may differ from lang from the path
+        // It's up to user to choose the language during authentication
         bean.setLanguage(settingsService.getLanguage().getLanguage());
         bean.setLogin(user.getLogin());
         LOG.debug("Bean data: " + bean.toString());
@@ -149,15 +152,21 @@ public class SettingsController {
             HttpServletRequest request
     ) {
         LOG.debug("Received Bean data: " + bean.toString());
+        // Init current Locale which will be used for error cases
+        Locale locale = new Locale(lang);
         FormValidator<Settings> validator = new FormValidatorImpl<>();
         validator.validate(bean);
         Notification notification = null;
         if (validator.isValid()) {
             try {
-                Locale locale = new Locale(bean.getLanguage());
+                Locale localeNew = new Locale(bean.getLanguage());
                 updateSettings(bean);
                 updateLogin(bean, bean.getLanguage(), request);
-                notification = new Notification(messageSource.getMessage("msg.settings_saved_success", null, locale));
+                notification = new Notification(messageSource.getMessage(
+                        "msg.settings_saved_success",
+                        null,
+                        localeNew
+                ));
                 HttpSession session = request.getSession(false);
                 session.setAttribute("notification", notification);
                 // If language has been changed redirect to the right language version
@@ -166,7 +175,11 @@ public class SettingsController {
                 validator.addMessage("login", "error.email_in_use");
             } catch (Exception e) {
                 LOG.warn(e.getMessage());
-                notification = new Notification(messageSource.getMessage("msg.generic_error", null, settingsService.getLanguage()));
+                notification = new Notification(messageSource.getMessage(
+                        "msg.generic_error",
+                        null,
+                        locale
+                ));
             }
         }
         LOG.debug("Bean is not valid");

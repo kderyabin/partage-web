@@ -57,7 +57,7 @@
                     <span aria-hidden="true">done</span>
                 </button>
             </c:if>
-<%--            <c:if test="${ ! empty navbarBtnSettings }">--%>
+           <c:if test="${ ! empty navbarBtnSettings }">
             <div class="mdc-menu-surface--anchor">
                 <button id="settings-btn" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
                         aria-label="<fmt:message key="settings"/>">
@@ -80,7 +80,7 @@
                     </ul>
                 </div>
             </div>
-<%--            </c:if>--%>
+           </c:if>
         </section>
     </nav>
 </header>

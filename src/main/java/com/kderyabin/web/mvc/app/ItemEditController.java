@@ -5,9 +5,7 @@ import com.kderyabin.core.model.BoardModel;
 import com.kderyabin.core.model.PersonModel;
 import com.kderyabin.core.services.StorageManager;
 import com.kderyabin.web.bean.Item;
-import com.kderyabin.web.bean.JsonResponseBody;
 import com.kderyabin.web.bean.Notification;
-import com.kderyabin.web.services.SettingsService;
 import com.kderyabin.web.utils.StaticResources;
 import com.kderyabin.web.validator.FormValidator;
 import com.kderyabin.web.validator.FormValidatorImpl;
@@ -16,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +36,6 @@ public class ItemEditController {
 
     private StorageManager storageManager;
 
-    private SettingsService settingsService;
-
     private MessageSource messageSource;
 
     @Autowired
@@ -51,11 +46,6 @@ public class ItemEditController {
     @Autowired
     public void setStorageManager(StorageManager storageManager) {
         this.storageManager = storageManager;
-    }
-
-    @Autowired
-    public void setSettingsService(SettingsService settingsService) {
-        this.settingsService = settingsService;
     }
 
 
@@ -103,6 +93,7 @@ public class ItemEditController {
             @PathVariable Long boardId,
             @RequestParam(name = "iid", required = false) Long itemId
     ) {
+        Locale locale = new Locale(lang);
         Item model;
         String title;
         if (itemId != null) {
@@ -115,7 +106,7 @@ public class ItemEditController {
             title = model.getTitle();
         } else {
             model = new Item();
-            title = messageSource.getMessage("new_entry", null, settingsService.getLanguage());
+            title = messageSource.getMessage("new_entry", null, locale);
         }
 
         // Get list of all persons registered in all boards for selection list
@@ -164,6 +155,7 @@ public class ItemEditController {
     ) {
         LOG.info("Start item handleSubmit");
         LOG.debug("Received data: " + bean.toString());
+        Locale locale = new Locale(lang);
         Notification notification = null;
         FormValidator<Item> validator = new FormValidatorImpl<>();
         validator.validate(bean);
@@ -192,7 +184,11 @@ public class ItemEditController {
                     LOG.debug("Generated Model: " + model.toString());
                     storageManager.save(model);
                 }
-                notification = new Notification(messageSource.getMessage("msg.item_saved_success",null, settingsService.getLanguage()));
+                notification = new Notification(messageSource.getMessage(
+                        "msg.item_saved_success",
+                        null,
+                        locale
+                ));
                 HttpSession session = request.getSession(false);
                 session.setAttribute("notification", notification);
 
@@ -200,7 +196,11 @@ public class ItemEditController {
 
             } catch (Exception e)  {
                LOG.warn(e.getMessage());
-               notification = new Notification(messageSource.getMessage("msg.generic_error",null, settingsService.getLanguage()));
+               notification = new Notification(messageSource.getMessage(
+                       "msg.generic_error",
+                       null,
+                       locale
+               ));
             }
         }
         viewModel = initFormModel(viewModel, lang, userId, boardId);
@@ -214,7 +214,7 @@ public class ItemEditController {
         }
         String title = itemId != null
                 ? bean.getTitle()
-                : messageSource.getMessage("new_entry", null, settingsService.getLanguage());
+                : messageSource.getMessage("new_entry", null, locale);
         viewModel.addAttribute("title", title);
 
         return "app/item-edit.jsp";

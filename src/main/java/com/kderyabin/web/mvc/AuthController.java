@@ -38,7 +38,6 @@ import java.util.List;
 public class AuthController {
     final private Logger LOG = LoggerFactory.getLogger(AuthController.class);
 
-
     private AccountManager accountManager;
     private SecurityService securityService;
     private MailWorkerService mailWorkerService;
@@ -58,6 +57,11 @@ public class AuthController {
         this.securityService = securityService;
     }
 
+    @GetMapping("/")
+    public String index() {
+        return "redirect:/en/signin";
+    }
+
     /**
      * Display sign in form.
      *
@@ -65,7 +69,6 @@ public class AuthController {
      */
     @GetMapping("{lang}/signin")
     public String displaySignin() {
-
         return "signin.jsp";
     }
 

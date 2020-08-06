@@ -3,7 +3,6 @@ package com.kderyabin.web.mvc.app;
 import com.kderyabin.core.model.BoardModel;
 import com.kderyabin.core.services.StorageManager;
 import com.kderyabin.web.bean.Notification;
-import com.kderyabin.web.services.SettingsService;
 import com.kderyabin.web.utils.StaticResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 public class HomeController {
     final private Logger LOG = LoggerFactory.getLogger(HomeController.class);
 
-    private SettingsService settingsService;
     /**
      * Storage manager to work with user database.
      */
@@ -34,11 +33,6 @@ public class HomeController {
     @Autowired
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
-    }
-
-    @Autowired
-    public void setSettingsService(SettingsService settingsService) {
-        this.settingsService = settingsService;
     }
 
     @Autowired
@@ -53,7 +47,8 @@ public class HomeController {
      * @return Template name.
      */
     @GetMapping("{lang}/app/{userId}/")
-    public String displayHome(Model viewModel, HttpServletRequest request) {
+    public String displayHome(@PathVariable String lang, Model viewModel, HttpServletRequest request) {
+        Locale locale = new Locale(lang);
         List<BoardModel> boards = storageManager.getRecentBoards(30);
         // Enable common buttons in the navbar
         viewModel.addAttribute("navbarBtnParticipantsLink", "participants/");
@@ -62,7 +57,7 @@ public class HomeController {
         viewModel.addAttribute("title", messageSource.getMessage(
                 "title.your_boards",
                 null,
-                settingsService.getLanguage()
+                locale
         ));
         if (boards.isEmpty()) {
             LOG.debug("No boards found. Displaying starter page.");
@@ -77,7 +72,7 @@ public class HomeController {
     public String displayStarter(Model viewModel) {
         // Add custom fonts
         List<String> stylesheetsExt = new ArrayList<>();
-        stylesheetsExt.add("https://fonts.googleapis.com/css2?family=Nothing+You+Could+Do&display=swap");
+        stylesheetsExt.add(StaticResources.CSS_HANDWRITE_FONT);
         viewModel.addAttribute("stylesheetsExt", stylesheetsExt);
         return "app/starter.jsp";
     }

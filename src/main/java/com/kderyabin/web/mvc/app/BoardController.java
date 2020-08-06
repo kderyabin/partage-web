@@ -7,7 +7,6 @@ import com.kderyabin.core.model.RefundmentModel;
 import com.kderyabin.core.services.BoardBalance;
 import com.kderyabin.core.services.StorageManager;
 import com.kderyabin.web.bean.Notification;
-import com.kderyabin.web.services.SettingsService;
 import com.kderyabin.web.utils.StaticResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +33,6 @@ public class BoardController {
 
     private StorageManager storageManager;
 
-    private SettingsService settingsService;
-
     private MessageSource messageSource;
 
     @Autowired
@@ -46,11 +43,6 @@ public class BoardController {
     @Autowired
     public void setStorageManager(StorageManager storageManager) {
         this.storageManager = storageManager;
-    }
-
-    @Autowired
-    public void setSettingsService(SettingsService settingsService) {
-        this.settingsService = settingsService;
     }
 
     /**
@@ -85,6 +77,7 @@ public class BoardController {
             HttpServletRequest request
     ) {
         LOG.debug("Displaying details for board: " + boardId);
+        Locale locale = new Locale(lang);
         BoardModel model = storageManager.findBoardById(boardId);
         if (model == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -98,7 +91,7 @@ public class BoardController {
         if (notification == null) {
             notification = new Notification();
         }
-        notification.addMessage("chart.expenses", messageSource.getMessage("expenses", null, settingsService.getLanguage()));
+        notification.addMessage("chart.expenses", messageSource.getMessage("expenses", null, locale));
 
         viewModel.addAttribute("notification", notification);
 
@@ -131,8 +124,9 @@ public class BoardController {
      * @return              Template name
      */
     @GetMapping("{lang}/app/{userId}/board/{boardId}/balance")
-    public String displayBalance(Model viewModel, @PathVariable Long boardId) {
+    public String displayBalance(Model viewModel, @PathVariable String lang, @PathVariable Long boardId) {
         LOG.debug("Displaying balance for board: " + boardId);
+        Locale locale = new Locale(lang);
         BoardModel model = storageManager.findBoardById(boardId);
         if (model == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -148,8 +142,7 @@ public class BoardController {
         viewModel.addAttribute("chartData", getShareChart(boardBalance));
         // Set translations for JS
         Notification notification = new Notification();
-        Locale language = settingsService.getLanguage();
-        notification.addMessage("amount", messageSource.getMessage("amount", null, language));
+        notification.addMessage("amount", messageSource.getMessage("amount", null, locale));
         viewModel.addAttribute("notification", notification);
 
         viewModel.addAttribute("title", model.getName());

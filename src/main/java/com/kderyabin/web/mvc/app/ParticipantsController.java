@@ -5,7 +5,6 @@ import com.kderyabin.core.services.StorageManager;
 import com.kderyabin.web.bean.JsonResponseBody;
 import com.kderyabin.web.bean.Notification;
 import com.kderyabin.web.bean.Person;
-import com.kderyabin.web.services.SettingsService;
 import com.kderyabin.web.utils.StaticResources;
 import com.kderyabin.web.validator.FormValidator;
 import com.kderyabin.web.validator.FormValidatorImpl;
@@ -25,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Handles display of participants' list, edition and deletion of a participant.
@@ -35,9 +35,6 @@ public class ParticipantsController {
     final private Logger LOG = LoggerFactory.getLogger(ParticipantsController.class);
 
     private StorageManager storageManager;
-
-    private SettingsService settingsService;
-
     private MessageSource messageSource;
 
     @Autowired
@@ -48,11 +45,6 @@ public class ParticipantsController {
     @Autowired
     public void setStorageManager(StorageManager storageManager) {
         this.storageManager = storageManager;
-    }
-
-    @Autowired
-    public void setSettingsService(SettingsService settingsService) {
-        this.settingsService = settingsService;
     }
 
     /**
@@ -69,10 +61,20 @@ public class ParticipantsController {
      * @return Template name.
      */
     @GetMapping("/")
-    public String displayList(Model viewModel, @PathVariable String lang, @PathVariable String userId, HttpServletRequest request){
+    public String displayList(
+            Model viewModel,
+            @PathVariable String lang,
+            @PathVariable String userId,
+            HttpServletRequest request
+    ){
+        Locale locale = new Locale(lang);
         List<PersonModel> participants = storageManager.getPersons();
         viewModel.addAttribute("participants", participants);
-        viewModel.addAttribute("title", messageSource.getMessage("participants", null, settingsService.getLanguage()));
+        viewModel.addAttribute("title", messageSource.getMessage(
+                "participants",
+                null,
+                locale
+        ));
         HttpSession session = request.getSession(false);
         // Notification can be set in edit form
         Notification notification = (Notification) session.getAttribute("notification");
@@ -157,6 +159,7 @@ public class ParticipantsController {
     ){
         LOG.info("Start save person form");
         LOG.debug("Data received : " + bean.toString());
+        Locale locale = new Locale(lang);
         Notification notification = null;
         FormValidator<Person> validator = new FormValidatorImpl<>();
         validator.validate(bean);
@@ -166,7 +169,11 @@ public class ParticipantsController {
                 model.setId(participantId);
                 storageManager.save(model);
 
-                notification = new Notification(messageSource.getMessage("msg.person_saved_success",null, settingsService.getLanguage()));
+                notification = new Notification(messageSource.getMessage(
+                        "msg.person_saved_success",
+                        null,
+                        locale
+                ));
                 HttpSession session = request.getSession(false);
                 session.setAttribute("notification", notification);
 
@@ -175,10 +182,18 @@ public class ParticipantsController {
             } catch (DataIntegrityViolationException e) {
                 // Non unique name error
                 LOG.warn(e.getMessage());
-                notification = new Notification(messageSource.getMessage("msg.person_exists",null, settingsService.getLanguage()));
+                notification = new Notification(messageSource.getMessage(
+                        "msg.person_exists",
+                        null,
+                        locale
+                ));
             } catch (Exception e) {
                 LOG.warn(e.getMessage());
-                notification = new Notification(messageSource.getMessage("msg.generic_error",null, settingsService.getLanguage()));
+                notification = new Notification(messageSource.getMessage(
+                        "msg.generic_error",
+                        null,
+                        locale
+                ));
             }
         }
         viewModel = initFormModel(viewModel, lang, userId);
@@ -206,16 +221,26 @@ public class ParticipantsController {
             produces = "application/json"
     )
     public ResponseEntity<JsonResponseBody> removeParticipant(
-            @RequestBody PersonModel person
+            @RequestBody PersonModel person,
+            @PathVariable String lang
     ){
+        Locale locale = new Locale(lang);
         JsonResponseBody response= new JsonResponseBody();
         try{
             storageManager.removePerson(person);
-            response.setOutput(messageSource.getMessage("msg.participant_deleted_success", null, settingsService.getLanguage()));
+            response.setOutput(messageSource.getMessage(
+                    "msg.participant_deleted_success",
+                    null,
+                    locale
+            ));
         } catch (Exception e) {
             LOG.warn(e.getMessage());
             response.setError(true);
-            response.setErrMsg(messageSource.getMessage("msg.generic_error", null, settingsService.getLanguage()));
+            response.setErrMsg(messageSource.getMessage(
+                    "msg.generic_error",
+                    null,
+                    locale
+            ));
         }
 
         return ResponseEntity.ok(response);
