@@ -70,11 +70,7 @@ public class BoardBalance {
      * We loose 1 cent in some cases.
      */
     public void calculateAverage() {
-        // To avoid rounding problem and bad calculation use scale of 3
-        BigDecimal intermediate = total.divide(BigDecimal.valueOf(totals.size()), 3, RoundingMode.FLOOR);
-        // Truncate by scaling to 2
-        // ex.: 1.987 will be 1.98 and not 1.99
-        average = new BigDecimal(intermediate.toPlainString()).setScale(2, RoundingMode.FLOOR);
+        average = total.divide(BigDecimal.valueOf(totals.size()), 2, RoundingMode.FLOOR);
     }
 
     /**

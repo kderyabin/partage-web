@@ -44,9 +44,10 @@ public class BoardBalanceController {
     /**
      * Displays board's balance page.
      *
-     * @param viewModel     Model instance
-     * @param boardId       Board ID
-     * @return              Template name
+     * @param viewModel Model instance
+     * @param lang      Language code
+     * @param boardId   Board ID
+     * @return Template name
      */
     @GetMapping("{lang}/app/{userId}/board/{boardId}/balance")
     public String displayBalance(Model viewModel, @PathVariable String lang, @PathVariable Long boardId) {
