@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+/**
+ * Manages board creation and update.
+ */
 @Controller
 public class BoardEditController {
 
@@ -85,7 +88,6 @@ public class BoardEditController {
         viewModel.addAttribute("navbarBtnBackLink", String.format("/%s/app/%s/", lang, userId));
         // Enable save & delete button
         viewModel.addAttribute("navbarBtnSave", true);
-
 
         // Attach JS scripts
         List<String> scripts = new ArrayList<>();
@@ -281,7 +283,7 @@ public class BoardEditController {
     }
 
     /**
-     * Handles submitted form.
+     * Handles submitted board form data.
      * @param lang      Language code
      * @param userId    Current User ID
      * @param boardId   Board ID (the value is empty in creation mode)
@@ -301,19 +303,22 @@ public class BoardEditController {
             @ModelAttribute Board bean,
             Model viewModel,
             HttpServletRequest request
-            )
+    )
     {
         LOG.info("Start board handleSubmit");
         Locale locale = new Locale(lang);
+        // Validate form data
         FormValidator<Board> validator = new FormValidatorImpl<>();
         validator.validate(bean);
+        // Init board model for saving or display in error case
         BoardModel model = new BoardModel();
         if (boardId != null) {
             model.setId(boardId);
         }
         model.setCurrency(bean.getCurrency());
         model.setName(bean.getName());
-        model.setDescription(bean.getDescription());
+
+        // Load attached to the board participants from the session
         HttpSession session = request.getSession(false);
         List<PersonModel> participants = (ArrayList<PersonModel>) session.getAttribute("participants");
         model.setParticipants(participants);

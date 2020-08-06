@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Board data submitted with a form.
- * Participants list is validates apart.
+ * Participants list must be validated apart.
  */
 @ToString
 @Getter @Setter

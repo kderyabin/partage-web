@@ -9,11 +9,15 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 
+/**
+ * Item form data
+ */
 @ToString
 @Getter @Setter
 public class Item {
@@ -24,7 +28,7 @@ public class Item {
     private String title;
     @NotNull( message = "msg.amount_is_required")
     private Float amount;
-    @NotEmpty( message = "msg.date_is_required")
+    @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "msg.date_is_required")
     private String date;
     @NotNull(message = "msg.person_is_required")
     private Long participant;
@@ -60,7 +64,6 @@ public class Item {
 
     /**
      * Converts data into BoardItemModel.
-     * Important! The conversion is partial. The returned model must completed later in the process.
      * @return  BoardItemModel instance
      */
     public BoardItemModel getModel(){

@@ -132,7 +132,7 @@
         </div>
     </li>
 </template>
-<div class="mdc-dialog">
+<div class="mdc-dialog" id="go-back-dialog">
     <div class="mdc-dialog__container">
         <div class="mdc-dialog__surface"
              role="alertdialog"

@@ -1,6 +1,7 @@
 <%@page trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <fmt:setLocale value="${ lang }"/>
 <fmt:setBundle basename="messages"/>
@@ -24,7 +25,7 @@
                         <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <input type="text" name="title" id="title" value="${ model.title }" required maxlength="50">
+                <input type="text" name="title" id="title" value="${ fn:escapeXml(model.title) }" required maxlength="50">
             </div>
             <div class="input-group-column">
                 <label for="amount" class="label-inline-block"><fmt:message key="amount"/> <span
@@ -34,7 +35,7 @@
                         <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <input type="number" name="amount" id="amount" value="${ model.amount }" required min="0" step="0.01">
+                <input type="number" name="amount" id="amount" value="${ fn:escapeXml(model.amount) }" required min="0" step="0.01">
             </div>
 
             <div class="input-group-column">
@@ -45,8 +46,7 @@
                         <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <input type="date" name="date" id="date" value="${model.date}">
-                <span class="input-info"><fmt:message key="date_help"/></span>
+                <input type="date" name="date" id="date" min="2010-01-01" max="2025-01-01" value="${fn:escapeXml(model.date)}">
             </div>
 
             <div class="input-group-column">

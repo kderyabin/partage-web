@@ -133,7 +133,7 @@ public class ItemEditController {
     }
 
     /**
-     * Handles form submission.
+     * Handles item form data submission.
      * @param bean      Form data populated into an Item bean.
      * @param viewModel Model instance
      * @param request   Current request
@@ -141,7 +141,7 @@ public class ItemEditController {
      * @param userId    User ID
      * @param boardId   Board ID to which item is attached
      * @param itemId    item ID in case of update.
-     * @return          Template name in case of error or redirect command on succes.
+     * @return          Template name in case of error or redirect command on success.
      */
     @PostMapping("{lang}/app/{userId}/board/{boardId}/item")
     public String handleSubmit(
@@ -157,52 +157,54 @@ public class ItemEditController {
         LOG.debug("Received data: " + bean.toString());
         Locale locale = new Locale(lang);
         Notification notification = null;
+        // Validate received data
         FormValidator<Item> validator = new FormValidatorImpl<>();
         validator.validate(bean);
-        // Check selected person makes part of boarder participants
         List<PersonModel> participants = storageManager.getParticipantsByBoardId(boardId);
-
         if (validator.isValid()) {
+            // Check selected person makes part of board participants
             Optional<PersonModel> found = participants
                     .stream()
                     .filter(p -> p.getId().equals(bean.getParticipant()))
                     .findFirst();
             if (found.isEmpty()) {
                 validator.addMessage("participant", "msg.person_is_required");
-
             }
-            try{
-                if( validator.isValid() ) {
+            if( validator.isValid() ) {
+                try {
                     // Load related BoardModel
                     BoardModel boardModel = storageManager.findBoardById(boardId);
                     BoardItemModel model = bean.getModel();
                     model.setBoard(boardModel);
                     model.setPerson(found.get());
-                    if(itemId != null){
+                    if (itemId != null) {
+                        // It is an update
                         model.setId(itemId);
                     }
                     LOG.debug("Generated Model: " + model.toString());
                     storageManager.save(model);
+
+                    notification = new Notification(messageSource.getMessage(
+                            "msg.item_saved_success",
+                            null,
+                            locale
+                    ));
+                    HttpSession session = request.getSession(false);
+                    session.setAttribute("notification", notification);
+
+                    return "redirect:" + String.format("/%s/app/%s/board/%s/details", lang, userId, boardId);
+
+                } catch (Exception e) {
+                    LOG.warn(e.getMessage());
+                    notification = new Notification(messageSource.getMessage(
+                            "msg.generic_error",
+                            null,
+                            locale
+                    ));
                 }
-                notification = new Notification(messageSource.getMessage(
-                        "msg.item_saved_success",
-                        null,
-                        locale
-                ));
-                HttpSession session = request.getSession(false);
-                session.setAttribute("notification", notification);
-
-                return "redirect:" + String.format("/%s/app/%s/board/%s/details", lang, userId, boardId);
-
-            } catch (Exception e)  {
-               LOG.warn(e.getMessage());
-               notification = new Notification(messageSource.getMessage(
-                       "msg.generic_error",
-                       null,
-                       locale
-               ));
             }
         }
+        // Error case
         viewModel = initFormModel(viewModel, lang, userId, boardId);
         viewModel.addAttribute("participants", participants);
         viewModel.addAttribute("model", bean);
@@ -212,9 +214,9 @@ public class ItemEditController {
         if( notification != null) {
             viewModel.addAttribute("notification", notification);
         }
-        String title = itemId != null
-                ? bean.getTitle()
-                : messageSource.getMessage("new_entry", null, locale);
+        String title = bean.getTitle().trim().isEmpty()
+                ? messageSource.getMessage("new_entry", null, locale)
+                : bean.getTitle().trim();
         viewModel.addAttribute("title", title);
 
         return "app/item-edit.jsp";
