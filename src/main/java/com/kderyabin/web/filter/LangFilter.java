@@ -27,7 +27,7 @@ public class LangFilter implements Filter {
 
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        LOG.debug("URI: " + req.getRequestURI());
+
         if (!req.getRequestURI().equals("/") && !isStaticContent(req) && !checkLanguage(req)) {
             res.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
