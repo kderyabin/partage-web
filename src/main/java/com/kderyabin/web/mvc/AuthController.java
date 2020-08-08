@@ -1,11 +1,8 @@
 package com.kderyabin.web.mvc;
 
+import com.kderyabin.web.bean.*;
 import com.kderyabin.web.model.MailActionModel;
 import com.kderyabin.web.model.UserModel;
-import com.kderyabin.web.bean.ResetPassword;
-import com.kderyabin.web.bean.ResetRequest;
-import com.kderyabin.web.bean.Signin;
-import com.kderyabin.web.bean.Signup;
 import com.kderyabin.web.error.MailTokenNotFoundException;
 import com.kderyabin.web.error.UserNotFoundException;
 import com.kderyabin.web.services.MailWorkerService;
@@ -16,6 +13,7 @@ import com.kderyabin.web.validator.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Handles account authentication and creation
@@ -41,6 +40,7 @@ public class AuthController {
     private AccountManager accountManager;
     private SecurityService securityService;
     private MailWorkerService mailWorkerService;
+    private MessageSource messageSource;
 
     @Autowired
     public void setMailWorkerService(MailWorkerService mailWorkerService) {
@@ -55,6 +55,11 @@ public class AuthController {
     @Autowired
     public void setSecurityService(SecurityService securityService) {
         this.securityService = securityService;
+    }
+
+    @Autowired
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 
     @GetMapping("/")
@@ -129,9 +134,11 @@ public class AuthController {
     @PostMapping("{lang}/signup")
     public String register(@PathVariable String lang, @ModelAttribute Signup dto, Model viewModel) {
         // Validate form fields
+        Locale locale = new Locale(lang);
         FormValidator<Signup> validator = new SignupValidator();
         validator.validate(dto);
         LOG.debug(dto.toString());
+        Notification notification = null;
         if (validator.isValid()) {
             // Check if login is in use
             UserModel userModel = new UserModel();
@@ -139,16 +146,26 @@ public class AuthController {
             boolean exists = accountManager.isUserExists(userModel);
             LOG.debug("User found status: " + exists);
             if (!exists) {
-                // Complete the model and process the account creation.
-                userModel.setName(dto.getName());
-                userModel.setIsConfirmed(false);
-                String hashPwd = securityService.getHashedPassword(dto.getPwd().trim());
-                userModel.setPwd(hashPwd);
-                MailActionModel actionModel = accountManager.create(userModel);
-                LOG.debug("Generated mail action: " + actionModel.toString());
-                // Send email
-                mailWorkerService.sendConfirmationEmail(actionModel, lang);
-                return String.format("redirect:/%s/confirm-email", lang);
+                try{
+                    // Complete the model and process the account creation.
+                    userModel.setName(dto.getName());
+                    userModel.setIsConfirmed(false);
+                    String hashPwd = securityService.getHashedPassword(dto.getPwd().trim());
+                    userModel.setPwd(hashPwd);
+                    MailActionModel actionModel = accountManager.create(userModel);
+                    LOG.debug("Generated mail action: " + actionModel.toString());
+                    // Send email
+                    mailWorkerService.sendConfirmationEmail(actionModel, lang);
+                    return String.format("redirect:/%s/confirm-email", lang);
+                } catch( Exception e) {
+                    LOG.warn(e.getMessage());
+                    notification = new Notification(messageSource.getMessage(
+                            "msg.generic_error",
+                            null,
+                            locale
+                    ));
+                }
+
             } else {
                 validator.addMessage("login", "error.email_in_use");
             }
@@ -160,6 +177,9 @@ public class AuthController {
         viewModel.addAttribute("confirmPwd", dto.getConfirmPwd());
         if (!validator.isValid()) {
             viewModel.addAttribute("errors", validator.getMessages());
+        }
+        if( notification != null) {
+            viewModel.addAttribute("notification", notification);
         }
 
         return "signup.jsp";

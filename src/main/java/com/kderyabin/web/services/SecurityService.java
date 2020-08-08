@@ -17,7 +17,9 @@ import java.security.NoSuchAlgorithmException;
 public class SecurityService {
 
     final private Logger LOG = LoggerFactory.getLogger(SecurityService.class);
-
+    /**
+     * Preconfigured salt string
+     */
     @Value("${app.salt}")
     protected String salt;
 
@@ -26,20 +28,17 @@ public class SecurityService {
      *
      * @return Hexadecimal value
      */
-    public String getHashedPassword(String pwd) {
+    public String getHashedPassword(String pwd) throws NoSuchAlgorithmException {
         MessageDigest digest;
         StringBuilder hexString = new StringBuilder();
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-            digest.update(salt.getBytes(StandardCharsets.UTF_8));
-            byte[] hash = digest.digest(pwd.getBytes(StandardCharsets.UTF_8));
-            // Convert to hex value
-            for (byte aByte : hash) {
-                hexString.append(String.format("%02x", aByte));
-            }
-        } catch (NoSuchAlgorithmException e) {
-            LOG.warn(e.getMessage());
+        digest = MessageDigest.getInstance("SHA-512");
+        digest.update(salt.getBytes(StandardCharsets.UTF_8));
+        byte[] hash = digest.digest(pwd.getBytes(StandardCharsets.UTF_8));
+        // Convert to hex value
+        for (byte aByte : hash) {
+            hexString.append(String.format("%02x", aByte));
         }
+
         return hexString.toString();
     }
 }

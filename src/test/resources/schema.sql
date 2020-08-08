@@ -1,11 +1,11 @@
 drop table if exists user;
 create table user (
-    user_id varchar(255) not null,
-    name varchar(100) not null,
+    user_id varchar(36) not null,
+    name varchar(50) not null,
     login varchar(100) not null,
     pwd varchar(255),
     confirmed boolean,
-    token varchar(255),
+    token_api varchar(255),
     primary key (user_id)
 );
 drop table if exists mail;
@@ -14,7 +14,7 @@ create table mail (
     action varchar(10) not null,
     creation timestamp not null,
     token varchar(36) not null,
-    user_id varchar(255),
+    user_id varchar(36),
     primary key (mail_id),
     CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
 );
