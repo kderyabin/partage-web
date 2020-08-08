@@ -92,20 +92,26 @@ public class AuthController {
         validator.validate(model);
         if (validator.isValid()) {
             LOG.debug(model.toString());
-            UserModel user = accountManager.findUserByLoginPassword(
-                    model.getLogin(),
-                    securityService.getHashedPassword(model.getPwd().trim())
-            );
+            try {
+                UserModel user = accountManager.findUserByLoginPassword(
+                        model.getLogin(),
+                        securityService.getHashedPassword(model.getPwd().trim())
+                );
 
-            if (user != null) {
-                LOG.debug("Found user: " + user.toString());
-                if (!user.getIsConfirmed()) {
-                    validator.addMessage("generic", "error.account_confirm_email");
+                if (user != null) {
+                    LOG.debug("Found user: " + user.toString());
+                    if (!user.getIsConfirmed()) {
+                        validator.addMessage("generic", "error.account_confirm_email");
+                    } else {
+                        initSessionData(user, request);
+                        return ("redirect:app/" + user.getId() + "/");
+                    }
                 } else {
-                    initSessionData(user, request);
-                    return ("redirect:app/" + user.getId() + "/");
+                    validator.addMessage("generic", "error.account_invalid_credentials");
                 }
-            } else {
+            } catch (Exception e) {
+                // NoSuchAlgorithmException can be thrown
+                LOG.warn(e.getMessage());
                 validator.addMessage("generic", "error.account_invalid_credentials");
             }
         }
@@ -146,7 +152,7 @@ public class AuthController {
             boolean exists = accountManager.isUserExists(userModel);
             LOG.debug("User found status: " + exists);
             if (!exists) {
-                try{
+                try {
                     // Complete the model and process the account creation.
                     userModel.setName(dto.getName());
                     userModel.setIsConfirmed(false);
@@ -157,7 +163,7 @@ public class AuthController {
                     // Send email
                     mailWorkerService.sendConfirmationEmail(actionModel, lang);
                     return String.format("redirect:/%s/confirm-email", lang);
-                } catch( Exception e) {
+                } catch (Exception e) {
                     LOG.warn(e.getMessage());
                     notification = new Notification(messageSource.getMessage(
                             "msg.generic_error",
@@ -178,7 +184,7 @@ public class AuthController {
         if (!validator.isValid()) {
             viewModel.addAttribute("errors", validator.getMessages());
         }
-        if( notification != null) {
+        if (notification != null) {
             viewModel.addAttribute("notification", notification);
         }
 
@@ -299,17 +305,35 @@ public class AuthController {
      * @throws ResponseStatusException 404 error if token is not valid
      */
     @PostMapping("{lang}/password-reset/{token}")
-    public String handleResetPassword(@PathVariable String token, @ModelAttribute ResetPassword bean, Model viewModel) {
+    public String handleResetPassword(
+            @PathVariable String lang,
+            @PathVariable String token,
+            @ModelAttribute ResetPassword bean,
+            Model viewModel
+    ) {
+        Locale locale = new Locale(lang);
         MailActionModel action = getValidMailAction(token, MailAction.RESET);
         FormValidator<ResetPassword> validator = new ResetPasswordValidation();
         validator.validate(bean);
-
+        Notification notification = null;
         if (validator.isValid()) {
-            UserModel user = action.getUser();
-            user.setPwd(securityService.getHashedPassword(bean.getPwd().trim()));
-            accountManager.save(user);
-            accountManager.deleteMailAction(action);
-            viewModel.addAttribute("success", true);
+            try {
+                UserModel user = action.getUser();
+                user.setPwd(securityService.getHashedPassword(bean.getPwd().trim()));
+                accountManager.save(user);
+                accountManager.deleteMailAction(action);
+                viewModel.addAttribute("success", true);
+            } catch (Exception e) {
+                LOG.warn(e.getMessage());
+                notification = new Notification(messageSource.getMessage(
+                        "msg.generic_error",
+                        null,
+                        locale
+                ));
+            }
+        }
+        if (notification != null) {
+            viewModel.addAttribute("notification", notification);
         }
         if (!validator.isValid()) {
             viewModel.addAttribute("errors", validator.getMessages());
@@ -319,20 +343,23 @@ public class AuthController {
 
     /**
      * Disconnects user.
+     *
      * @param request Current request.
      * @return Redirectioin command.
      */
     @GetMapping("{lang}/logout")
     public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if(session != null) {
+        if (session != null) {
             session.invalidate();
         }
         return "redirect:signin";
     }
+
     /**
      * Sets session data for authenticated user.
-     * @param user UserModel instance
+     *
+     * @param user    UserModel instance
      * @param request Current request
      */
     private void initSessionData(UserModel user, HttpServletRequest request) {

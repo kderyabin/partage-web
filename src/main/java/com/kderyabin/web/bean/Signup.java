@@ -8,7 +8,7 @@ import lombok.ToString;
 
 /**	
  * 
- * SignUpDTO contains sign up form data.
+ * Contains sign up form data.
  * 
  * @author Konstantin Deryabin
  */
@@ -19,7 +19,7 @@ public class Signup {
 	/**
 	 * User name
 	 */
-	@Size( min =2, max = 100, message = "error.name_too_big")
+	@Size( min =2, max = 100, message = "error.name_invalid")
 	private String name;
 	/**
 	 * User login
@@ -29,7 +29,7 @@ public class Signup {
 	/**
 	 * User password
 	 */
-	@Size( min = 8, max = 20,  message = "error.password_size")
+	@Pattern( regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*](?=\\S+$).{8,20}$", message = "error.password_invalid")
 	private String pwd;
 
 	/**
