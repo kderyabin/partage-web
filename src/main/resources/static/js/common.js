@@ -33,7 +33,7 @@ const handleCommonBackButtonEvent = (formSelector) => {
     if(form.length === 0) {
         return;
     }
-    const dialog = new mdc.dialog.MDCDialog(document.querySelector('.mdc-dialog'));
+    const dialog = new mdc.dialog.MDCDialog(document.querySelector('#go-back-dialog'));
     if(!dialog) {
         return;
     }
