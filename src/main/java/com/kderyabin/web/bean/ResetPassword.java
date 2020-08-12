@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @ToString
@@ -14,7 +15,7 @@ public class ResetPassword {
     /**
      * User password
      */
-    @Size( min = 8, max = 20,  message = "error.password_size")
+    @Pattern( regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*](?=\\S+$).{8,20}$", message = "error.password_invalid")
     private String pwd;
 
     /**
