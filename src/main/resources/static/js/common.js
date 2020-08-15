@@ -1,3 +1,9 @@
+/**
+ * AJAX request initializer
+ * @param url   URL where the request must be sent
+ * @param dto   DTO to send
+ * @returns     JQuery ajax instance
+ */
 const JsonRequest = (url, dto) => {
     return $.ajax({
         type: "POST",
@@ -9,11 +15,13 @@ const JsonRequest = (url, dto) => {
             withCredentials: true
         }
     }).fail((jqXHR, textStatus, errorThrown) => {
+        // Silently log errors
         console.error(jqXHR);
         console.error(textStatus);
         console.error(errorThrown)
     });
 }
+// Notification object to display messages in a snackbar.
 const Notification = {
     snackbar : null,
     init: function(snackbar) {
@@ -26,7 +34,7 @@ const Notification = {
 }
 /**
  * Verifies if a form is updated and triggers warning message display before redirection.
- * @param formSelector
+ * @param formSelector  Form selector, ex.: "#edit-board"
  */
 const handleCommonBackButtonEvent = (formSelector) => {
     const form = $(formSelector);
@@ -41,7 +49,6 @@ const handleCommonBackButtonEvent = (formSelector) => {
     if(backBtn.length === 0) {
         return;
     }
-
     // Watch for the form changes
     let isFormUpdated = false;
     form.find(":input").on('change', () => isFormUpdated = true);
@@ -64,8 +71,9 @@ const handleCommonBackButtonEvent = (formSelector) => {
         }
     });
 }
+// Common events initializer
 window.addEventListener( "load",  (event) => {
-    // Initialize Settings drop down menu
+    // Initialize Settings drop down menu if it's present on the page
     const settingsBtn = document.querySelector('#settings-btn');
     if(settingsBtn != null) {
         const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
@@ -74,8 +82,12 @@ window.addEventListener( "load",  (event) => {
         });
     }
     // Initialize snackbar notification
-    Notification.init(new mdc.snackbar.MDCSnackbar(document.querySelector('.mdc-snackbar')));
-    if( typeof notifications !== 'undefined' && notifications.display) {
-        Notification.show(notifications.display);
+    // Checks if notifications object is declared on the page and if it's the a case display the notification message
+    const snackbarElem = document.querySelector('.mdc-snackbar');
+    if(snackbarElem) {
+        Notification.init(new mdc.snackbar.MDCSnackbar(snackbarElem));
+        if( typeof notifications !== 'undefined' && notifications.display) {
+            Notification.show(notifications.display);
+        }
     }
 });

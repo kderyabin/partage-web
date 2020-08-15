@@ -1,11 +1,16 @@
 window.addEventListener('load', () => {
     handleCommonBackButtonEvent("#form-board-edit");
+    // Dialog for removing participants from the list
     const dialog = new mdc.dialog.MDCDialog(document.querySelector('#delete-dialog'));
     const mode = $("#form-board-edit").data("mode");
     const personInput = $("#person");
     const participantSelect = $("#participant");
     const participantResetBtn = $("#participant-reset-button");
     const participants = $("#participants");
+    /**
+     * Appends a line with a participant into participants list
+     * @param name  Participant's name
+     */
     const addParticipant = (name) => {
         let content = $("#participant-item").html();
         content = content.replaceAll("{{name}}", name);
@@ -16,8 +21,9 @@ window.addEventListener('load', () => {
         participants.removeClass("hidden");
     }
     /**
-     * Listen to user choice
-      * @param event
+     * Callback function which listens to user choice during participant removal.
+     * If user confirms his choice the participant is removed from the list.
+     * @param event
      */
     const dialogChoiceListener = (event) => {
         if (event.detail.action === 'accept') {
@@ -29,7 +35,7 @@ window.addEventListener('load', () => {
     dialog.listen('MDCDialog:closing', dialogChoiceListener);
     let participantToDelete = null;
     /**
-     * Sends request to the server to remove participant from the board.
+     * Sends AJAX request to the server with participant data to remove from the board.
      */
     const doRemoval = () => {
         const btn = $(participantToDelete);
@@ -48,7 +54,10 @@ window.addEventListener('load', () => {
                 participantToDelete = null;
             });
     }
-    // Event handler to remove user
+    /**
+     * Event handler attached to a "remove participant" button.
+     * Triggers participant's removal.
+     */
     const removeParticipant = function () {
         participantToDelete = this;
         if (mode === "create") {
@@ -63,11 +72,14 @@ window.addEventListener('load', () => {
     if (participants.children("li").length > 0) {
         participants.find("button").on("click", removeParticipant);
     }
-    // Submit board form
+    // Submit board form with a click on a menu button
     $("#navbarBtnSave").on("click", () => {
         $("#btn-form-board-submit").trigger("click");
     });
-    // Handle participants form submission
+    /**
+     * Handles participants form submission.
+     * Adds new participant to the board.
+     */
     $("#form-participants").on("submit", (event) => {
         event.preventDefault();
         let dto = {name: "", id: null};

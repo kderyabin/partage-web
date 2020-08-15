@@ -1,4 +1,5 @@
 window.addEventListener('load', () => {
+    // Initializes Bar chart display
     if(document.querySelector("#chartContainer")) {
         Highcharts.chart('chartContainer', {
             chart: {
