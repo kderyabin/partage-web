@@ -11,13 +11,15 @@
     <nav class="mdc-top-app-bar__row">
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
             <c:if test="${ !empty navbarBtnBackLink }">
-                <a id="back-btn" href="${navbarBtnBackLink}" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
-                   aria-label="Open navigation menu">arrow_back
+                <a id="back-btn" href="${navbarBtnBackLink}"
+                   class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button"
+                   aria-label="<fmt:message key="go_back"/>">
+                    <span aria-hidden="true">arrow_back</span>
                 </a>
             </c:if>
         </section>
         <section class="mdc-top-app-bar__section partage-top-app-bar__section--align-center">
-            <span class="mdc-top-app-bar__title">${title}</span>
+            <span class="mdc-top-app-bar__title" role="heading">${title}</span>
         </section>
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
             <c:if test="${ !empty navbarBtnParticipantsLink }">
@@ -60,7 +62,8 @@
            <c:if test="${ ! empty navbarBtnSettings }">
             <div class="mdc-menu-surface--anchor">
                 <button id="settings-btn" class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
-                        aria-label="<fmt:message key="settings"/>">
+                        aria-label="<fmt:message key="settings"/>"
+                        aria-haspopup="true">
                     <span aria-hidden="true">more_vert</span>
                 </button>
                 <div class="mdc-menu mdc-menu-surface">

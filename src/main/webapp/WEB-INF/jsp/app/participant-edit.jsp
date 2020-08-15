@@ -13,18 +13,22 @@
             <c:if test="${!empty errors && !empty errors.generic}">
                 <p>
                     <c:forEach items="${ errors.generic }" var="errorMsg">
-                        <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                        <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </p>
             </c:if>
             <div class="input-group-column">
-                <label for="name" class="label-inline-block"><fmt:message key="name"/> <span class="required">*</span></label>
+                <label for="name" class="label-inline-block">
+                    <fmt:message key="name"/> <span class="required">*</span>
+                </label>
                 <c:if test="${!empty errors && !empty errors.name}">
                     <c:forEach items="${ errors.name }" var="errorMsg">
-                        <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                        <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <input type="text" name="name" id="name" value="${ model.name }" required maxlength="50">
+                <input type="text" name="name" id="name" value="${ model.name }"
+                       required maxlength="50"
+                       aria-invalid="${!empty errors && !empty errors.name ? "true": "false"}">
             </div>
 
             <button id="btn-form-submit" type="submit" class="hidden"><fmt:message key="OK"/></button>
@@ -37,8 +41,8 @@
              role="alertdialog"
              aria-modal="true"
              aria-labelledby="my-dialog-title"
-             aria-describedby="my-dialog-content">
-            <div class="mdc-dialog__content" id="my-dialog-content">
+             aria-describedby="go-back-dialog-content">
+            <div class="mdc-dialog__content" id="go-back-dialog-content">
                 <fmt:message key="msg.confirm_form_exit"/>
             </div>
             <div class="mdc-dialog__actions">

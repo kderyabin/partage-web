@@ -5,7 +5,7 @@
 <fmt:setLocale value="${ lang }"/>
 <fmt:setBundle basename="messages"/>
 
-<jsp:include page="partial/header.jsp"/>
+<jsp:include page="partial/header.jsp" />
 <main class="main-container">
     <div class="content-column">
         <h1 class="align-center">

@@ -16,29 +16,35 @@
                 <div class="mdc-card partage-auth-form">
 				<c:if test="${!empty errors && !empty errors.generic}">
                     <c:forEach items="${ errors.generic }" var="errorMsg">
-                        <span class="align-center input-error"><fmt:message key="${ errorMsg }" /></span>
+                        <span class="align-center input-error" role="alert"><fmt:message key="${ errorMsg }" /></span>
                     </c:forEach>
 				</c:if>
                     <div class="input-group-column">
-                        <label for="login"><fmt:message key="email" /><span class="required">*</span></label>
+                        <label for="login">
+                            <fmt:message key="email" /><span class="required">*</span>
+                        </label>
                         <c:if test="${!empty errors && !empty errors.login}">
                             <c:forEach items="${ errors.login }" var="errorMsg">
-                                <span class="input-error"><fmt:message key="${ errorMsg }" /></span>
+                                <span class="input-error" role="alert"><fmt:message key="${ errorMsg }" /></span>
                             </c:forEach>
                         </c:if>
-                        <input type="email" id="login" name="login" maxlength="100" value="${ login }" required>
+                        <input type="email" id="login" name="login" maxlength="100" value="${ login }" required
+                               aria-invalid="${!empty errors && !empty errors.login ? "true": "false"}">
                     </div>
                     <div class="input-group-column">
                         <div class="partage-signin-password-label">
-                            <label for="pwd"><fmt:message key="password" /> <span class="required">*</span></label>
+                            <label for="pwd">
+                                <fmt:message key="password" /> <span class="required">*</span>
+                            </label>
                             <a href="password-reset"><fmt:message key="forgot_password" /></a>
                         </div>
                         <c:if test="${!empty errors && !empty errors.pwd}">
                             <c:forEach items="${ errors.pwd }" var="errorMsg">
-                                <span class="input-error"><fmt:message key="${ errorMsg }" /></span>
+                                <span class="input-error" role="alert"><fmt:message key="${ errorMsg }" /></span>
                             </c:forEach>
                         </c:if>
-                        <input type="password" id="pwd" name="pwd" minlength="8" maxlength="20" value="${ pwd }" required>
+                        <input type="password" id="pwd" name="pwd" minlength="8" maxlength="20" value="${ pwd }"
+                               required aria-invalid="${!empty errors && !empty errors.pwd ? "true": "false"}">
                     </div>
 
                     <div class="partage-auth-button-box">

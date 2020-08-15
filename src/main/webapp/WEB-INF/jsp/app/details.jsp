@@ -22,7 +22,7 @@
 
         <c:if test="${ !empty items}">
         <figure class="highcharts-figure board-balance-chart}">
-            <div id="chartContainer"></div>
+            <div id="chartContainer" role="graphics-document"></div>
         </figure>
         <c:forEach items="${items}" var="item">
             <a class="list-item" href="item?iid=${item.id}">

@@ -15,43 +15,56 @@
 			<div class="partage-auth">
 				<div class="mdc-card partage-auth-form">
                     <div class="input-group-column">
-						<label for="name"><fmt:message key="name" /><span class="required">*</span> </label>
+						<label for="name">
+							<fmt:message key="name" /><span class="required">*</span>
+						</label>
 						<c:if test="${!empty errors && !empty errors.name}">
 							<c:forEach items="${ errors.name }" var="errorMsg">
-							<span class="input-error"><fmt:message key="${ errorMsg }" /></span>
+								<span class="input-error" role="alert"><fmt:message key="${ errorMsg }" /></span>
 							</c:forEach>
 						</c:if>
-						<input type="text" id="name" name="name" maxlength="100" value="${ name }" required>
+						<input type="text" id="name" name="name" maxlength="100" value="${ name }" required
+							   aria-invalid="${!empty errors && !empty errors.name ? "true": "false"}">
 					</div>
 					<div class="input-group-column">
 					
-						<label for="login"><fmt:message key="email" /><span class="required">*</span> </label>
+						<label for="login">
+							<fmt:message key="email" /><span class="required">*</span>
+						</label>
 						<c:if test="${!empty errors && !empty errors.login}">
 							<c:forEach items="${ errors.login }" var="errorMsg">
-							<span class="input-error"><fmt:message key="${ errorMsg }" /></span> 
+							<span class="input-error" role="alert"><fmt:message key="${ errorMsg }" /></span> 
 							</c:forEach>
 						</c:if> 
-						<input type="email" id="login" name="login" maxlength="100" value="${ login }" required>
+						<input type="email" id="login" name="login" maxlength="100" value="${ login }" required
+							   aria-invalid="${!empty errors && !empty errors.login ? "true": "false"}">
 					</div>
 
 					<div class="input-group-column">
-						<label for="pwd"><fmt:message key="password" /> <span class="required">*</span></label>
+						<label for="pwd">
+							<fmt:message key="password" /> <span class="required">*</span>
+						</label>
 						<c:if test="${!empty errors && !empty errors.pwd}">
 							<c:forEach items="${ errors.pwd }" var="errorMsg">
-							<span class="input-error"><fmt:message key="${ errorMsg }" /></span> 
+							<span class="input-error" role="alert"><fmt:message key="${ errorMsg }" /></span> 
 							</c:forEach>
 						</c:if> 
-						<input type="password" id="pwd" name="pwd" minlength="8" maxlength="20" value="${ pwd }" required> 
+						<input type="password" id="pwd" name="pwd" minlength="8" maxlength="20" value="${ pwd }"
+							   aria-invalid="${!empty errors && !empty errors.pwd ? "true": "false"}" required>
 						<span class="input-info"><fmt:message key="info.password_requirement" /></span>
 					</div>
 					<div class="input-group-column">
-						<label for="confirmPwd"> <fmt:message key="repeat_password" /> <span class="required">*</span></label> 
+						<label for="confirmPwd">
+							<fmt:message key="repeat_password" /> <span class="required">*</span>
+						</label>
 						<c:if test="${!empty errors && !empty errors.confirmPwd}">
 							<c:forEach items="${ errors.confirmPwd }" var="errorMsg">
-							<span class="input-error"><fmt:message key="${ errorMsg }" /></span> 
+							<span class="input-error" role="alert"><fmt:message key="${ errorMsg }" /></span> 
 							</c:forEach>
 						</c:if> 
-						<input type="password" id="confirmPwd" minlength="8" maxlength="20" name="confirmPwd" value="${ confirmPwd }" required>
+						<input type="password" id="confirmPwd" minlength="8" maxlength="20" name="confirmPwd"
+							   value="${ confirmPwd }" required
+							   aria-invalid="${!empty errors && !empty errors.confirmPwd ? "true": "false"}">
 					</div>
 					<div class="partage-auth-button-box">
 						<button type="submit" class="mdc-button mdc-button--unelevated button-rounded">

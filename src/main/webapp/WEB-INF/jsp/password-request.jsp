@@ -27,10 +27,11 @@
                         <label for="login"><fmt:message key="email" /><span class="required">*</span></label>
                         <c:if test="${!empty errors && !empty errors.login}">
                             <c:forEach items="${ errors.login }" var="errorMsg">
-                                <span class="input-error"><fmt:message key="${ errorMsg }" /></span>
+                                <span class="input-error" role="alert"><fmt:message key="${ errorMsg }" /></span>
                             </c:forEach>
                         </c:if>
-                        <input type="email" id="login" name="login" maxlength="100" value="${ login }" required>
+                        <input type="email" id="login" name="login" maxlength="100" value="${ login }" required
+                               aria-invalid="${!empty errors && !empty errors.login ? "true": "false"}">
                     </div>
                     <div class="partage-auth-button-box">
                         <button type="submit" class="mdc-button mdc-button--unelevated button-rounded">

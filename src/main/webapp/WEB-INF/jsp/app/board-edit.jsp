@@ -13,7 +13,7 @@
             <c:if test="${!empty errors && !empty errors.generic}">
                 <p>
                     <c:forEach items="${ errors.generic }" var="errorMsg">
-                        <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                        <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </p>
             </c:if>
@@ -21,19 +21,21 @@
                 <label for="name" class="label-inline-block"><fmt:message key="name"/></label>
                 <c:if test="${!empty errors && !empty errors.name}">
                     <c:forEach items="${ errors.name }" var="errorMsg">
-                        <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                        <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <input type="text" name="name" id="name" value="${ model.name }" required maxlength="50">
+                <input type="text" name="name" id="name" value="${ model.name }" required maxlength="50" aria-invalid="${!empty errors && !empty errors.name ? "true": "false"}">
             </div>
             <div class="input-group-column">
                 <label for="description"><fmt:message key="description"/></label>
                 <c:if test="${!empty errors && !empty errors.description}">
                     <c:forEach items="${ errors.description }" var="errorMsg">
-                        <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                        <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <textarea name="description" id="description" maxlength="255">${model.description}</textarea>
+                <textarea name="description" id="description" maxlength="255" aria-invalid="${!empty errors && !empty errors.description ? "true": "false"}">
+                    ${model.description}
+                </textarea>
             </div>
             <div class="input-group-column">
                 <label for="currency" class="label-inline-block"><fmt:message key="currency"/></label>
@@ -56,7 +58,7 @@
             <div class="input-group-column">
                 <c:if test="${!empty errors && !empty errors.participants}">
                     <c:forEach items="${ errors.participants }" var="errorMsg">
-                        <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                        <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
                 <ul class="mdc-list list-condensed ${ empty model.participants ? 'hidden' : ''}" id="participants"
@@ -83,10 +85,11 @@
                     <label for="person" class="label-inline-block"><fmt:message key="add_new_participant"/></label>
                     <c:if test="${!empty errors && !empty errors.person}">
                         <c:forEach items="${ errors.person }" var="errorMsg">
-                            <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                            <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                         </c:forEach>
                     </c:if>
-                    <input type="text" name="person" id="person" maxlength="50">
+                    <input type="text" name="person" id="person" maxlength="50"
+                           aria-invalid="${!empty errors && !empty errors.person ? "true": "false"}">
                 </div>
                 <c:if test="${ !empty persons}">
                     <div class="h1 align-center"><fmt:message key="or"/></div>
@@ -96,10 +99,11 @@
                                 key="add_registered_participant"/></label>
                         <c:if test="${!empty errors && !empty errors.participant}">
                             <c:forEach items="${ errors.participant }" var="errorMsg">
-                                <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                                <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                             </c:forEach>
                         </c:if>
-                        <select name="participant" id="participant">
+                        <select name="participant" id="participant"
+                                aria-invalid="${!empty errors && !empty errors.participant ? "true": "false"}">
                             <option value=""><fmt:message key="choose_from_the_list"/></option>
                             <c:forEach items="${persons}" var="person">
                                 <option value="${person.id}">${person.name}</option>
@@ -137,9 +141,8 @@
         <div class="mdc-dialog__surface"
              role="alertdialog"
              aria-modal="true"
-             aria-labelledby="my-dialog-title"
-             aria-describedby="my-dialog-content">
-            <div class="mdc-dialog__content" id="my-dialog-content">
+             aria-describedby="go-back-dialog-content">
+            <div class="mdc-dialog__content" id="go-back-dialog-content">
                 <fmt:message key="msg.confirm_delete_participant"/>
             </div>
             <div class="mdc-dialog__actions">

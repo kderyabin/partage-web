@@ -12,15 +12,20 @@
         <form id="form-settings" method="post">
 
             <div class="input-group-column">
-                <label for="language" class="label-inline-block"><fmt:message key="language"/> <span class="required">*</span></label>
+                <label for="language" class="label-inline-block">
+                    <fmt:message key="language"/> <span class="required">*</span>
+                </label>
                 <c:if test="${!empty errors && !empty errors.language}">
                     <c:forEach items="${ errors.language }" var="errorMsg">
-                        <span class="input-error"><fmt:message key="${ errorMsg }"/></span>
+                        <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <select name="language" id="language">
+                <select name="language" id="language"
+                        aria-invalid="${!empty errors && !empty errors.language ? "true": "false"}">
                     <c:forEach items="${languages}" var="language">
-                        <option value="${language.language}" <c:if test="${ language.language eq model.language}"> selected</c:if>>${language.displayName}</option>
+                        <option value="${language.language}" ${ language.language eq model.language ? "selected" : ""}>
+                                ${language.displayName}
+                        </option>
                     </c:forEach>
                 </select>
             </div>
@@ -42,14 +47,29 @@
             <h3><fmt:message key="account"/></h3>
 
             <div class="input-group-column">
-
-                <label for="login"><fmt:message key="email" /><span class="required">*</span> </label>
-                <c:if test="${!empty errors && !empty errors.login}">
-                    <c:forEach items="${ errors.login }" var="errorMsg">
-                        <span class="input-error"><fmt:message key="${ errorMsg }" /></span>
+                <label for="name">
+                    <fmt:message key="name" /><span class="required">*</span>
+                </label>
+                <c:if test="${!empty errors && !empty errors.name}">
+                    <c:forEach items="${ errors.name }" var="errorMsg">
+                        <span class="input-error" role="alert"><fmt:message key="${ errorMsg }" /></span>
                     </c:forEach>
                 </c:if>
-                <input type="email" id="login" name="login" maxlength="100" value="${ model.login }" required>
+                <input type="text" id="name" name="name" maxlength="100" value="${ name }" required
+                       aria-invalid="${!empty errors && !empty errors.name ? "true": "false"}">
+            </div>
+
+            <div class="input-group-column">
+                <label for="login">
+                    <fmt:message key="email" /><span class="required">*</span>
+                </label>
+                <c:if test="${!empty errors && !empty errors.login}">
+                    <c:forEach items="${ errors.login }" var="errorMsg">
+                        <span class="input-error" role="alert"><fmt:message key="${ errorMsg }" /></span>
+                    </c:forEach>
+                </c:if>
+                <input type="email" id="login" name="login" maxlength="100" value="${ model.login }" required
+                       aria-invalid="${!empty errors && !empty errors.login ? "true": "false"}">
             </div>
 
             <div class="input-group-column">
@@ -65,9 +85,8 @@
         <div class="mdc-dialog__surface"
              role="alertdialog"
              aria-modal="true"
-             aria-labelledby="my-dialog-title"
-             aria-describedby="my-dialog-content">
-            <div class="mdc-dialog__content" id="my-dialog-content">
+             aria-describedby="go-back-dialog-content">
+            <div class="mdc-dialog__content" id="go-back-dialog-content">
                 <fmt:message key="msg.confirm_form_exit"/>
             </div>
             <div class="mdc-dialog__actions">

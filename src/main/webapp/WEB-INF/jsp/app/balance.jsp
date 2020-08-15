@@ -17,7 +17,7 @@
 
         <c:if test="${ !isEmpty}">
             <figure class="highcharts-figure board-balance-chart">
-                <div id="chartContainer"></div>
+                <div id="chartContainer" role="graphics-document"></div>
             </figure>
 
             <h3 class="align-center"><fmt:message key="balance"/></h3>
