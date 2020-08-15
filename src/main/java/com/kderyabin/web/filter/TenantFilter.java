@@ -1,5 +1,6 @@
 package com.kderyabin.web.filter;
 
+import com.kderyabin.web.model.UserModel;
 import com.kderyabin.web.storage.multitenancy.TenantContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,12 @@ public class TenantFilter implements Filter {
             if(session == null ){
                 LOG.info("TenantFilter: session is not initialized");
                 // User space can be accessed only with valid session
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+            // Check user exists in current session
+            if( null == (UserModel)session.getAttribute("user")){
+                LOG.warn("TenantFilter: user not set in session");
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }

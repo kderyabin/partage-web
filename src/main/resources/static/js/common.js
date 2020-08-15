@@ -65,14 +65,15 @@ const handleCommonBackButtonEvent = (formSelector) => {
     });
 }
 window.addEventListener( "load",  (event) => {
-    // Settings drop down menu
-    const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
-    if (menu) {
-        document.querySelector('#settings-btn').addEventListener('click', () => {
+    // Initialize Settings drop down menu
+    const settingsBtn = document.querySelector('#settings-btn');
+    if(settingsBtn != null) {
+        const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
+        settingsBtn.addEventListener('click', () => {
             menu.open = true;
         });
     }
-
+    // Initialize snackbar notification
     Notification.init(new mdc.snackbar.MDCSnackbar(document.querySelector('.mdc-snackbar')));
     if( typeof notifications !== 'undefined' && notifications.display) {
         Notification.show(notifications.display);

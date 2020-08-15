@@ -136,27 +136,12 @@
         </div>
     </li>
 </template>
-<div class="mdc-dialog" id="go-back-dialog">
-    <div class="mdc-dialog__container">
-        <div class="mdc-dialog__surface"
-             role="alertdialog"
-             aria-modal="true"
-             aria-describedby="go-back-dialog-content">
-            <div class="mdc-dialog__content" id="go-back-dialog-content">
-                <fmt:message key="msg.confirm_delete_participant"/>
-            </div>
-            <div class="mdc-dialog__actions">
-                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
-                    <div class="mdc-button__ripple"></div>
-                    <span class="mdc-button__label"><fmt:message key="Cancel"/></span>
-                </button>
-                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept">
-                    <div class="mdc-button__ripple"></div>
-                    <span class="mdc-button__label"><fmt:message key="OK"/></span>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="mdc-dialog__scrim"></div>
-</div>
+<jsp:include page="../partial/dialog.jsp">
+    <jsp:param name="dialogId" value="go-back-dialog"/>
+    <jsp:param name="dialogMsg" value="msg.confirm_form_exit"/>
+</jsp:include>
+<jsp:include page="../partial/dialog.jsp">
+    <jsp:param name="dialogId" value="delete-dialog"/>
+    <jsp:param name="dialogMsg" value="msg.confirm_delete_participant"/>
+</jsp:include>
 <jsp:include page="../partial/footer-user.jsp"/>

@@ -74,7 +74,6 @@ public class SettingsController {
      */
     public Model initFormModel(Model viewModel, String userId, String lang, HttpServletRequest request) {
 
-
         Locale locale = new Locale(lang);
         // Set default Locale for Java currencies and languages native translation
         Locale.setDefault(locale);
@@ -114,7 +113,12 @@ public class SettingsController {
      * @return  Template name
      */
     @GetMapping("/")
-    public String displayForm(Model viewModel, @PathVariable String userId, @PathVariable String lang, HttpServletRequest request) {
+    public String displayForm(
+            Model viewModel,
+            @PathVariable String userId,
+            @PathVariable String lang,
+            HttpServletRequest request
+    ) {
         HttpSession session = request.getSession(false);
         UserModel user = (UserModel) session.getAttribute("user");
         settingsService.load();
@@ -124,6 +128,7 @@ public class SettingsController {
         // It's up to user to choose the language during authentication
         bean.setLanguage(settingsService.getLanguage().getLanguage());
         bean.setLogin(user.getLogin());
+        bean.setName(user.getName());
         LOG.debug("Bean data: " + bean.toString());
 
         viewModel = initFormModel(viewModel, userId, lang, request);
@@ -270,7 +275,8 @@ public class SettingsController {
     }
 
     /**
-     * Updates user login in main database and sends email confirmation email.
+     * Updates user data in main database and sends email confirmation
+     * if user's login (email) has been changed.
      *
      * @param bean  Form data
      * @param lang  User language for the email content localization
@@ -279,30 +285,47 @@ public class SettingsController {
     protected void updateLogin(Settings bean, String lang, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         UserModel currentUser = (UserModel) session.getAttribute("user");
-
-        if (currentUser.getLogin().equals(bean.getLogin())) {
-            LOG.info("Login is not changed: user update is not required");
+        boolean loginUpdated = false;
+        boolean nameUpdated = false;
+        if (!currentUser.getLogin().equals(bean.getLogin())) {
+            loginUpdated = true;
+        }
+        if (!currentUser.getName().equals(bean.getName())) {
+            nameUpdated = true;
+        }
+        if(!loginUpdated && !nameUpdated) {
+            LOG.info("Name & Login are has not been changed: user update is not required");
             return;
         }
         String tenantId = TenantContext.getId();
         TenantContext.setTenant(TenantContext.DEFAULT_TENANT_IDENTIFIER);
-        // Check if login is in use
-        UserModel userModel = new UserModel();
-        userModel.setLogin(bean.getLogin());
-        boolean exists = accountManager.isUserExists(userModel);
-        LOG.debug("Is login is already in use: " + exists);
-
-        if (exists) {
-            TenantContext.setTenant(tenantId);
-            throw new DupplicateLoginException();
+        // If login has been updated check if it is already in use
+        if(loginUpdated) {
+            UserModel userModel = new UserModel();
+            userModel.setLogin(bean.getLogin());
+            boolean exists = accountManager.isUserExists(userModel);
+            if (exists) {
+                LOG.debug("Login is already in use");
+                TenantContext.setTenant(tenantId);
+                throw new DupplicateLoginException();
+            }
         }
-        // Complete the model and process the account creation.
+        // Save
         currentUser.setLogin(bean.getLogin());
-        MailActionModel actionModel = accountManager.create(currentUser);
-        // Reset user in session
-        session.setAttribute("user", actionModel.getUser());
+        currentUser.setName(bean.getName());
+        UserModel user = null;
+
+        if(loginUpdated) {
+            // Updated login requires email validation
+            MailActionModel actionModel = accountManager.create(currentUser);
+            // Reset user in session
+            user = actionModel.getUser();
+            // Send email
+            mailWorkerService.sendConfirmationEmail(actionModel, lang);
+        } else {
+            user = accountManager.save(currentUser);
+        }
+        session.setAttribute("user", user);
         TenantContext.setTenant(tenantId);
-        // Send email
-        mailWorkerService.sendConfirmationEmail(actionModel, lang);
     }
 }

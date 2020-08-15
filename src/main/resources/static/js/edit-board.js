@@ -1,5 +1,6 @@
 window.addEventListener('load', () => {
-    const dialog = new mdc.dialog.MDCDialog(document.querySelector('.mdc-dialog'));
+    handleCommonBackButtonEvent("#form-board-edit");
+    const dialog = new mdc.dialog.MDCDialog(document.querySelector('#delete-dialog'));
     const mode = $("#form-board-edit").data("mode");
     const personInput = $("#person");
     const participantSelect = $("#participant");
