@@ -24,7 +24,8 @@
                         <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <input type="text" name="name" id="name" value="${ model.name }" required maxlength="50" aria-invalid="${!empty errors && !empty errors.name ? "true": "false"}">
+                <input type="text" name="name" id="name" value="${ model.name }" required maxlength="50" 
+                       aria-invalid="${!empty errors && !empty errors.name ? "true": "false"}">
             </div>
             <div class="input-group-column">
                 <label for="description"><fmt:message key="description"/></label>
@@ -33,7 +34,8 @@
                         <span class="input-error" role="alert"><fmt:message key="${ errorMsg }"/></span>
                     </c:forEach>
                 </c:if>
-                <textarea name="description" id="description" maxlength="255" aria-invalid="${!empty errors && !empty errors.description ? "true": "false"}">
+                <textarea name="description" id="description" maxlength="255" 
+                          aria-invalid="${!empty errors && !empty errors.description ? "true": "false"}">
                     ${model.description}
                 </textarea>
             </div>
@@ -41,9 +43,8 @@
                 <label for="currency" class="label-inline-block"><fmt:message key="currency"/></label>
                 <select name="currency" id="currency">
                     <c:forEach items="${currencies}" var="currency">
-                        <option value="${currency.currencyCode}"
-                                <c:if test="${ currency.currencyCode == model.currencyCode}">selected</c:if>> ${currency.displayName}
-                            (${currency.currencyCode})
+                        <option value="${currency.currencyCode}" ${ currency.currencyCode == model.currencyCode ? "selected" : "" }>
+                            ${currency.displayName} (${currency.currencyCode})
                         </option>
                     </c:forEach>
                 </select>
