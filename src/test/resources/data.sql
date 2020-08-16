@@ -1,5 +1,5 @@
 INSERT INTO user(
-  `user_id`, `name`, `login`, `pwd`, `confirmed`, `token`) 
+  `user_id`, `name`, `login`, `pwd`, `confirmed`, `token_api`) 
 VALUES (
   '52ba882b-07b3-48e2-8aff-8183b20f1266',
   'Konstantin',
