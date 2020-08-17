@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * MailWorkerService is a facade for the {@link MailService}.
- * Generates links used in email.
+ * Generates links used in email and sends asynchronously emails.
  */
 @Service
 public class MailWorkerService {

@@ -56,7 +56,7 @@ public class TenantFilter implements Filter {
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-            // Check if resource can accessed  by the current user
+            // Check if resource can be accessed by the current user
             if( !userId.equals((String)session.getAttribute("userId"))){
                 LOG.warn("TenantFilter: user path mismatches user ID ");
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED);

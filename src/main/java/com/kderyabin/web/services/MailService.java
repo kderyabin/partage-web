@@ -96,8 +96,7 @@ public class MailService {
 	 * 
 	 * @param recipientEmail Receiver email.
 	 * @param recipientName  Receiver name.
-	 * @param host           Application host
-	 * @param token          User token for account confirmation.
+	 * @param link			Confirmation link.
 	 * @throws MessagingException
 	 */
 	public void sendConfirmationMail(String recipientEmail, String recipientName, String link)
@@ -142,10 +141,8 @@ public class MailService {
 		context.setLocale(locale);
 		context.setVariables(data);
 		templateEngine.setTemplateEngineMessageSource(messageSource);
-		
-		String htmlBody = templateEngine.process(template, context);
 
-		return htmlBody;
+		return templateEngine.process(template, context);
 	}
 
 	/**
@@ -190,8 +187,7 @@ public class MailService {
 	 */
 	private MimeMessageHelper getMessageHelper() throws MessagingException {
 		MimeMessage message = mailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-		return helper;
+		return new MimeMessageHelper(message, true, "UTF-8");
 	}
 }
