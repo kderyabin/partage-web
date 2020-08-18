@@ -35,9 +35,7 @@
                     </c:forEach>
                 </c:if>
                 <textarea name="description" id="description" maxlength="255" 
-                          aria-invalid="${!empty errors && !empty errors.description ? "true": "false"}">
-                    ${model.description}
-                </textarea>
+                          aria-invalid="${!empty errors && !empty errors.description ? "true": "false"}">${model.description}</textarea>
             </div>
             <div class="input-group-column">
                 <label for="currency" class="label-inline-block"><fmt:message key="currency"/></label>

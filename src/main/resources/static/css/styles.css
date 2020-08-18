@@ -111,6 +111,9 @@ h6, .h6 {
 .align-right {
 	text-align: right;
 }
+.text-justify {
+  text-align: justify;
+}
 /**
  * @license
  * Copyright Google LLC All Rights Reserved.

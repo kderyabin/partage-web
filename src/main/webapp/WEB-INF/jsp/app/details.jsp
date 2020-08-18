@@ -17,7 +17,7 @@
         </c:if>
 
         <c:if test="${ empty items}">
-            <h3 class="align-center"><fmt:message key="no_data_to_display"/> </h3>
+            <h3 class="text-justify"><fmt:message key="no_data_to_display"/> </h3>
         </c:if>
 
         <c:if test="${ !empty items}">

@@ -317,6 +317,7 @@ public class BoardEditController {
         }
         model.setCurrency(bean.getCurrency());
         model.setName(bean.getName());
+        model.setDescription(bean.getDescription());
 
         // Load attached to the board participants from the session
         HttpSession session = request.getSession(false);
