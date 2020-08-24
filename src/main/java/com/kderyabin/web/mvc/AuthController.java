@@ -313,7 +313,7 @@ public class AuthController {
     ) {
         Locale locale = new Locale(lang);
         MailActionModel action = getValidMailAction(token, MailAction.RESET);
-        FormValidator<ResetPassword> validator = new ResetPasswordValidation();
+        FormValidator<ResetPassword> validator = new ResetPasswordValidator();
         validator.validate(bean);
         Notification notification = null;
         if (validator.isValid()) {
