@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -19,8 +20,11 @@ import java.util.Date;
  * Item form data
  */
 @ToString
-@Getter @Setter
-public class Item {
+@Getter
+@Setter
+public class Item implements Serializable{
+
+    private static final long serialVersionUID = -7830250164092747166L;
 
     private Long id;
     @NotEmpty
@@ -86,7 +90,7 @@ public class Item {
     /**
      * Converts Date into into its String representation.
      * @param date Date to covert.
-     * @return
+     * @return Date as a String in required pattern.
      */
     public static String convertDateToString(Date date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -109,5 +113,4 @@ public class Item {
             return new java.sql.Date(System.currentTimeMillis());
         }
     }
-
 }
