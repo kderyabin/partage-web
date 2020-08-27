@@ -5,9 +5,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 
 @ToString
-public class Password {
+public class Password implements Serializable {
+    private static final long serialVersionUID = -450066652475869704L;
     /**
      * User password
      */

@@ -5,10 +5,12 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.Email;
+import java.io.Serializable;
 
 @ToString
 @Getter @Setter
-public class ResetRequest {
+public class ResetRequest implements Serializable {
+    private static final long serialVersionUID = 3539120400705931589L;
     /**
      * User email
      */

@@ -7,9 +7,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @ToString
-public class Signin {
-	
+public class Signin implements Serializable {
+
+	private static final long serialVersionUID = 6947039856789018538L;
 	/**
 	 * User login
 	 */

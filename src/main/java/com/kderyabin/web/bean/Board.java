@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,7 +16,9 @@ import java.util.List;
  */
 @ToString
 @Getter @Setter
-public class Board {
+public class Board implements Serializable {
+
+    private static final long serialVersionUID = -2712222637246212081L;
 
     @Size(min = 1, max = 50, message = "msg.board_name_required")
     private String name;

@@ -7,6 +7,7 @@ import lombok.ToString;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 
 /**
@@ -14,7 +15,8 @@ import javax.validation.constraints.Size;
  */
 @ToString
 @Getter @Setter
-public class Settings {
+public class Settings implements Serializable {
+    private static final long serialVersionUID = -5839758040787377152L;
     @NotEmpty( message = "error.language_is_required")
     String language;
 

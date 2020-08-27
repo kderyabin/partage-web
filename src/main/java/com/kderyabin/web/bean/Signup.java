@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 /**
  * Contains sign up form data.
  *
@@ -14,7 +16,9 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class Signup extends ResetPassword {
+public class Signup extends ResetPassword implements Serializable {
+
+    private static final long serialVersionUID = -380198429264297680L;
     /**
      * User name
      */

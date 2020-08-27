@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 @ToString
 @Getter @Setter
-public class Notification {
+public class Notification implements Serializable {
+    private static final long serialVersionUID = 6753199531841448220L;
     /**
      * Message to display
      */

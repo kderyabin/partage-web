@@ -13,7 +13,7 @@
 	<artifactId>web</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>web </name>
+	<name>web</name>
 	<description>Spring Boot web project of the Sharing Application </description>
 
 	<properties>

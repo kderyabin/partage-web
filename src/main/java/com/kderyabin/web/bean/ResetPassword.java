@@ -12,12 +12,8 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 public class ResetPassword extends Password{
-    /**
-     * User password
-     */
-/*    @Pattern( regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*](?=\\S+$).{8,20}$", message = "error.password_invalid")
-    private String pwd;*/
 
+    private static final long serialVersionUID = -1205511984773487423L;
     /**
      * Password confirmation to ensure there is no mistake in a password.
      */
